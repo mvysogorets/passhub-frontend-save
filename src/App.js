@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import Container from 'react-bootstrap/Container';
+import Row from "react-bootstrap/Row";
+
+import Header from "./components/header"
+import UserManagementPage from "./components/userManagementPage";
+import MainPage from "./components/mainPage";
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container className='d-flex' style={{flexDirection: "column"}}>
+      <Header />
+      <Row style={{
+        flexGrow: "1",  
+        borderRadius: "6px"
+      }}>
+        <MainPage />
+        { /* <UserManagementPage /> */}
+      </Row>
+      <Row>
+        <div style={{height:"3em"}}></div>
+      </Row>
+
+    </Container>
   );
 }
 
