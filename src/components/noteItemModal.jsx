@@ -14,7 +14,8 @@ class NoteItemModal extends Component {
   };
 
   render() {
-    let { title, username, password, url, notes, code6 } = [
+    let { title, username, password, url, notes, code6, path } = [
+      "",
       "",
       "",
       "",
@@ -31,13 +32,15 @@ class NoteItemModal extends Component {
       if (this.props.item.cleartext.length >= 6) {
         code6 = this.props.item.cleartext[5];
       }
+      path = this.props.item.path.join(" > ");
     }
 
     return (
       <Modal show={this.props.show} onHide={this.handleClose} animation={false}>
-        <Modal.Header closeButton>
-          <Modal.Title>{title}</Modal.Title>
+        <Modal.Header closeButton style={{ border: "none" }}>
+          <div className="itemModalPath">{path}</div>
         </Modal.Header>
+        <div className="itemModalTitle">{title}</div>
         <Modal.Body>
           <div className="itemModalField">
             {/*<div className="label">Notes</div> */}

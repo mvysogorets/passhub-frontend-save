@@ -47,9 +47,7 @@ class TablePane extends Component {
   };
 
   render() {
-    const contentNotEmpty =
-      this.props.content.folders.length > 0 ||
-      this.props.content.items.length > 0;
+    const contentNotEmpty = this.props.folder != null;
     return (
       <Col
         className="col-xl-9 col-lg-8 col-md-7 d-none d-md-block"
@@ -61,6 +59,8 @@ class TablePane extends Component {
           borderRadius: "0 16px 16px 0",
         }}
       >
+        {contentNotEmpty && <div>{this.props.folder.path.join(" > ")}</div>}
+
         {contentNotEmpty && (
           <table className="item_table">
             <thead>
@@ -72,10 +72,10 @@ class TablePane extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.props.content.folders.map((f) => (
+              {this.props.folder.folders.map((f) => (
                 <FolderItem item={f} />
               ))}
-              {this.props.content.items.map(
+              {this.props.folder.items.map(
                 (f) =>
                   (isLoginItem(f) && (
                     <LoginItem item={f} showModal={this.showLoginModal} />

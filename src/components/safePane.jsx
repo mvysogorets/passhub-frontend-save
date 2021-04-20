@@ -50,24 +50,19 @@ class SafePane extends Component {
 
   render() {
     return (
-      <Col
-        className="col-xl-3 col-lg-4 col-md-5 col-12 vaults_pane"
-        style={{
-          background: "rgba(27, 27, 38, 0.86)",
-          color: "white",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          padding: 0,
-          borderRadius: "16px 0 0 16px",
-        }}
-      >
+      <Col className="col-xl-3 col-lg-4 col-md-5 col safe_pane">
+        <div className="folder">Recent and favorities</div>
         <div
+          className="folder"
           style={{
-            overflowY: "auto",
-            paddingTop: "16px" /* marginLeft: "-20px" */,
+            fontSize: "14px",
+            margin: "17px 0 6px 0",
+            letterSpacing: "0.16em",
           }}
         >
+          SAFES
+        </div>
+        <div className="safe_scroll_control">
           {this.props.safes.map((s) => (
             <FolderTreeNode
               key={s.id}
@@ -77,9 +72,11 @@ class SafePane extends Component {
               open={this.state.openNodes.has(s.id) && this.state.openNodes}
               activeFolder={this.props.activeFolder}
               isSafe={true}
+              padding={20}
             />
           ))}
         </div>
+        <div className="add_safe">Add safe</div>
       </Col>
     );
   }

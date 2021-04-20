@@ -40,11 +40,13 @@ function decryptSafes(eSafes) {
 function normalizeFolder(folder, items, folders) {
   folder.name = folder.cleartext[0];
   folder.id = folder._id;
+  folder.path = [...folder.path, folder.cleartext[0]];
+
   folder.items = [];
   for (const item of items) {
     if (item.folder === folder.id) {
       folder.items.push(item);
-      item.path = [...folder.path, folder.cleartext[0]];
+      item.path = folder.path;
     }
   }
   folder.items.sort((a, b) =>
@@ -55,7 +57,7 @@ function normalizeFolder(folder, items, folders) {
   for (const f of folders) {
     if (f.parent === folder.id) {
       folder.folders.push(f);
-      f.path = [...folder.path, folder.cleartext[0]];
+      f.path = folder.path;
       normalizeFolder(f, items, folders);
     }
   }
@@ -67,6 +69,7 @@ function normalizeFolder(folder, items, folders) {
 function normalizeSafes(safes) {
   for (const safe of safes) {
     safe.rawItems = safe.items;
+    safe.path = [safe.name];
     safe.items = [];
     for (const item of safe.rawItems) {
       if (!item.folder || item.folder == "0") {
@@ -112,6 +115,7 @@ class MainPage extends Component {
     activeFolder: 0,
   };
 
+  /*
   getFolderContent = (folderId) => {
     const folder = getFolderById(this.state.safes, folderId);
     if (folder) {
@@ -119,6 +123,7 @@ class MainPage extends Component {
     }
     return { folders: [], items: [] };
   };
+*/
 
   setActiveFolder = (id) => {
     this.setState({ activeFolder: id });
@@ -173,7 +178,7 @@ class MainPage extends Component {
           setActiveFolder={this.setActiveFolder}
           activeFolder={activeFolder}
         />
-        <TablePane content={this.getFolderContent(activeFolder)} />
+        <TablePane folder={getFolderById(this.state.safes, activeFolder)} />
       </React.Fragment>
     );
   }

@@ -27,7 +27,9 @@ const FOLDER_MENU_ID = "folder-menu-id";
 
 class FolderTreeNode extends Component {
   getClass = () => {
-    return this.props.node.isCurrent ? "selectedFolder" : "";
+    return this.props.node.id === this.props.activeFolder
+      ? "folder active_folder"
+      : "folder";
   };
 
   handleItemClick = (e) => {
@@ -155,7 +157,11 @@ class FolderTreeNode extends Component {
             fill: "white",
             transform: this.props.open ? false : "rotate(-90deg)",
           }}
-          onClick={() => this.props.onOpen(this.props.node.id)}
+          onClick={(e) => {
+            // e.preventDefault();
+            e.stopPropagation();
+            this.props.onOpen(this.props.node.id);
+          }}
           activeFolder={this.props.activeFolder}
         >
           <use href="#angle"></use>

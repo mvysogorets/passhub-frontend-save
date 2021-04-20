@@ -1,3 +1,55 @@
+.top_icon {
+  stroke: white;
+  vertical-align: middle;
+  margin: 0 15px;
+}
+.item_icon {
+  stroke: #2277e6;
+  opacity: 0.5;
+  vertical-align: middle;
+}
+
+#search_string {
+  border-radius: 6px;
+  padding: 0 0.75rem;
+  height: 30px;
+  border: none;
+  border-color: #d9efff;
+  padding-right: 2.2em;
+}
+#search_string:active {
+  border: none;
+  outline: none;
+}
+
+.search_clear {
+  margin-left: -1.3em;
+  cursor: pointer;
+}
+
+#fake_username,
+#fake_password {
+  border: none;
+  width: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root,
+.container {
+  height: 100%;
+}
+/*
+.selectedFolder {
+  background: rgb(255, 255, 255, 0.3);
+}
+*/
+.caret-off::after {
+  display: none;
+}
+
+/*
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -6,7 +58,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
@@ -18,6 +69,7 @@ code {
   height: 142px;
   width: 100%;
 }
+
 
 td,
 th {
@@ -35,15 +87,16 @@ td.email {
   text-align: right;
 }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
 table,
 th,
 td {
   border: 1px solid black;
+}
+*/
+
+table {
+  border-collapse: collapse;
+  width: 100%;
 }
 
 .iam_table_scroll_control {
@@ -71,6 +124,7 @@ h1 {
 
 .item_table {
   border: none;
+  margin-top: 50px;
 }
 .item_table th {
   border: none;
@@ -92,8 +146,14 @@ h1 {
   border: none;
   text-align: left;
 }
+
+.item_table tr + td {
+  cursor: pointer;
+}
+
 .item_table tbody tr {
   border-bottom: 1px solid #e6e6f0;
+  padding: 7px 0;
 }
 
 .item_table .rightAlign {
@@ -104,11 +164,40 @@ h1 {
   border-radius: 16px;
 }
 
+.itemModalPath {
+  font-size: 14px;
+  line-height: 22px;
+  color: #1b1b26;
+  opacity: 0.5;
+}
+
+.itemModalTitle {
+  border-bottom: 1px solid #dee2e6;
+  font-weight: bold;
+  font-size: 42px;
+  line-height: 57px;
+  padding: 0 1rem;
+}
 .itemModalField {
   background: rgba(230, 230, 240, 0.3);
   border-radius: 16px;
   padding: 16px;
 }
+
+.itemModalField.upper {
+  border-radius: 16px 16px 0 0;
+  border-bottom: 1px solid white;
+}
+
+.itemModalField.lower {
+  border-radius: 0 0 16px 16px;
+  border-top: 1px solid white;
+}
+
+.itemModalField:hover {
+  background: rgba(0, 188, 98, 0.1);
+}
+
 .itemModalField .label {
   font-size: 14px;
   opacity: 0.5;
@@ -147,4 +236,61 @@ h1 {
   > .react-contexify__item__content {
   color: white;
   background: rgba(27, 27, 38, 0.86);
+}
+
+/*----------------------*/
+.safe_pane {
+  background: rgba(27, 27, 38, 0.86);
+  color: white;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px 0 0 16px;
+  padding: 16px 0;
+}
+.safe_scroll_control {
+  overflow-y: auto;
+}
+
+.folder {
+  color: white;
+  opacity: 0.5;
+  font-size: 16px;
+  line-height: 24px;
+  padding: 7px 0 7px 24px;
+}
+
+.active_folder {
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 1;
+}
+
+.menu-dots {
+  cursor: pointer;
+  position: absolute;
+  top: 7px;
+  right: 0;
+}
+
+.add_safe {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: white;
+  opacity: 0.5;
+  font-size: 16px;
+  line-height: 24px;
+  padding: 7px 0;
+  margin: 16px 20px;
+  text-align: center;
+}
+
+.add_safe:hover {
+  opacity: 1;
+}
+
+.add_button {
+  background: linear-gradient(282.86deg, #00ba97 8.08%, #00bc62 68.47%);
+  box-shadow: 0px 3px 7px rgba(1, 189, 98, 0.16),
+    0px 4px 18px rgba(0, 255, 153, 0.5);
+  border-radius: 14px;
 }
