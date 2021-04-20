@@ -45,19 +45,47 @@ class LoginItemModal extends Component {
         <div className="itemModalTitle">{title}</div>
         <Modal.Body>
           <div className="itemModalField upper">
-            <div className="label">Username</div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div className="label">Username</div>
+              <div>
+                <span className="iconTitle">Copy</span>
+                <svg
+                  width="24"
+                  height="24"
+                  fill="none"
+                  title="Copy"
+                  style={{ opacity: "0.5" }}
+                >
+                  <use href="#f-copy"></use>
+                </svg>
+              </div>
+            </div>
             <div>
               <input className="lp" readonly value={username}></input>
             </div>
           </div>
           <div className="itemModalField lower">
-            <div style={{ fontSize: "14px" }}>
-              <span style={{ opacity: "0.5" }}>Password</span>
-              <span className="colored" style={{ opacity: "1" }}>
-                <span style={{ margin: "0 .3em" }}>&#183;</span>
-                Strong
-              </span>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{ fontSize: "14px" }}>
+                <span style={{ opacity: "0.5" }}>Password</span>
+                <span className="colored" style={{ opacity: "1" }}>
+                  <span style={{ margin: "0 .3em" }}>&#183;</span>
+                  Strong
+                </span>
+              </div>
+              <div>
+                <span className="iconTitle">Copy</span>
+                <svg
+                  width="24"
+                  height="24"
+                  fill="none"
+                  style={{ opacity: "0.5" }}
+                >
+                  <use href="#f-copy"></use>
+                </svg>
+              </div>
             </div>
+
             <div>
               <input
                 className="lp"
@@ -71,16 +99,27 @@ class LoginItemModal extends Component {
             className="colored"
             onClick={this.showPassword}
             style={{
-              textAlignLast: "right",
-              margin: "0 0 16px 0",
+              textAlign: "right",
+              margin: "6px 0 16px 0",
               fontSize: "14px",
               cursor: "pointer",
             }}
           >
-            Show Password
+            <svg width="21" height="21" fill="none">
+              <use href="#show-password"></use>
+            </svg>
+            <span style={{ marginLeft: "6px" }}>Show Password</span>
           </div>
-          <div className="itemModalField">
-            <div className="label">URL</div>
+          <div className="itemModalField" style={{ marginBottom: "32px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div className="label">Website address</div>
+              <div>
+                <span className="iconTitle">Go to website</span>
+                <svg width="24" height="24" fill="none" stroke="#1B1B26">
+                  <use href="#f-gotowebsite"></use>
+                </svg>
+              </div>
+            </div>
             <div>{url}</div>
           </div>
           <div className="itemModalField">

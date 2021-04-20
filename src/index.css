@@ -207,12 +207,26 @@ h1 {
   font-size: 18px;
   font-family: "Monospace";
   border: none;
+  outline: none;
+  color: #1b1b26;
 }
 .itemModalField .lp:focus {
   border: none;
 }
 .itemModalField .lp:active {
   border: none;
+}
+
+.itemModalField .iconTitle {
+  color: #00bc62;
+  opacity: 0;
+  margin-right: 10px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.itemModalField:hover .iconTitle {
+  opacity: 1;
 }
 
 .colored {
