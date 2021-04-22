@@ -164,11 +164,37 @@ h1 {
   border-radius: 16px;
 }
 
+.itemModalNav {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 18px;
+}
+
+.itemModalNav svg {
+  cursor: pointer;
+}
+.itemModalEditButton {
+  display: inline-block;
+  margin: 0 10px;
+  border: 1px solid #00bc62;
+  color: #009a50;
+  border-radius: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  opacity: 0.7;
+  padding: 8px 20px 2px 20px;
+  cursor: pointer;
+}
+
 .itemModalPath {
   font-size: 14px;
   line-height: 22px;
   color: #1b1b26;
   opacity: 0.5;
+  padding-top: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .itemModalTitle {
@@ -176,7 +202,6 @@ h1 {
   font-weight: bold;
   font-size: 42px;
   line-height: 57px;
-  padding: 0 1rem;
 }
 .itemModalField {
   background: rgba(230, 230, 240, 0.3);
@@ -217,6 +242,10 @@ h1 {
   border: none;
 }
 
+.itemModalField.lower.weakPassword {
+  background: rgba(235, 101, 0, 0.1);
+}
+
 .itemModalField .iconTitle {
   color: #00bc62;
   opacity: 0;
@@ -238,10 +267,13 @@ h1 {
 }
 .modal-content {
   width: 680px;
+  padding: 0 72px;
 }
+
 .modal-body {
-  padding-left: 72px;
-  padding-right: 72px;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 24px;
 }
 
 .react-contexify__item:not(.react-contexify__item--disabled):hover

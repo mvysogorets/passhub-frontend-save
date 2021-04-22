@@ -7,7 +7,7 @@ import {
   decryptAesKey,
   decodeItem,
   decodeFolder,
-} from "../libs/crypto";
+} from "../lib/crypto";
 import SafePane from "./safePane";
 import TablePane from "./tablePane";
 
