@@ -62,7 +62,7 @@ class LoginItemModal extends Component {
           <div className="itemModalPath">{path}</div>
           <div>
             <ItemViewIcon iconId="#f-history" opacity="1" title="History" />
-            <ItemViewIcon iconId="#f-folderSimplePlus" title="Move" />
+            <ItemViewIcon iconId="#f-move" title="Move" />
             <ItemViewIcon iconId="#f-copy" title="Copy" />
 
             {/* <ItemViewIcon iconId="#f-edit" />*/}
