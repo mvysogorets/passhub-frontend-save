@@ -1,3 +1,19 @@
+import { updateTicket } from 'wwpass-frontend';
+
+function keepTicketAlive(ttl, age) {
+  const maxTicketAge = ttl / 2 + 30;
+  let ticketTimeStamp = new Date() / 1000 - age;
+
+  function CheckIdleTime() {
+    const secondsNow = new Date() / 1000;
+
+    if ((secondsNow - ticketTimeStamp) > maxTicketAge) {
+      ticketTimeStamp = new Date() / 1000;
+      updateTicket('update_ticket.php');
+    }
+  }
+  window.setInterval(CheckIdleTime, 1000);
+}
 
 function serverLog(msg) {
   /*
@@ -92,4 +108,5 @@ function isStrongPassword(pw) {
 export {
   serverLog,
   isStrongPassword,
+  keepTicketAlive,
 };

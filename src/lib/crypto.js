@@ -4,6 +4,7 @@ import forge from 'node-forge';
 
 let WebCryptoPrivateKey = null;
 let ForgePrivateKey = null;
+let publicKeyPem = null;
 
 const ab2str = buf => String.fromCharCode.apply(null, new Uint16Array(buf));
 const uint82str = buf => String.fromCharCode.apply(null, new Uint8Array(buf));
@@ -59,6 +60,7 @@ const pem2CryptoKey = (pem) => {
 
 
 function getPrivateKey(data) {
+  publicKeyPem = data.publicKeyPem;
   return WWPass.cryptoPromise
     .getWWPassCrypto(data.ticket, "AES-CBC")
     .then((thePromise) => {
@@ -145,6 +147,10 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
   }
   
   function decodeItem(item, aesKey) {
+    if ( (item.version === 3) || (item.version === 4)) {
+      return decodeItemGCM(item, aesKey);
+    }
+
     const decipher = forge.cipher.createDecipher('AES-ECB', aesKey);
     decipher.start({ iv: forge.random.getBytesSync(16) });
   
@@ -161,9 +167,6 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
       const result = decipher.finish(); // check 'result' for true/false
       return decipher.output.toString('utf8').split('\0');
     }
-    if ( (item.version === 3) || (item.version === 4)) {
-      return decodeItemGCM(item, aesKey);
-    }
     alert(`Error 450: cannot decode data version ${item.version}`); //  ??
     return null;
   }
@@ -176,11 +179,35 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
     return decipher.output.toString('utf8').split('\0');
   }
   
+  function createSafe(name, items, folders) {
+    const aesKey = forge.random.getBytesSync(32);
+    const publicKey = forge.pki.publicKeyFromPem(publicKeyPem);
+    const encryptedAesKey = publicKey.encrypt(aesKey, 'RSA-OAEP');
+    const hexEncryptedAesKey = forge.util.bytesToHex(encryptedAesKey);
+    return { name, aes_key: hexEncryptedAesKey };
+  };
 
+  
+  function encryptFolderName(cleartextName, aesKey) {
+  
+    const iv = forge.random.getBytesSync(16);
+    const cipher = forge.cipher.createCipher('AES-GCM', aesKey);
+    cipher.start({ iv });
+    cipher.update(forge.util.createBuffer(cleartextName, 'utf8')); // already joined by encode_item (
+    const result = cipher.finish(); // check 'result' for true/false
+    return JSON.stringify({
+      iv: btoa(iv),
+      data: btoa(cipher.output.data),
+      tag: btoa(cipher.mode.tag.data),
+      version: 3,
+    });
+  }
   
 export {
   getPrivateKey,
   decryptAesKey,
   decodeItem,
   decodeFolder,
+  createSafe,
+  encryptFolderName
 };

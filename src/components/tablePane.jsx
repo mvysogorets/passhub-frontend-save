@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
 
 import FolderItem from "./folderItem";
 import LoginItem from "./loginItem";
@@ -48,6 +49,12 @@ class TablePane extends Component {
 
   render() {
     const contentNotEmpty = this.props.folder != null;
+    const emptyFolder = !(
+      contentNotEmpty &&
+      this.props.folder.folders.length + this.props.folder.items.length > 0
+    );
+    const isSafe = contentNotEmpty && this.props.folder.path.length == 1;
+
     return (
       <Col
         className="col-xl-9 col-lg-8 col-md-7 d-none d-md-block"
@@ -59,9 +66,28 @@ class TablePane extends Component {
           borderRadius: "0 16px 16px 0",
         }}
       >
-        {contentNotEmpty && <div>{this.props.folder.path.join(" > ")}</div>}
-
         {contentNotEmpty && (
+          <div style={{ color: "#1B1B26" }}>
+            {this.props.folder.path.join(" > ")}
+          </div>
+        )}
+
+        {contentNotEmpty && emptyFolder && (
+          <div>
+            <div style={{ textAlign: "center" }}>
+              <svg
+                width="400"
+                height="208"
+                style={{ margin: "2em auto 1em auto", display: "block" }}
+              >
+                <use href={isSafe ? "#f-emptySafe" : "#f-emptyFolder"}></use>
+              </svg>
+              {isSafe ? "Empty safe" : "Empty folder"}
+            </div>
+          </div>
+        )}
+
+        {contentNotEmpty && !emptyFolder && (
           <table className="item_table">
             <thead>
               <tr>
@@ -88,6 +114,25 @@ class TablePane extends Component {
             </tbody>
           </table>
         )}
+
+        <Button
+          variant="primary"
+          type="submit"
+          style={{
+            width: "80px",
+            height: "80px",
+            position: "absolute",
+            bottom: "16px",
+            right: "16px",
+            minWidth: "0",
+            padding: "0",
+            borderRadius: "14px",
+          }}
+          onClick={() => {}}
+        >
+          +
+        </Button>
+
         <LoginItemModal
           show={this.state.showLoginItemModal}
           item={this.state.currentItem}

@@ -12,6 +12,9 @@ class NoteItem extends Component {
     return (
       <tr>
         <td colspan="3" onClick={this.showModal}>
+          <svg width="16" height="16" className="itemIcon">
+            <use href="#i-note"></use>
+          </svg>
           {item.cleartext[0]}
         </td>
         <td className="rightAlign">{modified}</td>

@@ -1,3 +1,12 @@
+@font-face {
+  font-family: OpenSans;
+  src: url("fonts/OpenSans-Regular.ttf");
+}
+
+* {
+  font-family: OpenSans;
+}
+
 .top_icon {
   stroke: white;
   vertical-align: middle;
@@ -40,6 +49,7 @@ body,
 .container {
   height: 100%;
 }
+
 /*
 .selectedFolder {
   background: rgb(255, 255, 255, 0.3);
@@ -153,15 +163,18 @@ h1 {
 
 .item_table tbody tr {
   border-bottom: 1px solid #e6e6f0;
-  padding: 7px 0;
+  height: 46px;
+  /*  padding: 7px 0;*/
 }
 
 .item_table .rightAlign {
   text-align: right;
 }
 
-.modal-dialog .modal-content {
-  border-radius: 16px;
+.itemIcon {
+  /*stroke: #e6e6f0; */
+  stroke: #808080;
+  margin-right: 12px;
 }
 
 .itemModalNav {
@@ -230,10 +243,12 @@ h1 {
 .itemModalField .lp {
   background: transparent;
   font-size: 18px;
-  font-family: "Monospace";
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
   border: none;
   outline: none;
   color: #1b1b26;
+  width: 100%;
 }
 .itemModalField .lp:focus {
   border: none;
@@ -260,20 +275,6 @@ h1 {
 
 .colored {
   color: #00bc62;
-}
-
-.modal-dialog {
-  max-width: fit-content;
-}
-.modal-content {
-  width: 680px;
-  padding: 0 72px;
-}
-
-.modal-body {
-  padding-left: 0;
-  padding-right: 0;
-  padding-top: 24px;
 }
 
 .react-contexify__item:not(.react-contexify__item--disabled):hover
@@ -328,6 +329,7 @@ h1 {
   padding: 7px 0;
   margin: 16px 20px;
   text-align: center;
+  cursor: pointer;
 }
 
 .add_safe:hover {
@@ -339,4 +341,127 @@ h1 {
   box-shadow: 0px 3px 7px rgba(1, 189, 98, 0.16),
     0px 4px 18px rgba(0, 255, 153, 0.5);
   border-radius: 14px;
+}
+
+/* standard bootstrap elements */
+
+.btn-primary {
+  min-width: 146px;
+  padding: 12px;
+  border: none;
+  background: linear-gradient(264.92deg, #00ba97 4.82%, #00bc62 73.44%);
+  border-radius: 12px;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(264.92deg, #00bc62 4.82%, #00ba97 73.44%);
+}
+
+.btn-primary:active {
+  background: #1b1b26;
+  opacity: 0.08;
+}
+
+.btn-outline-secondary {
+  min-width: 146px;
+  padding: 12px;
+  color: #1b1b26;
+  border: 1px solid #e7e7ee;
+  box-sizing: border-box;
+  border-radius: 12px;
+}
+
+.btn-outline-secondary:hover {
+  color: #1b1b26;
+  background: none;
+  border: 1px solid #a3a4ab;
+}
+
+.btn-outline-secondary:active {
+  color: #1b1b26;
+  background: none;
+  border: 1px solid #5f5f68;
+}
+
+.modal-dialog {
+  max-width: fit-content;
+}
+
+.modal-content {
+  width: 680px;
+  padding: 0 72px;
+}
+
+.modal-dialog .modal-content {
+  border-radius: 16px;
+}
+
+.modal-header {
+  border: none;
+  padding: 0;
+  margin: 32px 0 0 0;
+}
+
+.modal-header h2 {
+  font-weight: bold;
+  font-size: 32px;
+  line-height: 44px;
+  margin: 0;
+  /* Dark/100 */
+  color: #1b1b26;
+}
+
+.modal-header .close {
+  padding: 0;
+  margin-top: 20px;
+}
+
+.modal-body {
+  padding: 0;
+  margin: 32px 0 0 0;
+}
+
+.modal-footer {
+  border: none;
+  padding: 0;
+  margin: 32px 0;
+}
+
+.modal-body .form-group {
+  /* Dark */
+  border: 1px solid #1b1b26;
+  border-radius: 16px;
+  margin: 0;
+  padding: 11px 20px;
+}
+
+.modal-body .form-group label {
+  opacity: 0.7;
+  margin: 0;
+}
+
+.modal-body .form-group input.form-control {
+  border: none;
+  font-size: 18px;
+  line-height: 24px;
+  padding: 0;
+  height: auto;
+}
+
+.modal-body .form-group input.form-control:focus {
+  border: none;
+  box-shadow: none;
+}
+
+.form-label {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 22px;
+
+  /* identical to box height, or 157% */
+
+  /* Dark */
+  color: #1b1b26;
+  opacity: 0.5;
 }

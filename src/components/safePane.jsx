@@ -1,33 +1,20 @@
 import React, { Component } from "react";
+import axios from "axios";
 
+import * as passhubCrypto from "../lib/crypto";
 import Col from "react-bootstrap/Col";
+// import CreateSafeModal from "./createSafeModal";
+import FolderNameModal from "./folderNameModal";
+import DeleteFolderModal from "./deleteFolderModal";
+
 import FolderTreeNode from "./folderTreeNode";
-
-/*
-function setSelected(nodes, id) {
-  let r = nodes.map((s) => {
-    const result = {};
-
-    result.isCurrent = s.id === id ? true : false;
-
-    for (let p in s) {
-      if (p !== "children") {
-        if (p !== "isCurrent") {
-          result[p] = s[p];
-        }
-      } else {
-        result[p] = setSelected(s[p], id);
-      }
-    }
-    return result;
-  });
-  return r;
-}
-*/
 
 class SafePane extends Component {
   state = {
     openNodes: new Set(),
+    // showCreateSafeModal: false,
+    showFolderNameModal: false,
+    folderNameModalArgs: {},
   };
 
   handleSelect = (id) => {
@@ -44,137 +31,98 @@ class SafePane extends Component {
     this.setState({ openNodes: openNodesCopy });
   };
 
-  componentDidMount() {
-    console.log("safePane mounted");
-  }
+  onFolderMenuCmd = (node, cmd) => {
+    if (cmd === "delete") {
+      this.setState({
+        showDeleteFolderModal: true,
+        deleteFolderModalArgs: node,
+      });
+    }
 
+    if (cmd === "rename") {
+      this.setState({
+        showFolderNameModal: true,
+        folderNameModalArgs: { folder: node },
+      });
+    }
+
+    if (cmd === "Add folder") {
+      this.setState({
+        showFolderNameModal: true,
+        folderNameModalArgs: { parent: node },
+      });
+    }
+  };
   render() {
     return (
       <Col className="col-xl-3 col-lg-4 col-md-5 col safe_pane">
-        <div className="folder">Recent and favorities</div>
         <div
-          className="folder"
-          style={{
-            fontSize: "14px",
-            margin: "17px 0 6px 0",
-            letterSpacing: "0.16em",
-          }}
+          style={{ display: "flex", flexDirection: "column", height: "100%" }}
         >
-          SAFES
+          <div className="folder">Recent and favorities</div>
+          <div
+            className="folder"
+            style={{
+              fontSize: "14px",
+              margin: "17px 0 6px 0",
+              letterSpacing: "0.16em",
+            }}
+          >
+            SAFES
+          </div>
+          <div className="safe_scroll_control">
+            {this.props.safes.map((s) => (
+              <FolderTreeNode
+                key={s.id}
+                onSelect={this.handleSelect}
+                onOpen={this.handleOpen}
+                node={s}
+                open={this.state.openNodes.has(s.id) && this.state.openNodes}
+                activeFolder={this.props.activeFolder}
+                isSafe={true}
+                onMenuCmd={this.onFolderMenuCmd}
+                padding={20}
+              />
+            ))}
+          </div>
+          <div
+            className="add_safe"
+            onClick={() => {
+              /* this.setState({ showCreateSafeModal: true }); */
+              this.setState({
+                folderNameModalArgs: {},
+                showFolderNameModal: true,
+              });
+            }}
+          >
+            Add safe
+          </div>
         </div>
-        <div className="safe_scroll_control">
-          {this.props.safes.map((s) => (
-            <FolderTreeNode
-              key={s.id}
-              onSelect={this.handleSelect}
-              onOpen={this.handleOpen}
-              node={s}
-              open={this.state.openNodes.has(s.id) && this.state.openNodes}
-              activeFolder={this.props.activeFolder}
-              isSafe={true}
-              padding={20}
-            />
-          ))}
-        </div>
-        <div className="add_safe">Add safe</div>
+
+        <FolderNameModal
+          show={this.state.showFolderNameModal}
+          args={this.state.folderNameModalArgs}
+          onClose={(refresh = false) => {
+            this.setState({ showFolderNameModal: false });
+            if (refresh === true) {
+              this.props.refreshUserData();
+            }
+          }}
+        ></FolderNameModal>
+
+        <DeleteFolderModal
+          show={this.state.showDeleteFolderModal}
+          folder={this.state.deleteFolderModalArgs}
+          onClose={(refresh = false) => {
+            this.setState({ showDeleteFolderModal: false });
+            if (refresh === true) {
+              this.props.refreshUserData();
+            }
+          }}
+        ></DeleteFolderModal>
       </Col>
     );
   }
 }
 
 export default SafePane;
-
-/*
-    safes: [
-      {
-        name: "safe10",
-        id: 10,
-        children: [
-          {
-            name: "folder112",
-            id: 112,
-            children: [
-              {
-                name: "folder1112",
-                id: 1112,
-                isCurrent: true,
-                children: [],
-              },
-            ],
-          },
-          {
-            name: "folder114",
-            id: 114,
-          },
-        ],
-      },
-      {
-        name: "safe11",
-        id: 11,
-        isSharedSafe: true,
-        children: [],
-      },
-      {
-        name: "safe12",
-        id: 12,
-        isSharedSafe: true,
-        children: [],
-      },
-      {
-        name: "safe13",
-        id: 13,
-        isSharedSafe: true,
-        children: [],
-      },
-      {
-        name: "safe14",
-        id: 14,
-        isSharedSafe: true,
-        children: [],
-      },
-      {
-        name: "safe15",
-        id: 15,
-        isSharedSafe: true,
-        children: [],
-      },
-      {
-        name: "safe16",
-        id: 16,
-        isSharedSafe: true,
-        children: [],
-      },
-    ],
-
-*/
-/*
-function getChildren(folders, parent) {
-  const result = [];
-  for (let f = 0; f < folders.length; f++) {
-    if (folders[f].parent == parent) {
-      const child = {};
-      //      child.name = utils.escapeHtml(folders[f].cleartext[0]);
-      child.name = folders[f].cleartext[0];
-      child.id = folders[f]._id;
-      // child.icon = folderIcon;
-      const children = getChildren(folders, folders[f]._id);
-      if (children.length > 0) {
-        child.children = children;
-      }
-      result.push(child);
-    }
-  }
-  return result;
-}
-*/
-/*
-    const data = [];
-
-    for (let i = 0; i < this.props.safes.length; i++) {
-      const safe = this.props.safes[i];
-      const children = getChildren(safe.folders, 0);
-      if (children.length > 0) {
-        safe.children = children;
-      }
-    }
-    */

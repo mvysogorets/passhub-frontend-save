@@ -10,7 +10,12 @@ class LoginItem extends Component {
     const modified = new Date(item.lastModified).toLocaleString();
     return (
       <tr>
-        <td onClick={this.showModal}>{item.cleartext[0]}</td>
+        <td onClick={this.showModal}>
+          <svg width="16" height="16" className="itemIcon">
+            <use href="#i-key"></use>
+          </svg>
+          {item.cleartext[0]}
+        </td>
         <td>{item.cleartext[1]}</td>
         <td>{item.cleartext[3]}</td>
         <td className="rightAlign">{modified}</td>

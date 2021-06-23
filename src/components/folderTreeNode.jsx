@@ -32,8 +32,9 @@ class FolderTreeNode extends Component {
       : "folder";
   };
 
-  handleItemClick = (e) => {
-    console.log(e);
+  handleItemClick = (cmd) => {
+    this.props.onMenuCmd(this.props.node, cmd);
+    console.log(cmd);
   };
 
   folderMenu = (
@@ -44,6 +45,13 @@ class FolderTreeNode extends Component {
         }}
       >
         Rename
+      </Item>
+      <Item
+        onClick={() => {
+          this.handleItemClick("Add folder");
+        }}
+      >
+        Add folder
       </Item>
       <Item disabled>Paste</Item>
       <Item
@@ -86,6 +94,14 @@ class FolderTreeNode extends Component {
       >
         Rename
       </Item>
+      <Item
+        onClick={() => {
+          this.handleItemClick("Add folder");
+        }}
+      >
+        Add folder
+      </Item>
+
       <Item disabled>Paste</Item>
       <Item
         onClick={() => {
@@ -133,6 +149,7 @@ class FolderTreeNode extends Component {
     const icon = this.props.node.users > 1 ? sharedFolderIcon : folderIcon;
     const menuDotsHere =
       this.props.node.id === this.props.activeFolder ? this.menuDots : "";
+
     const menu = this.props.isSafe ? this.safeMenu : this.folderMenu;
     const padding = this.props.padding ? this.props.padding : 0;
     if ("folders" in this.props.node && this.props.node.folders.length > 0) {
@@ -146,6 +163,7 @@ class FolderTreeNode extends Component {
               open={this.props.open.has(s.id) && this.props.open}
               onOpen={this.props.onOpen}
               activeFolder={this.props.activeFolder}
+              onMenuCmd={this.props.onMenuCmd}
             />
           ))
         : "";

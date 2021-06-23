@@ -80,7 +80,7 @@ class LoginItemModal extends Component {
               >
                 <use href="#f-edit"></use>
               </svg>
-              <span style={{ verticalAlign: "text-bottom" }}>Edit</span>
+              <span style={{ verticalAlign: "top" }}>Edit</span>
             </div>
 
             <span
@@ -103,7 +103,7 @@ class LoginItemModal extends Component {
           <div className="itemModalField upper">
             <ItemModalFieldNav copy name="Username" />
             <div>
-              <input className="lp" readonly value={username}></input>
+              <input className="lp" readOnly value={username}></input>
             </div>
           </div>
           <div className={`itemModalField lower ${passwordBackground}`}>
@@ -129,7 +129,7 @@ class LoginItemModal extends Component {
               <input
                 className="lp"
                 type={passwordType}
-                readonly
+                readOnly
                 value={password}
               ></input>
             </div>
