@@ -215,11 +215,34 @@ h1 {
   font-weight: bold;
   font-size: 42px;
   line-height: 57px;
+  padding: 0;
 }
+
+input.itemModalTitle {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid #dee2e6;
+  height: auto;
+}
+
+input.itemModalTitle::placeholder {
+  color: #babbc2;
+}
+
+input.itemModalTitle:focus {
+  border-bottom: 1px solid #dee2e6;
+  box-shadow: none;
+}
+
 .itemModalField {
   background: rgba(230, 230, 240, 0.3);
   border-radius: 16px;
   padding: 16px;
+}
+
+.itemModalField:hover {
+  background: rgba(0, 188, 98, 0.1);
 }
 
 .itemModalField.upper {
@@ -232,29 +255,37 @@ h1 {
   border-top: 1px solid white;
 }
 
-.itemModalField:hover {
-  background: rgba(0, 188, 98, 0.1);
+.edit > .itemModalField {
+  background: white;
+  border: 1px solid #e7e7ee;
+}
+
+.edit > .itemModalField:hover {
+  border: 1px solid #1b1b26;
 }
 
 .itemModalField .label {
   font-size: 14px;
   opacity: 0.5;
 }
-.itemModalField .lp {
+.itemModalField input {
   background: transparent;
   font-size: 18px;
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
   border: none;
   outline: none;
   color: #1b1b26;
   width: 100%;
 }
-.itemModalField .lp:focus {
+.itemModalField input:focus {
   border: none;
 }
-.itemModalField .lp:active {
+.itemModalField input:active {
   border: none;
+}
+
+.itemModalField input.lp {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
 }
 
 .itemModalField.lower.weakPassword {
@@ -267,6 +298,18 @@ h1 {
   margin-right: 10px;
   font-size: 14px;
   line-height: 22px;
+}
+
+.itemModalPlusField {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 24px;
+
+  /* identical to box height, or 150% */
+
+  /* Green/70 */
+  color: #009a50;
 }
 
 .itemModalField:hover .iconTitle {
@@ -357,9 +400,14 @@ h1 {
   background: linear-gradient(264.92deg, #00bc62 4.82%, #00ba97 73.44%);
 }
 
+.btn-primary:focus {
+  box-shadow: none;
+}
+
 .btn-primary:active {
   background: #1b1b26;
   opacity: 0.08;
+  box-shadow: none;
 }
 
 .btn-outline-secondary {
@@ -418,13 +466,13 @@ h1 {
 
 .modal-body {
   padding: 0;
-  margin: 32px 0 0 0;
+  margin: 32px 0;
 }
 
 .modal-footer {
   border: none;
   padding: 0;
-  margin: 32px 0;
+  margin: 0 0 32px 0;
 }
 
 .modal-body .form-group {

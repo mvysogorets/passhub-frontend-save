@@ -3,8 +3,9 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
-import * as passhubCrypto from "../lib/crypto";
 import axios from "axios";
+
+import * as passhubCrypto from "../lib/crypto";
 
 class FolderNameModal extends Component {
   state = { name: "", error_msg: "" };
@@ -223,6 +224,7 @@ class FolderNameModal extends Component {
             <Form.Control
               ref={this.textInput}
               type="text"
+              spellCheck={false}
               onChange={this.handleChange}
               value={this.state.name}
             />

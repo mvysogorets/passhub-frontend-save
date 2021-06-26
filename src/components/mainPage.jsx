@@ -208,7 +208,6 @@ class MainPage extends Component {
   };
 
   componentDidMount() {
-    console.log("mainPage mounted");
     this.getPageData();
   }
 
@@ -246,7 +245,10 @@ class MainPage extends Component {
           activeFolder={activeFolder}
           refreshUserData={this.refreshUserData}
         />
-        <TablePane folder={getFolderById(this.state.safes, activeFolder)} />
+        <TablePane
+          folder={getFolderById(this.state.safes, activeFolder)}
+          refreshUserData={this.refreshUserData}
+        />
 
         {"idleTimeout" in this.state && (
           <div>

@@ -99,6 +99,7 @@ class LoginItemModal extends Component {
           </div>
         </div>
         <div className="itemModalTitle">{title}</div>
+
         <Modal.Body>
           <div className="itemModalField upper">
             <ItemModalFieldNav copy name="Username" />

@@ -3,13 +3,18 @@ import React, { Component } from "react";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
+import { contextMenu, Menu, Item, Separator, Submenu } from "react-contexify";
+
 import FolderItem from "./folderItem";
 import LoginItem from "./loginItem";
 import NoteItem from "./noteItem";
 import FileItem from "./fileItem";
 
 import NoteItemModal from "./noteItemModal";
-import LoginItemModal from "./loginItemModal";
+// import LoginItemModal from "./loginItemModal";
+import LoginModal from "./loginModal";
+
+const ADD_BUTTON_MENU_ID = "add-menu-id";
 
 function isLoginItem(item) {
   return !item.note && !item.file;
@@ -25,14 +30,64 @@ function isNoteItem(item) {
 
 class TablePane extends Component {
   state = {
-    showLoginItemModal: false,
+    //    showLoginItemModal: false,
     showNoteItemModal: false,
     showFileItemModal: false,
+    showLoginModal: false,
+    itemModalArgs: {},
     currentItem: 0,
   };
 
+  handleAddClick = (cmd) => {
+    if (cmd == "Login") {
+      this.setState({
+        showLoginModal: true,
+        itemModalArgs: {},
+      });
+    }
+  };
+
+  addMenu = (
+    <Menu id={ADD_BUTTON_MENU_ID}>
+      <Item
+        onClick={() => {
+          this.handleAddClick("Login");
+        }}
+      >
+        Login
+      </Item>
+      <Item
+        onClick={() => {
+          this.handleAddClick("Note");
+        }}
+      >
+        Note
+      </Item>
+      <Item
+        onClick={() => {
+          this.handleAddClick("File");
+        }}
+      >
+        File
+      </Item>
+      <Item
+        onClick={() => {
+          this.handleAddClick("Folder");
+        }}
+      >
+        Folder
+      </Item>
+    </Menu>
+  );
+
+  showAddMenu = (e) => {
+    // e.preventDefault();
+    contextMenu.show({ id: ADD_BUTTON_MENU_ID, event: e });
+  };
+
   showLoginModal = (item) => {
-    this.setState({ showLoginItemModal: true, currentItem: item });
+    //    this.setState({ showLoginItemModal: true, currentItem: item });
+    this.setState({ showLoginModal: true, itemModalArgs: { item } });
   };
 
   showNoteModal = (item) => {
@@ -115,6 +170,7 @@ class TablePane extends Component {
           </table>
         )}
 
+        {this.addMenu}
         <Button
           variant="primary"
           type="submit"
@@ -128,16 +184,29 @@ class TablePane extends Component {
             padding: "0",
             borderRadius: "14px",
           }}
-          onClick={() => {}}
+          onClick={this.showAddMenu}
         >
           +
         </Button>
-
+        {/*
         <LoginItemModal
           show={this.state.showLoginItemModal}
           item={this.state.currentItem}
           onClose={this.hideItemModal}
         />
+*/}
+        <LoginModal
+          show={this.state.showLoginModal}
+          folder={this.props.folder}
+          args={this.state.itemModalArgs}
+          onClose={(refresh = false) => {
+            this.setState({ showLoginModal: false });
+            if (refresh === true) {
+              this.props.refreshUserData();
+            }
+          }}
+        ></LoginModal>
+
         <NoteItemModal
           show={this.state.showNoteItemModal}
           item={this.state.currentItem}

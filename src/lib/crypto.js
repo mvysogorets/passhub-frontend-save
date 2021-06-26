@@ -202,6 +202,38 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
       version: 3,
     });
   }
+
+  function encryptItemGCM(cleartextItem, aesKey, options) {
+    const cleartextData = cleartextItem.join('\0');
+    const cipher = forge.cipher.createCipher('AES-GCM', aesKey);
+    const iv = forge.random.getBytesSync(16);
+    cipher.start({ iv });
+    cipher.update(forge.util.createBuffer(cleartextData, 'utf8')); // already joined by encode_item (
+    const result = cipher.finish(); // check 'result' for true/false
+  
+    const obj = {
+      iv: btoa(iv),
+      data: btoa(cipher.output.data),
+      tag: btoa(cipher.mode.tag.data),
+      version: 3,
+    };
+    if (cleartextItem.length === 6) {
+      obj.version = 4;
+    }
+    if (typeof options !== 'undefined') {
+      // Object.assign "polifill"
+      for (let prop1 in options) {
+        obj[prop1] = options[prop1];
+      }
+    }
+    return JSON.stringify(obj);
+  }
+  
+
+  function encryptItem(item, aesKey, options) {
+    return encryptItemGCM(item, aesKey, options);
+  }
+  
   
 export {
   getPrivateKey,
@@ -209,5 +241,6 @@ export {
   decodeItem,
   decodeFolder,
   createSafe,
-  encryptFolderName
+  encryptFolderName,
+  encryptItem
 };

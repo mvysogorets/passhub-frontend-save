@@ -141,9 +141,7 @@ class FolderTreeNode extends Component {
     </div>
   );
 
-  componentDidMount() {
-    console.log("treeNode mounted");
-  }
+  componentDidMount() {}
 
   render() {
     const icon = this.props.node.users > 1 ? sharedFolderIcon : folderIcon;
