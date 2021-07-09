@@ -22,7 +22,7 @@ class ShareModal extends Component {
   isAdmin = false;
   refreshOnClose = false;
 
-  onEmailChange = (e) => this.setState({ email: e.target.value });
+  onEmailChange = (e) => this.setState({ email: e.target.value, errMsg: "" });
 
   onClose = (refresh = false) => {
     this.props.onClose(refresh || this.refreshOnClose);
@@ -138,6 +138,12 @@ class ShareModal extends Component {
   };
 
   onSubmit = () => {
+    let name = this.state.email.trim();
+    if (name.length < 1) {
+      this.setState({ errMsg: "Recipient email should not be empty" });
+      return;
+    }
+
     const [SafeID, safeAesKey] = this.props.folder.safe
       ? [this.props.folder.safe.id, this.props.folder.safe.key]
       : [this.props.folder.id, this.props.folder.key];
@@ -175,7 +181,33 @@ class ShareModal extends Component {
       });
   };
 
+  removeUser = (name) => {
+    axios
+      .post("safe_acl.php", {
+        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+        vault: this.props.folder.id,
+        operation: "delete",
+        name,
+      })
+      .then((reply) => {
+        const result = reply.data;
+        if (result.status == "Ok") {
+          this.setState({ userList: result.UserList });
+          return;
+        }
+        this.setState({ errMsg: result.status });
+      })
+      .catch((err) => {
+        this.setState({ errMsg: err });
+      });
+  };
+
   setUserRole = (name, role) => {
+    if (role == "Remove") {
+      this.removeUser(name);
+      return;
+    }
+
     axios
       .post("safe_acl.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
@@ -276,6 +308,7 @@ class ShareModal extends Component {
         this.refreshOnClose = false;
         this.state.userList = [];
         this.state.email = "";
+        this.state.errMsg = "";
         this.getSafeUsers();
       }
     } else {
@@ -351,6 +384,12 @@ class ShareModal extends Component {
             </div>
           )}
           {recipientField}
+
+          {this.state.errMsg.length > 0 ? (
+            <div style={{ color: "red" }}>{this.state.errMsg}</div>
+          ) : (
+            ""
+          )}
 
           {this.isAdmin && (
             <div

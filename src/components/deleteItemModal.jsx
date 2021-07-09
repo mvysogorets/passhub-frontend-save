@@ -42,9 +42,17 @@ class DeleteItemModal extends Component {
   render() {
     let path = [];
     let title = "";
+    let modalTitle = "Delete Record";
     if (this.props.show) {
       path = this.props.folder ? this.props.folder.path.join(" > ") : [];
       title = this.props.args.item.cleartext[0];
+
+      if (this.props.args.item.file) {
+        modalTitle = "Delete File";
+      }
+      if (this.props.args.item.note) {
+        modalTitle = "Delete Note";
+      }
     }
 
     return (
@@ -72,7 +80,7 @@ class DeleteItemModal extends Component {
             </span>
           </div>
         </div>
-        <div className="itemModalTitle">Delete Entry</div>
+        <div className="itemModalTitle">{modalTitle}</div>
 
         <Modal.Body>
           Do you really want to delete{" "}
@@ -84,7 +92,7 @@ class DeleteItemModal extends Component {
           <Button variant="outline-secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button variant="primary" type="submit" onClick={this.onSubmit}>
+          <Button variant="danger" type="submit" onClick={this.onSubmit}>
             Delete
           </Button>
         </Modal.Footer>

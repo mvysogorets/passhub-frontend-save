@@ -75,17 +75,10 @@ class FolderTreeNode extends Component {
     <Menu id={SAFE_MENU_ID}>
       <Item
         onClick={() => {
-          this.handleItemClick("share");
+          this.handleItemClick("Share");
         }}
       >
         Share
-      </Item>
-      <Item
-        onClick={() => {
-          this.handleItemClick("users");
-        }}
-      >
-        Users
       </Item>
       <Item
         onClick={() => {

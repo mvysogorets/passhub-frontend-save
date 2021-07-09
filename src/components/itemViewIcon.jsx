@@ -3,7 +3,11 @@ import React, { Component } from "react";
 class ItemViewIcon extends Component {
   render() {
     return (
-      <span title={this.props.title} style={{ margin: "0 10px" }}>
+      <span
+        title={this.props.title}
+        style={{ margin: "0 10px" }}
+        onClick={this.props.onClick}
+      >
         <svg
           width="24"
           height="24"

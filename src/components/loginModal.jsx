@@ -145,13 +145,9 @@ class LoginModal extends Component {
 
     let passwordType = this.state.showPassword ? "text" : "password";
 
-    let path = [];
-
     let modalClass = this.state.edit ? "edit" : "view";
 
-    if (this.props.folder) {
-      path = this.props.folder.path.join(" > ");
-    }
+    const path = this.props.folder ? this.props.folder.path.join(" > ") : [];
 
     const strongPassword = isStrongPassword(this.state.password);
     const passwordStrength = strongPassword ? (
@@ -187,7 +183,11 @@ class LoginModal extends Component {
                 <ItemViewIcon iconId="#f-history" opacity="1" title="History" />
                 <ItemViewIcon iconId="#f-move" title="Move" />
                 <ItemViewIcon iconId="#f-copy" title="Copy" />
-                <ItemViewIcon iconId="#f-trash" title="Delete" />
+                <ItemViewIcon
+                  iconId="#f-trash"
+                  title="Delete"
+                  onClick={this.props.openDeleteItemModal}
+                />
                 <div class="itemModalEditButton" onClick={this.onEdit}>
                   <svg
                     width="24"
@@ -288,7 +288,7 @@ class LoginModal extends Component {
             }}
           >
             <svg width="21" height="21" fill="none">
-              <use href="#show-password"></use>
+              <use href="#f-eye"></use>
             </svg>
             <span
               style={{

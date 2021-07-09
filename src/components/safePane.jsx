@@ -1,20 +1,19 @@
 import React, { Component } from "react";
-import axios from "axios";
 
-import * as passhubCrypto from "../lib/crypto";
 import Col from "react-bootstrap/Col";
 // import CreateSafeModal from "./createSafeModal";
 import FolderNameModal from "./folderNameModal";
 import DeleteFolderModal from "./deleteFolderModal";
+import ShareModal from "./shareModal";
 
 import FolderTreeNode from "./folderTreeNode";
 
 class SafePane extends Component {
   state = {
     openNodes: new Set(),
-    // showCreateSafeModal: false,
-    showFolderNameModal: false,
+    showModal: "",
     folderNameModalArgs: {},
+    shareModalArgs: null,
   };
 
   handleSelect = (id) => {
@@ -34,25 +33,32 @@ class SafePane extends Component {
   onFolderMenuCmd = (node, cmd) => {
     if (cmd === "delete") {
       this.setState({
-        showDeleteFolderModal: true,
+        showModal: "DeleteFolderModal",
         deleteFolderModalArgs: node,
       });
     }
 
     if (cmd === "rename") {
       this.setState({
-        showFolderNameModal: true,
+        showModal: "FolderNameModal",
         folderNameModalArgs: { folder: node },
       });
     }
 
     if (cmd === "Add folder") {
       this.setState({
-        showFolderNameModal: true,
+        showModal: "FolderNameModal",
         folderNameModalArgs: { parent: node },
       });
     }
+    if (cmd === "Share") {
+      this.setState({
+        showModal: "ShareModal",
+        shareModalArgs: node,
+      });
+    }
   };
+
   render() {
     return (
       <Col className="col-xl-3 col-lg-4 col-md-5 col safe_pane">
@@ -88,10 +94,9 @@ class SafePane extends Component {
           <div
             className="add_safe"
             onClick={() => {
-              /* this.setState({ showCreateSafeModal: true }); */
               this.setState({
                 folderNameModalArgs: {},
-                showFolderNameModal: true,
+                showModal: "FolderNameModal",
               });
             }}
           >
@@ -100,10 +105,10 @@ class SafePane extends Component {
         </div>
 
         <FolderNameModal
-          show={this.state.showFolderNameModal}
+          show={this.state.showModal == "FolderNameModal"}
           args={this.state.folderNameModalArgs}
           onClose={(refresh = false) => {
-            this.setState({ showFolderNameModal: false });
+            this.setState({ showModal: "" });
             if (refresh === true) {
               this.props.refreshUserData();
             }
@@ -111,15 +116,25 @@ class SafePane extends Component {
         ></FolderNameModal>
 
         <DeleteFolderModal
-          show={this.state.showDeleteFolderModal}
+          show={this.state.showModal == "DeleteFolderModal"}
           folder={this.state.deleteFolderModalArgs}
           onClose={(refresh = false) => {
-            this.setState({ showDeleteFolderModal: false });
+            this.setState({ showModal: "" });
             if (refresh === true) {
               this.props.refreshUserData();
             }
           }}
         ></DeleteFolderModal>
+        <ShareModal
+          show={this.state.showModal == "ShareModal"}
+          folder={this.state.shareModalArgs}
+          onClose={(refresh = false) => {
+            this.setState({ showModal: "" });
+            if (refresh === true) {
+              this.props.refreshUserData();
+            }
+          }}
+        ></ShareModal>
       </Col>
     );
   }

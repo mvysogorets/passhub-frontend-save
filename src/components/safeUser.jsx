@@ -14,6 +14,9 @@ class SafeUSer extends Component {
     if (cmd == "Safe owner") {
       role = "administrator";
     }
+    if (cmd == "Remove") {
+      role = "Remove";
+    }
 
     this.props.setUserRole(this.props.user.name, role);
   };
@@ -72,6 +75,9 @@ class SafeUSer extends Component {
             Additionaly can share safe and manage user access rights
           </div>
         </div>
+      </Item>
+      <Item onClick={(e) => this.handleRoleMenuClick("Remove", e)}>
+        <div style={{ color: "#B40020", fontWeight: "bold" }}>Remove</div>
       </Item>
     </Menu>
   );

@@ -142,7 +142,7 @@ class DeleteFolderModal extends Component {
             </Button>
           )}
           <Button
-            variant="primary"
+            variant="danger"
             type="submit"
             onClick={() => this.onSubmit()}
           >
