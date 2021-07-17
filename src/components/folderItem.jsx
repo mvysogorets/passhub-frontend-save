@@ -3,13 +3,20 @@ import React, { Component } from "react";
 class FolderItem extends Component {
   state = {};
 
-  openClick = () => {
+  onClick = () => {
     this.props.onClick(this.props.item);
   };
 
   render() {
     const item = this.props.item;
-    const modified = new Date(item.lastModified).toLocaleString();
+    const modified = new Date(item.lastModified).toLocaleString([], {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
     return (
       <tr>
         <td colspan="3" onClick={this.onClick}>
@@ -18,7 +25,7 @@ class FolderItem extends Component {
           </svg>
           {item.cleartext[0]}
         </td>
-        <td className="rightAlign">{modified}</td>
+        <td className="rightAlign d-none d-xl-table-cell">{modified}</td>
       </tr>
     );
   }

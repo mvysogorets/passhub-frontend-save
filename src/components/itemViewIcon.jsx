@@ -4,8 +4,8 @@ class ItemViewIcon extends Component {
   render() {
     return (
       <span
+        className="itemViewIcon"
         title={this.props.title}
-        style={{ margin: "0 10px" }}
         onClick={this.props.onClick}
       >
         <svg
@@ -14,7 +14,6 @@ class ItemViewIcon extends Component {
           fill="none"
           stroke="#1B1B26"
           style={{
-            opacity: this.props.opacity ? this.props.opacity : "0.5",
             verticalAlign: "unset",
           }}
         >

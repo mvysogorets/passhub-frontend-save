@@ -27,7 +27,7 @@ const FOLDER_MENU_ID = "folder-menu-id";
 
 class FolderTreeNode extends Component {
   getClass = () => {
-    return this.props.node.id === this.props.activeFolder
+    return this.props.node.id === this.props.activeFolder.id
       ? "folder active_folder"
       : "folder";
   };
@@ -139,7 +139,7 @@ class FolderTreeNode extends Component {
   render() {
     const icon = this.props.node.users > 1 ? sharedFolderIcon : folderIcon;
     const menuDotsHere =
-      this.props.node.id === this.props.activeFolder ? this.menuDots : "";
+      this.props.node.id === this.props.activeFolder.id ? this.menuDots : "";
 
     const menu = this.props.isSafe ? this.safeMenu : this.folderMenu;
     const padding = this.props.padding ? this.props.padding : 0;
@@ -169,7 +169,7 @@ class FolderTreeNode extends Component {
           onClick={(e) => {
             // e.preventDefault();
             e.stopPropagation();
-            this.props.onOpen(this.props.node.id);
+            this.props.onOpen(this.props.node);
           }}
           activeFolder={this.props.activeFolder}
         >
@@ -181,7 +181,7 @@ class FolderTreeNode extends Component {
         <div>
           <div
             className={this.getClass()}
-            onClick={() => this.props.onSelect(this.props.node.id)}
+            onClick={() => this.props.onSelect(this.props.node)}
             style={{
               position: "relative",
               paddingLeft: padding + "px",
@@ -202,7 +202,7 @@ class FolderTreeNode extends Component {
     return (
       <div
         className={this.getClass()}
-        onClick={() => this.props.onSelect(this.props.node.id)}
+        onClick={() => this.props.onSelect(this.props.node)}
         style={{
           position: "relative",
           overflow: "hidden",

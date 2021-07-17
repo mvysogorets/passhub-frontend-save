@@ -10,11 +10,14 @@ class Header extends Component {
     return (
       <Row>
         <Col
-          className="py-md-2 col"
-          style={{ paddingRight: "0", margin: "0 auto" }}
+          style={{
+            paddingLeft: 24,
+            paddingRight: 0,
+            margin: "20px auto 12px auto",
+          }}
         >
           <a href="index.php">
-            <img src="public/img/new_ph_logo.svg" alt="logo" width="98" />
+            <img src="public/img/new_ph_logo.svg" alt="logo" width="133" />
           </a>
           <span className="d-md-none" id="xs_indicator"></span>
           <NavSpan />

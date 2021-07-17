@@ -8,7 +8,13 @@ class FileItem extends Component {
 
   render() {
     const item = this.props.item;
-    const modified = new Date(item.lastModified).toLocaleString();
+    const modified = new Date(item.lastModified).toLocaleString([], {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
     return (
       <tr>
         <td colspan="2" onClick={this.showModal}>
@@ -18,8 +24,8 @@ class FileItem extends Component {
           </svg>
           {item.cleartext[0]}
         </td>
-        <td className="rightAlign">1.35 KBytes</td>
-        <td className="rightAlign">{modified}</td>
+        <td className="rightAlign d-none d-lg-table-cell"></td>
+        <td className="rightAlign d-none d-xl-table-cell">{modified}</td>
       </tr>
     );
   }

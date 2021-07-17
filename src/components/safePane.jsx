@@ -4,9 +4,12 @@ import Col from "react-bootstrap/Col";
 // import CreateSafeModal from "./createSafeModal";
 import FolderNameModal from "./folderNameModal";
 import DeleteFolderModal from "./deleteFolderModal";
+import ExportFolderModal from "./exportFolderModal";
 import ShareModal from "./shareModal";
 
 import FolderTreeNode from "./folderTreeNode";
+
+import { getFolderById } from "../lib/utils";
 
 class SafePane extends Component {
   state = {
@@ -16,16 +19,16 @@ class SafePane extends Component {
     shareModalArgs: null,
   };
 
-  handleSelect = (id) => {
-    this.props.setActiveFolder(id);
+  handleSelect = (folder) => {
+    this.props.setActiveFolder(folder);
   };
 
-  handleOpen = (id) => {
+  handleOpen = (folder) => {
     const openNodesCopy = new Set(this.state.openNodes);
-    if (this.state.openNodes.has(id)) {
-      openNodesCopy.delete(id);
+    if (this.state.openNodes.has(folder.id)) {
+      openNodesCopy.delete(folder.id);
     } else {
-      openNodesCopy.add(id);
+      openNodesCopy.add(folder.id);
     }
     this.setState({ openNodes: openNodesCopy });
   };
@@ -45,6 +48,13 @@ class SafePane extends Component {
       });
     }
 
+    if (cmd === "export") {
+      this.setState({
+        showModal: "ExportFolderModal",
+        exportFolderModalArgs: node,
+      });
+    }
+
     if (cmd === "Add folder") {
       this.setState({
         showModal: "FolderNameModal",
@@ -60,6 +70,24 @@ class SafePane extends Component {
   };
 
   render() {
+    if (this.props.activeFolder && this.props.activeFolder.safe) {
+      let parentId = this.props.activeFolder.parent;
+      while (parentId) {
+        if (!this.state.openNodes.has(parentId)) {
+          this.state.openNodes.add(parentId);
+        }
+        const parentNode = getFolderById(
+          this.props.activeFolder.safe.folders,
+          parentId
+        );
+        parentId = parentNode.parent;
+      }
+
+      if (!this.state.openNodes.has(this.props.activeFolder.safe.id)) {
+        this.state.openNodes.add(this.props.activeFolder.safe.id);
+      }
+    }
+
     return (
       <Col className="col-xl-3 col-lg-4 col-md-5 col safe_pane">
         <div
@@ -125,6 +153,13 @@ class SafePane extends Component {
             }
           }}
         ></DeleteFolderModal>
+        <ExportFolderModal
+          show={this.state.showModal == "ExportFolderModal"}
+          folder={this.state.exportFolderModalArgs}
+          onClose={() => {
+            this.setState({ showModal: "" });
+          }}
+        ></ExportFolderModal>
         <ShareModal
           show={this.state.showModal == "ShareModal"}
           folder={this.state.shareModalArgs}

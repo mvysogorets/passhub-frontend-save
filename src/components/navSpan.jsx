@@ -2,23 +2,43 @@ import React, { Component } from "react";
 import NavIcon from "./navIcon";
 
 class NavSpan extends Component {
-  state = {};
+  state = { searchString: "" };
+  searchClear = () => {
+    this.setState({ searchString: "" });
+  };
+
+  onSearchChange = (e) => this.setState({ searchString: e.target.value });
+
   render() {
     return (
       <span style={{ float: "right" }}>
         <span
-          className="d-none d-md-inline-block main-page"
+          className="d-none d-md-inline-block"
           style={{ marginRight: "20px" }}
         >
+          <span>
+            <svg
+              width="24"
+              height="24"
+              style={{
+                marginRight: "-32px",
+                opacity: 0.3,
+                verticalAlign: "text-bottom",
+              }}
+            >
+              <use href="#f-search"></use>
+            </svg>
+          </span>
           <input
-            id="search_string"
-            className="main-page"
+            className="search_string"
             type="text"
             placeholder="Search.."
             autoComplete="off"
+            onChange={this.onSearchChange}
+            value={this.state.searchString}
           />
-          <span className="search_clear">
-            <svg width="0.7em" height="0.7em" className="item_icon main-page">
+          <span className="search_clear" onClick={this.searchClear}>
+            <svg width="0.7em" height="0.7em" className="item_icon">
               <use href="#cross"></use>
             </svg>
           </span>

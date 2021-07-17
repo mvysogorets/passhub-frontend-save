@@ -113,10 +113,33 @@ function baseName(path) {
   return base;
 }
 
+const escapeHtml = (unsafe) => {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
+function getFolderById(folderList, id) {
+  for (const folder of folderList) {
+    if (folder.id === id) {
+      return folder;
+    }
+    const f = getFolderById(folder.folders, id);
+    if (f) {
+      return f;
+    }
+  }
+  return null;
+}
 
 export {
   serverLog,
   isStrongPassword,
   keepTicketAlive,
   baseName,
+  escapeHtml,
+  getFolderById,
 };

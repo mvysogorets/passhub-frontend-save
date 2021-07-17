@@ -12,6 +12,7 @@ import FileItem from "./fileItem";
 
 import NoteItemModal from "./noteItemModal";
 import LoginModal from "./loginModal";
+import NoteModal from "./noteModal";
 import FileModal from "./fileModal";
 import DeleteItemModal from "./deleteItemModal";
 
@@ -39,16 +40,13 @@ class TablePane extends Component {
 
   handleAddClick = (cmd) => {
     if (cmd == "Login") {
-      this.setState({
-        showModal: "LoginModal",
-        itemModalArgs: {},
-      });
+      this.showLoginModal();
     }
     if (cmd == "File") {
-      this.setState({
-        showModal: "FileModal",
-        itemModalArgs: {},
-      });
+      this.showFileModal();
+    }
+    if (cmd == "Note") {
+      this.showNoteModal();
     }
   };
 
@@ -91,28 +89,52 @@ class TablePane extends Component {
   };
 
   showLoginModal = (item) => {
-    this.setState({ showModal: "LoginModal", itemModalArgs: { item } });
+    this.setState({
+      showModal: "LoginModal",
+      itemModalArgs: {
+        item,
+        folder: this.props.folder,
+        openDeleteItemModal: this.openDeleteItemModal,
+      },
+    });
   };
 
   showNoteModal = (item) => {
-    this.setState({ showModal: "NoteModal", currentItem: item });
+    this.setState({
+      showModal: "NoteModal",
+      itemModalArgs: {
+        item,
+        folder: this.props.folder,
+        openDeleteItemModal: this.openDeleteItemModal,
+      },
+    });
   };
 
   showFileModal = (item) => {
-    this.setState({ showModal: "FileModal", itemModalArgs: { item } });
+    this.setState({
+      showModal: "FileModal",
+      itemModalArgs: {
+        item,
+        folder: this.props.folder,
+        openDeleteItemModal: this.openDeleteItemModal,
+      },
+    });
+  };
+
+  onItemModalClose = (refresh = false) => {
+    this.setState({ showModal: "" });
+    if (refresh === true) {
+      this.props.refreshUserData();
+    }
   };
 
   openDeleteItemModal = () => {
     this.setState({ showModal: "DeleteItemModal" });
   };
 
-  hideModal = () => {
-    this.setState({
-      showModal: "",
-    });
+  openFolder = (folder) => {
+    this.props.setActiveFolder(folder);
   };
-
-  openFolder = (folder) => {};
 
   render() {
     const contentNotEmpty = this.props.folder != null;
@@ -159,16 +181,16 @@ class TablePane extends Component {
             <thead>
               <tr>
                 <th>Title</th>
-                <th></th>
-                <th></th>
-                <th className="rightAlign">Modified</th>
+                <th className="d-none d-lg-table-cell"></th>
+                <th className="d-none d-lg-table-cell"></th>
+                <th className="rightAlign d-none d-xl-table-cell">Modified</th>
               </tr>
             </thead>
             <tbody>
               {this.props.folder.folders.map((f) => (
                 <FolderItem
                   item={f}
-                  onclick={(folder) => {
+                  onClick={(folder) => {
                     this.openFolder(folder);
                   }}
                 />
@@ -209,7 +231,6 @@ class TablePane extends Component {
         </Button>
         <LoginModal
           show={this.state.showModal == "LoginModal"}
-          folder={this.props.folder}
           args={this.state.itemModalArgs}
           openDeleteItemModal={this.openDeleteItemModal}
           onClose={(refresh = false) => {
@@ -220,24 +241,19 @@ class TablePane extends Component {
           }}
         ></LoginModal>
 
-        <NoteItemModal
-          show={this.state.showModal == "NoteModal"}
-          item={this.state.currentItem}
-          onClose={this.hideItemModal}
-        />
-
         <FileModal
           show={this.state.showModal == "FileModal"}
-          folder={this.props.folder}
           args={this.state.itemModalArgs}
           openDeleteItemModal={this.openDeleteItemModal}
-          onClose={(refresh = false) => {
-            this.setState({ showModal: "" });
-            if (refresh === true) {
-              this.props.refreshUserData();
-            }
-          }}
+          onClose={this.onItemModalClose}
         ></FileModal>
+
+        <NoteModal
+          show={this.state.showModal == "NoteModal"}
+          args={this.state.itemModalArgs}
+          openDeleteItemModal={this.openDeleteItemModal}
+          onClose={this.onItemModalClose}
+        ></NoteModal>
 
         <DeleteItemModal
           show={this.state.showModal == "DeleteItemModal"}

@@ -10,7 +10,7 @@ import {
 } from "../lib/crypto";
 */
 import * as passhubCrypto from "../lib/crypto";
-import { keepTicketAlive } from "../lib/utils";
+import { keepTicketAlive, getFolderById } from "../lib/utils";
 
 import SafePane from "./safePane";
 import TablePane from "./tablePane";
@@ -106,38 +106,15 @@ function normalizeSafes(safes) {
   }
 }
 
-function getFolderById(folderList, id) {
-  for (const folder of folderList) {
-    if (folder.id === id) {
-      return folder;
-    }
-    const f = getFolderById(folder.folders, id);
-    if (f) {
-      return f;
-    }
-  }
-  return null;
-}
-
 class MainPage extends Component {
   state = {
     safes: [],
-    activeFolder: 0,
+    activeFolder: null,
     idleTimeoutAlert: false,
   };
 
-  /*
-  getFolderContent = (folderId) => {
-    const folder = getFolderById(this.state.safes, folderId);
-    if (folder) {
-      return { folders: folder.folders, items: folder.items };
-    }
-    return { folders: [], items: [] };
-  };
-*/
-
-  setActiveFolder = (id) => {
-    this.setState({ activeFolder: id });
+  setActiveFolder = (folder) => {
+    this.setState({ activeFolder: folder });
   };
 
   refreshUserData = () => {
@@ -155,7 +132,10 @@ class MainPage extends Component {
               a.name.toLowerCase().localeCompare(b.name.toLowerCase())
             );
             normalizeSafes(safes);
-            self.setState({ safes, activeFolder: data.currentSafe });
+            self.setState({
+              safes,
+              activeFolder: getFolderById(data.safes, data.currentSafe),
+            });
           });
         }
         if (result.data.status === "login") {
@@ -184,16 +164,10 @@ class MainPage extends Component {
                 a.name.toLowerCase().localeCompare(b.name.toLowerCase())
               );
               normalizeSafes(data.safes);
-              data.activeFolder = data.currentSafe;
+              data.activeFolder = getFolderById(data.safes, data.currentSafe);
               self.setState(data);
-              keepTicketAlive(data.WWPASS_TICKET_TTL, data.ticketAge);
 
-              /*
-              self.setState({
-                safes: data.safes,
-                activeFolder: data.currentSafe,
-              });
-              */
+              keepTicketAlive(data.WWPASS_TICKET_TTL, data.ticketAge);
             });
           });
         }
@@ -231,9 +205,6 @@ class MainPage extends Component {
   };
 
   render() {
-    const activeFolder =
-      this.state.safes.length === 0 ? 0 : this.state.activeFolder;
-
     const idleTimeout =
       "idleTimeout" in this.state ? this.state.idleTimeout : 0;
 
@@ -242,11 +213,12 @@ class MainPage extends Component {
         <SafePane
           safes={this.state.safes}
           setActiveFolder={this.setActiveFolder}
-          activeFolder={activeFolder}
+          activeFolder={this.state.activeFolder}
           refreshUserData={this.refreshUserData}
         />
         <TablePane
-          folder={getFolderById(this.state.safes, activeFolder)}
+          folder={this.state.activeFolder}
+          setActiveFolder={this.setActiveFolder}
           refreshUserData={this.refreshUserData}
         />
 
