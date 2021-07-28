@@ -135,6 +135,18 @@ function getFolderById(folderList, id) {
   return null;
 }
 
+
+const humanReadableFileSize = (size) => {
+  if(size == 0) return "0";
+  if (size < 1024) return `${size} B`;
+  const i = Math.floor(Math.log(size) / Math.log(1024));
+  let num = (size / Math.pow(1024, i));
+  const round = Math.round(num);
+  num = round < 10 ? num.toFixed(2) : round < 100 ? num.toFixed(1) : round
+  return `${num} ${'KMGTPEZY'[i-1]}B`;
+};
+
+
 export {
   serverLog,
   isStrongPassword,
@@ -142,4 +154,5 @@ export {
   baseName,
   escapeHtml,
   getFolderById,
+  humanReadableFileSize,
 };

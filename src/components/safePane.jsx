@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 
 import Col from "react-bootstrap/Col";
-// import CreateSafeModal from "./createSafeModal";
 import FolderNameModal from "./folderNameModal";
 import DeleteFolderModal from "./deleteFolderModal";
 import ExportFolderModal from "./exportFolderModal";
+import ImportModal from "./importModal";
 import ShareModal from "./shareModal";
 
 import FolderTreeNode from "./folderTreeNode";
@@ -32,6 +32,20 @@ class SafePane extends Component {
     }
     this.setState({ openNodes: openNodesCopy });
   };
+
+  onAccountMenuCommand(cmd) {
+    if (cmd === "Export") {
+      this.setState({
+        showModal: "ExportFolderModal",
+        exportFolderModalArgs: this.props.safes,
+      });
+    }
+    if (cmd === "Import") {
+      this.setState({
+        showModal: "ImportModal",
+      });
+    }
+  }
 
   onFolderMenuCmd = (node, cmd) => {
     if (cmd === "delete") {
@@ -70,6 +84,7 @@ class SafePane extends Component {
   };
 
   render() {
+    /*
     if (this.props.activeFolder && this.props.activeFolder.safe) {
       let parentId = this.props.activeFolder.parent;
       while (parentId) {
@@ -87,6 +102,8 @@ class SafePane extends Component {
         this.state.openNodes.add(this.props.activeFolder.safe.id);
       }
     }
+*/
+    console.log("safePane render");
 
     return (
       <Col className="col-xl-3 col-lg-4 col-md-5 col safe_pane">
@@ -160,6 +177,16 @@ class SafePane extends Component {
             this.setState({ showModal: "" });
           }}
         ></ExportFolderModal>
+        <ImportModal
+          show={this.state.showModal == "ImportModal"}
+          safes={this.props.safes}
+          onClose={(refresh = false) => {
+            this.setState({ showModal: "" });
+            if (refresh === true) {
+              this.props.refreshUserData();
+            }
+          }}
+        ></ImportModal>
         <ShareModal
           show={this.state.showModal == "ShareModal"}
           folder={this.state.shareModalArgs}

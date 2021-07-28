@@ -85,12 +85,10 @@ function exportXML(folder) {
   xml += '        <Group>\r\n';
   xml += '            <Name>Passhub</Name>\r\n';
 
-  if (!folder) {
-    /*
-    for (let s = 0; s < state.safes.length; s++) {
-      exportSafe(state.safes[s]);
+  if(Array.isArray(folder)) {
+    for (let s = 0; s < folder.length; s++) {
+      exportFolder(folder[s], '            ');
     }
-    */
   } else {
     exportFolder(folder, '            ');
   }

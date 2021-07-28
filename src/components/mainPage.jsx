@@ -1,14 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
 import IdleTimer from "react-idle-timer";
-/*
-import {
-  getPrivateKey,
-  decryptAesKey,
-  decodeItem,
-  decodeFolder,
-} from "../lib/crypto";
-*/
 import * as passhubCrypto from "../lib/crypto";
 import { keepTicketAlive, getFolderById } from "../lib/utils";
 
@@ -113,6 +105,16 @@ class MainPage extends Component {
     idleTimeoutAlert: false,
   };
 
+  constructor(props) {
+    super(props);
+    this.safePaneRef = React.createRef();
+  }
+
+  onAccountMenuCommand = (cmd) => {
+    console.log("main: " + cmd);
+    this.safePaneRef.current.onAccountMenuCommand(cmd);
+  };
+
   setActiveFolder = (folder) => {
     this.setState({ activeFolder: folder });
   };
@@ -132,9 +134,15 @@ class MainPage extends Component {
               a.name.toLowerCase().localeCompare(b.name.toLowerCase())
             );
             normalizeSafes(safes);
+            let activeFolder = getFolderById(data.safes, data.currentSafe);
+            if (!activeFolder) {
+              activeFolder = safes[0];
+              console.log("activeFolder corrected");
+            }
+            console.log("setting new state with updated data");
             self.setState({
               safes,
-              activeFolder: getFolderById(data.safes, data.currentSafe),
+              activeFolder,
             });
           });
         }
@@ -165,6 +173,11 @@ class MainPage extends Component {
               );
               normalizeSafes(data.safes);
               data.activeFolder = getFolderById(data.safes, data.currentSafe);
+              if (!data.activeFolder) {
+                console.log("active folder not found" + data.currentSafe);
+                data.activeFolder = data.safes[0];
+              }
+              console.log("setting new data state");
               self.setState(data);
 
               keepTicketAlive(data.WWPASS_TICKET_TTL, data.ticketAge);
@@ -204,9 +217,50 @@ class MainPage extends Component {
     clearTimeout(this.logoutTimer);
   };
 
+  searchFolder = {
+    path: ["Search results"],
+    folders: [],
+    items: [],
+  };
+
+  search(what) {
+    const result = [];
+    const lcWhat = what.toLowerCase();
+    for (let s = 0; s < this.state.safes.length; s += 1) {
+      if (this.state.safes[s].key) {
+        // key!= null => confirmed, better have a class
+        for (let i = 0; i < this.state.safes[s].rawItems.length; i += 1) {
+          let item = this.state.safes[s].rawItems[i];
+          let found = false;
+          if (item.cleartext[0].toLowerCase().indexOf(lcWhat) >= 0) {
+            found = true;
+          } else if (item.cleartext[1].toLowerCase().indexOf(lcWhat) >= 0) {
+            found = true;
+          } else if (item.cleartext[3].toLowerCase().indexOf(lcWhat) >= 0) {
+            found = true;
+          } else if (item.cleartext[4].toLowerCase().indexOf(lcWhat) >= 0) {
+            found = true;
+          }
+          if (found) {
+            result.push(item);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   render() {
+    const searchString = this.props.searchString.trim();
+    if (searchString.length > 0) {
+      this.searchFolder.items = this.search(searchString);
+    }
+
     const idleTimeout =
       "idleTimeout" in this.state ? this.state.idleTimeout : 0;
+
+    console.log("render mainPage, active folder:");
+    console.log(this.state.activeFolder);
 
     return (
       <React.Fragment>
@@ -215,9 +269,14 @@ class MainPage extends Component {
           setActiveFolder={this.setActiveFolder}
           activeFolder={this.state.activeFolder}
           refreshUserData={this.refreshUserData}
+          ref={this.safePaneRef}
         />
         <TablePane
-          folder={this.state.activeFolder}
+          folder={
+            searchString.length > 0
+              ? this.searchFolder
+              : this.state.activeFolder
+          }
           setActiveFolder={this.setActiveFolder}
           refreshUserData={this.refreshUserData}
         />

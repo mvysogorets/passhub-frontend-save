@@ -147,16 +147,46 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
 
   function createSafe(name) {
     const aesKey = forge.random.getBytesSync(32);
-    /*
-    const publicKey = forge.pki.publicKeyFromPem(publicKeyPem);
-    const encryptedAesKey = publicKey.encrypt(aesKey, 'RSA-OAEP');
-    const hexEncryptedAesKey = forge.util.bytesToHex(encryptedAesKey);
-    */
     const hexEncryptedAesKey = encryptAesKey(publicKeyPem, aesKey);
     return { name, aes_key: hexEncryptedAesKey };
   };
 
-  
+  function encryptFolder(folder, aes_key) {
+    const result = { entries: [], folders: [] };
+    if (folder.hasOwnProperty('name')) { // new, imported
+      result.name = encryptFolderName(folder.name, aes_key);
+    }
+    if (folder.hasOwnProperty('_id')) { // merged, restore
+      result._id = folder._id;
+    }
+    for (let e = 0; e < folder.entries.length; e++) {
+      result.entries.push(encryptItem(folder.entries[e].cleartext, aes_key, folder.entries[e].options));
+    }
+    for (let f = 0; f < folder.folders.length; f++) {
+      result.folders.push(encryptFolder(folder.folders[f], aes_key));
+    }
+    return result;
+  }
+
+  function createSafeFromFolder(folder) {
+    const aesKey = forge.random.getBytesSync(32);
+    const hexEncryptedAesKey = encryptAesKey(publicKeyPem, aesKey);
+    const result = {};
+    result.key = hexEncryptedAesKey;
+    result.name = folder.name;
+    result.entries = [];
+    for (let e = 0; e < folder.entries.length; e++) {
+      result.entries.push(encryptItem(folder.entries[e].cleartext, aesKey, folder.entries[e].options));
+    }
+    result.folders = [];
+    if ('folders' in folder) {
+      for (let f = 0; f < folder.folders.length; f++) {
+        result.folders.push(encryptFolder(folder.folders[f], aesKey));
+      }
+    }
+    return result;
+  }
+    
   function decodeItemGCM(item, aesKey) {
     const decipher = forge.cipher.createDecipher('AES-GCM', aesKey);
     decipher.start({ iv: atob(item.iv), tag: atob(item.tag) });
@@ -302,7 +332,9 @@ export {
   decodeItem,
   decodeFolder,
   createSafe,
+  createSafeFromFolder,
   encryptFolderName,
+  encryptFolder,
   encryptItem,
   encryptFile,
   decryptFile,

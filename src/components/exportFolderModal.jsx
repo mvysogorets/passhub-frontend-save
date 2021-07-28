@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -25,7 +24,7 @@ class ExportFolderModal extends Component {
   };
 
   onSubmit = () => {
-    if (this.state.format == "XML") {
+    if (this.state.format === "XML") {
       const blob = exportXML(this.props.folder);
       saveAs(blob, "passhub.xml");
     } else {
@@ -50,13 +49,18 @@ class ExportFolderModal extends Component {
       this.isShown = false;
     }
 
-    let folderType = "";
-    let folderName = "";
+    let title = "Export all safes and folders";
 
-    if (this.props.show) {
-      folderName = this.props.folder.path[this.props.folder.path.length - 1];
+    if (
+      this.props.show &&
+      this.props.folder &&
+      !Array.isArray(this.props.folder)
+    ) {
+      const folderName =
+        this.props.folder.path[this.props.folder.path.length - 1];
       const isSafe = this.props.folder.path.length < 2;
-      folderType = isSafe ? "Safe" : "Folder";
+      const folderType = isSafe ? "Safe" : "Folder";
+      title = `Export ${folderType}: ${folderName}`;
     }
 
     return (
@@ -67,14 +71,13 @@ class ExportFolderModal extends Component {
         animation={false}
       >
         <Modal.Header closeButton>
-          <h2>
-            Export {folderType}: {folderName}
-          </h2>
+          <h2>{title}</h2>
         </Modal.Header>
         <Modal.Body>
           <div style={{ marginBottom: 32 }}>
             {formatEntries.map((e) => (
               <div
+                key={e.format}
                 style={{ display: "flex", marginBottom: 12 }}
                 onClick={() => {
                   this.handleFormatChange(e.format);
@@ -89,7 +92,7 @@ class ExportFolderModal extends Component {
                   >
                     <use
                       href={
-                        this.state.format == e.format
+                        this.state.format === e.format
                           ? "#f-radio-checked"
                           : "#f-radio"
                       }
@@ -106,7 +109,6 @@ class ExportFolderModal extends Component {
 
           <div style={{ display: "flex", color: "#DE5F00" }}>
             <div>
-              {" "}
               <svg
                 width="39"
                 height="41"
@@ -126,11 +128,7 @@ class ExportFolderModal extends Component {
           <Button variant="outline-secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            type="submit"
-            onClick={() => this.onSubmit()}
-          >
+          <Button variant="primary" type="submit" onClick={this.onSubmit}>
             Export
           </Button>
         </Modal.Footer>

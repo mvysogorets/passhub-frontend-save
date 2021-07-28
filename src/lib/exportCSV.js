@@ -24,14 +24,12 @@ function exportFolder(folder) {
 function exportCSV(folder) {
   csv = 'path,title,username,password,url,notes\r\n';
 
-  if (folder) {
-    exportFolder(folder);
-  } else {
-    /*
-    for (let s = 0; s < state.safes.length; s++) {
-      exportSafe(state.safes[s]);
+  if (Array.isArray(folder)) {
+    for (let s = 0; s < folder.length; s++) {
+      exportFolder(folder[s]);
     }
-    */
+  } else {
+    exportFolder(folder);
   }
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   return blob;

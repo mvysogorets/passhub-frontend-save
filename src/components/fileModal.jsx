@@ -1,15 +1,10 @@
 import React, { Component } from "react";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 
 import axios from "axios";
 import { saveAs } from "file-saver";
 
 import * as passhubCrypto from "../lib/crypto";
 
-import ItemModalFieldNav from "./itemModalFieldNav";
-import ItemViewIcon from "./itemViewIcon";
 import DownloadAndViewButtons from "./downloadAndViewButtons";
 
 import ItemModal from "./itemModal";
@@ -309,7 +304,7 @@ class FileModal extends Component {
         ) : (
           <div style={{ margin: "12px auto", display: "table" }}>
             <svg width="105" height="132">
-              <use href="#f-file"></use>
+              <use href="#f-file-m"></use>
             </svg>
           </div>
         )}

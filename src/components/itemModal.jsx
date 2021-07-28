@@ -57,6 +57,7 @@ class ItemModal extends Component {
   onView = () => {};
 
   render() {
+    let path = "";
     if (this.props.show) {
       if (!this.isShown) {
         this.isShown = true;
@@ -65,10 +66,12 @@ class ItemModal extends Component {
           this.state.title = this.props.args.item.cleartext[0];
           this.state.note = this.props.args.item.cleartext[4];
           this.state.edit = false;
+          path = this.props.args.item.path.join(" > ");
         } else {
           this.state.title = "";
           this.state.note = "";
           this.state.edit = true;
+          path = this.props.args.folder.path.join(" > ");
         }
       }
     } else {
@@ -76,10 +79,6 @@ class ItemModal extends Component {
     }
 
     let modalClass = this.state.edit ? "edit" : "view";
-
-    const path = this.props.args.folder
-      ? this.props.args.folder.path.join(" > ")
-      : [];
 
     return (
       <Modal

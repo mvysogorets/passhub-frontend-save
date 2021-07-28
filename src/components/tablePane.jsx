@@ -10,11 +10,12 @@ import LoginItem from "./loginItem";
 import NoteItem from "./noteItem";
 import FileItem from "./fileItem";
 
-import NoteItemModal from "./noteItemModal";
+// import NoteItemModal from "./noteItemModal";
 import LoginModal from "./loginModal";
 import NoteModal from "./noteModal";
 import FileModal from "./fileModal";
 import DeleteItemModal from "./deleteItemModal";
+import AddDropUp from "./addDropUp";
 
 const ADD_BUTTON_MENU_ID = "add-menu-id";
 
@@ -38,14 +39,22 @@ class TablePane extends Component {
     currentItem: 0,
   };
 
+  constructor(props) {
+    super(props);
+    this.addButtonRef = React.createRef();
+  }
+
+  addButtonRect = { right: "16px", bottom: "16px" };
+
   handleAddClick = (cmd) => {
-    if (cmd == "Login") {
+    console.log(cmd);
+    if (cmd === "Password") {
       this.showLoginModal();
     }
-    if (cmd == "File") {
+    if (cmd === "File") {
       this.showFileModal();
     }
-    if (cmd == "Note") {
+    if (cmd === "Note") {
       this.showNoteModal();
     }
   };
@@ -83,9 +92,19 @@ class TablePane extends Component {
     </Menu>
   );
 
+  /*  
   showAddMenu = (e) => {
-    // e.preventDefault();
-    contextMenu.show({ id: ADD_BUTTON_MENU_ID, event: e });
+    contextMenu.show({
+      id: ADD_BUTTON_MENU_ID,
+      event: e,
+    });
+  };
+*/
+
+  showAddMenu = (e) => {
+    this.setState({
+      showModal: "addDropUp",
+    });
   };
 
   showLoginModal = (item) => {
@@ -137,6 +156,8 @@ class TablePane extends Component {
   };
 
   render() {
+    console.log("table pane render");
+    console.log(this.props);
     const contentNotEmpty = this.props.folder != null;
     const emptyFolder = !(
       contentNotEmpty &&
@@ -215,6 +236,7 @@ class TablePane extends Component {
         <Button
           variant="primary"
           type="submit"
+          ref={this.addButtonRef}
           style={{
             width: "80px",
             height: "80px",
@@ -222,13 +244,28 @@ class TablePane extends Component {
             bottom: "16px",
             right: "16px",
             minWidth: "0",
-            padding: "0",
+            padding: "20px",
             borderRadius: "14px",
           }}
-          onClick={this.showAddMenu}
+          onClick={() => {
+            this.addButtonRect =
+              this.addButtonRef.current.getBoundingClientRect();
+            this.showAddMenu();
+          }}
         >
-          +
+          <svg width="40" height="40">
+            <use href="#f-plus"></use>
+          </svg>
         </Button>
+
+        <AddDropUp
+          show={this.state.showModal == "addDropUp"}
+          bottom={window.innerHeight - this.addButtonRect.bottom - 8}
+          right={window.innerWidth - this.addButtonRect.right - 8}
+          onClose={() => this.setState({ showModal: "" })}
+          handleAddClick={this.handleAddClick}
+        ></AddDropUp>
+
         <LoginModal
           show={this.state.showModal == "LoginModal"}
           args={this.state.itemModalArgs}

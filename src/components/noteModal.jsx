@@ -1,17 +1,8 @@
 import React, { Component } from "react";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 
 import axios from "axios";
-import { saveAs } from "file-saver";
 
 import * as passhubCrypto from "../lib/crypto";
-
-import ItemModalFieldNav from "./itemModalFieldNav";
-import ItemViewIcon from "./itemViewIcon";
-import DownloadAndViewButtons from "./downloadAndViewButtons";
-
 import ItemModal from "./itemModal";
 
 class NoteModal extends Component {
