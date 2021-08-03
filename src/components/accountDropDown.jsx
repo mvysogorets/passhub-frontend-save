@@ -3,6 +3,21 @@ import axios from "axios";
 
 import * as utils from "../lib/utils";
 
+function perCent(part, all) {
+  if (part == 0) {
+    return 0;
+  }
+
+  let result = Math.floor((part * 100) / all);
+  if (result < 2) {
+    return 2;
+  }
+  if (result > 100) {
+    return 100;
+  }
+  return result;
+}
+
 class AccountDropDown extends Component {
   state = { accountData: {} };
   isShown = false;
@@ -32,6 +47,11 @@ class AccountDropDown extends Component {
     this.props.onMenuCommand(cmd);
   };
 
+  onUpgrade = () => {
+    this.props.onClose();
+    this.props.onMenuCommand("upgrade");
+  };
+
   getAccountData = () => {
     const self = this;
     axios
@@ -51,6 +71,19 @@ class AccountDropDown extends Component {
       });
   };
 
+  componentDidMount = () => {
+    this.getAccountData();
+    console.log("account mounted");
+  };
+
+  componentDidUpdate = () => {
+    console.log("account updated");
+  };
+
+  componentWillUnmount = () => {
+    console.log("account will unmount");
+  };
+
   render() {
     if (this.props.show) {
       if (!this.isShown) {
@@ -59,6 +92,7 @@ class AccountDropDown extends Component {
       }
     } else {
       this.isShown = false;
+      return null;
     }
 
     console.log(this.state);
@@ -117,9 +151,9 @@ class AccountDropDown extends Component {
                 <div
                   style={{
                     height: "4px",
-                    width: `${Math.floor(
-                      (this.state.accountData.records * 100) /
-                        this.state.accountData.maxRecords
+                    width: `${perCent(
+                      this.state.accountData.records,
+                      this.state.accountData.maxRecords
                     )}%`,
                     background: "#00BC62",
                     borderRadius: "4px",
@@ -145,9 +179,9 @@ class AccountDropDown extends Component {
                 <div
                   style={{
                     height: "4px",
-                    width: `${Math.floor(
-                      (this.state.accountData.used * 100) /
-                        this.state.accountData.maxStorage
+                    width: `${perCent(
+                      this.state.accountData.used,
+                      this.state.accountData.maxStorage
                     )}%`,
                     background: "#00BC62",
                     borderRadius: "4px",
@@ -164,6 +198,7 @@ class AccountDropDown extends Component {
               <button
                 className="btn btn-primary"
                 style={{ width: "100%", marginBottom: "14px" }}
+                onCLick={this.onUpgrade}
               >
                 Get more
               </button>
@@ -182,7 +217,7 @@ class AccountDropDown extends Component {
 
           <div
             className="account-menu-item"
-            onClick={(e) => this.handleMenuCommand(e, "Account settings")}
+            onClick={(e) => this.handleMenuCommand(e, "Help")}
           >
             <svg width="24" height="24">
               <use href="#f-lightbulb"></use>

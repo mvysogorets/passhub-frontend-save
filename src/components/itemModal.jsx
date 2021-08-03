@@ -142,6 +142,7 @@ class ItemModal extends Component {
             type="text"
             onChange={this.onTitleChange}
             value={this.state.title}
+            spellCheck="false"
             placeholder="Title"
           />
         ) : (

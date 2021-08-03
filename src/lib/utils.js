@@ -146,6 +146,13 @@ const humanReadableFileSize = (size) => {
   return `${num} ${'KMGTPEZY'[i-1]}B`;
 };
 
+const isMobile = () => {
+  const isIOS = navigator.userAgent.match(/iPhone|iPod|iPad/i)
+  || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // crazy ios13 on iPad..
+  
+  const mobileDevice = isIOS || navigator.userAgent.match(/Android/i);
+  return mobileDevice;
+}
 
 export {
   serverLog,
@@ -155,4 +162,5 @@ export {
   escapeHtml,
   getFolderById,
   humanReadableFileSize,
+  isMobile,
 };

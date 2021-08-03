@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { humanReadableFileSize } from "../lib/utils";
 
 class FileItem extends Component {
   state = {};
@@ -24,7 +25,9 @@ class FileItem extends Component {
           </svg>
           {item.cleartext[0]}
         </td>
-        <td className="rightAlign d-none d-lg-table-cell"></td>
+        <td className="rightAlign d-none d-lg-table-cell">
+          {humanReadableFileSize(item.file.size)}
+        </td>
         <td className="rightAlign d-none d-xl-table-cell">{modified}</td>
       </tr>
     );

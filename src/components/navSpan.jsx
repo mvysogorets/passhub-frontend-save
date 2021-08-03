@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import AccountDropDown from "./accountDropDown";
+import ContactUsModal from "./contactUsModal";
+import SuccessModal from "./successModal";
+import UpgradeModal from "./upgradeModal";
 
 class NavSpan extends Component {
-  state = { showAccount: false };
+  state = { showModal: "" };
   searchClear = () => {
     this.props.onSearchChange("");
   };
@@ -12,10 +15,10 @@ class NavSpan extends Component {
   };
 
   right = 0;
-
+  /*
   handleToggleAccount = (e) => {
     e.stopPropagation();
-    if (!this.state.showAccount) {
+    if (this.state.showModal != "AccountDropDown") {
       this.right =
         document.body.getBoundingClientRect().right -
         e.currentTarget.parentElement.getBoundingClientRect().right -
@@ -23,12 +26,36 @@ class NavSpan extends Component {
       if (this.right <= 16) {
         this.right = 16;
       }
+      this.setState({ showModal: "AccountDropDown" });
+    } else {
+      this.setState({ showModal: "" });
     }
-    this.setState({ showAccount: !this.state.showAccount });
+  };
+*/
+
+  showAccountDropDown = (e) => {
+    e.stopPropagation();
+    this.right =
+      document.body.getBoundingClientRect().right -
+      e.currentTarget.parentElement.getBoundingClientRect().right -
+      27;
+    if (this.right <= 16) {
+      this.right = 16;
+    }
+    this.setState({ showModal: "AccountDropDown" });
   };
 
-  handleHideAccont = () => {
-    this.setState({ showAccount: false });
+  handleMenuCommand = (cmd) => {
+    if (cmd === "Contact us") {
+      this.setState({ showModal: "Contact us" });
+      return;
+    }
+    if (cmd === "Account settings") {
+      this.setState({ showModal: "upgrade" });
+      return;
+    }
+
+    this.props.onMenuCommand(cmd);
   };
 
   render() {
@@ -78,7 +105,7 @@ class NavSpan extends Component {
         </div>
 
         <span
-          onClick={this.handleToggleAccount}
+          onClick={this.showAccountDropDown}
           style={{
             width: "40px",
             height: "40px",
@@ -94,7 +121,7 @@ class NavSpan extends Component {
           </svg>
         </span>
         <span
-          onClick={this.handleToggleAccount}
+          onClick={this.showAccountDropDown}
           style={{ padding: "8px 16px 0 0" }}
         >
           <svg width="24" height="24" fill="white">
@@ -102,11 +129,29 @@ class NavSpan extends Component {
           </svg>
         </span>
         <AccountDropDown
-          show={this.state.showAccount}
+          show={this.state.showModal == "AccountDropDown"}
           right={this.right}
-          onClose={this.handleHideAccont}
-          onMenuCommand={this.props.onMenuCommand}
+          onClose={() => this.setState({ showModal: "" })}
+          onMenuCommand={this.handleMenuCommand}
         />
+        <ContactUsModal
+          show={this.state.showModal == "Contact us"}
+          onClose={(success) => {
+            this.setState({ showModal: success ? "success" : "" });
+          }}
+        ></ContactUsModal>
+        <SuccessModal
+          show={this.state.showModal == "success"}
+          onClose={() => {
+            this.setState({ showModal: "" });
+          }}
+        ></SuccessModal>
+        <UpgradeModal
+          show={this.state.showModal == "upgrade"}
+          onClose={() => {
+            this.setState({ showModal: "" });
+          }}
+        ></UpgradeModal>
       </React.Fragment>
     );
   }

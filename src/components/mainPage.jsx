@@ -277,6 +277,7 @@ class MainPage extends Component {
               ? this.searchFolder
               : this.state.activeFolder
           }
+          searchMode={searchString.length > 0}
           setActiveFolder={this.setActiveFolder}
           refreshUserData={this.refreshUserData}
         />

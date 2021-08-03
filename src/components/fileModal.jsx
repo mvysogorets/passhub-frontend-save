@@ -4,6 +4,7 @@ import axios from "axios";
 import { saveAs } from "file-saver";
 
 import * as passhubCrypto from "../lib/crypto";
+import * as utils from "../lib/utils";
 
 import DownloadAndViewButtons from "./downloadAndViewButtons";
 
@@ -37,6 +38,41 @@ function getMimeByExt(filename) {
   }
   // }
   return "application/octet-binary";
+}
+
+function isFileViewable(filename) {
+  const dot = filename.lastIndexOf(".");
+  if (dot > 0) {
+    const ext = filename.substring(dot + 1).toLowerCase();
+    if (ext == "pdf") {
+      if (utils.isMobile()) {
+        return false;
+      }
+
+      if (
+        navigator.userAgent.indexOf("Chrome") == -1 &&
+        navigator.userAgent.indexOf("Safari") > 0 &&
+        navigator.userAgent.indexOf("Macintosh") > 0
+      ) {
+        return false;
+      }
+      return true;
+    }
+    if (
+      ext == "jpeg" ||
+      ext == "jpg" ||
+      ext == "png" ||
+      ext == "gif" ||
+      ext == "bmp"
+
+      /* || (ext == 'tif')
+       || (ext == 'svg')  
+      */
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 class FileModal extends Component {
@@ -250,6 +286,7 @@ class FileModal extends Component {
       }
     } else {
       this.isShown = false;
+      return null;
     }
 
     let modalClass = this.state.edit ? "edit" : "view";
@@ -302,16 +339,32 @@ class FileModal extends Component {
             ></input>
           </div>
         ) : (
-          <div style={{ margin: "12px auto", display: "table" }}>
-            <svg width="105" height="132">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "40px",
+            }}
+          >
+            <svg width="105" height="132" style={{ marginBottom: "32px" }}>
               <use href="#f-file-m"></use>
             </svg>
+            <div style={{ marginBottom: "24px" }}>
+              {this.props.args.item.cleartext[0]}
+              <span
+                style={{ color: "rgba(27, 27, 38, 0.5)", marginLeft: "8px" }}
+              >
+                {utils.humanReadableFileSize(this.props.args.item.file.size)}
+              </span>
+            </div>
+            <DownloadAndViewButtons
+              onDownload={this.onDownload}
+              view={isFileViewable(this.state.title)}
+              onView={this.onView}
+            ></DownloadAndViewButtons>
           </div>
         )}
-        <DownloadAndViewButtons
-          onDownload={this.onDownload}
-          onView={this.onView}
-        ></DownloadAndViewButtons>
       </ItemModal>
     );
   }

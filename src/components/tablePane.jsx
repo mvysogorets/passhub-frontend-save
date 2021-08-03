@@ -163,8 +163,21 @@ class TablePane extends Component {
       contentNotEmpty &&
       this.props.folder.folders.length + this.props.folder.items.length > 0
     );
-    const isSafe = contentNotEmpty && this.props.folder.path.length == 1;
-
+    const isSafe =
+      contentNotEmpty &&
+      this.props.folder.path.length == 1 &&
+      !this.props.searchMode;
+    let EmptyMessage = isSafe ? "Empty safe" : "Empty folder";
+    if (this.props.searchMode) {
+      EmptyMessage = (
+        <div>
+          <b>
+            <p>Nothing found</p>
+            <p>Try another search</p>
+          </b>
+        </div>
+      );
+    }
     return (
       <Col
         className="col-xl-9 col-lg-8 col-md-7 d-none d-md-block"
@@ -192,7 +205,7 @@ class TablePane extends Component {
               >
                 <use href={isSafe ? "#f-emptySafe" : "#f-emptyFolder"}></use>
               </svg>
-              {isSafe ? "Empty safe" : "Empty folder"}
+              {EmptyMessage}
             </div>
           </div>
         )}

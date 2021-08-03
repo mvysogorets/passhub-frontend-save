@@ -654,8 +654,7 @@ input[type="file"] {
   box-sizing: border-box;
   border: 1px solid #e7e7ee;
   border-radius: 12px;
-  margin: auto;
-  display: table;
+  margin-bottom: 74px;
 }
 
 .btn-as-span {
@@ -754,4 +753,23 @@ input[type="file"] {
 
 .link:hover {
   color: #009a50;
+}
+
+textarea {
+  width: 100%;
+  border: none;
+}
+textarea:focus {
+  outline: none;
+}
+
+h2 {
+  font-family: OpenSans;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 35px;
+  line-height: 48px;
+
+  /* Dark/100 */
+  color: #1b1b26;
 }
