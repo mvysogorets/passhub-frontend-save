@@ -18,8 +18,7 @@ class FileItem extends Component {
     });
     return (
       <tr>
-        <td colspan="2" onClick={this.showModal}>
-          {" "}
+        <td colspan="2" onClick={this.showModal} style={{ cursor: "pointer" }}>
           <svg width="16" height="16" className="itemIcon">
             <use href="#i-file"></use>
           </svg>

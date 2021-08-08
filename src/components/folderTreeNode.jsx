@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import { contextMenu, Menu, Item, Separator, Submenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
+import { isCopyBufferEmpty } from "../lib/copyBuffer";
 
 const iconStyle = {
   stroke: "white",
@@ -53,7 +54,14 @@ class FolderTreeNode extends Component {
       >
         Add folder
       </Item>
-      <Item disabled>Paste</Item>
+      <Item
+        disabled={isCopyBufferEmpty}
+        onClick={() => {
+          this.handleItemClick("Paste");
+        }}
+      >
+        Paste
+      </Item>
       <Item
         onClick={() => {
           this.handleItemClick("export");
@@ -95,7 +103,14 @@ class FolderTreeNode extends Component {
         Add folder
       </Item>
 
-      <Item disabled>Paste</Item>
+      <Item
+        disabled={isCopyBufferEmpty}
+        onClick={() => {
+          this.handleItemClick("Paste");
+        }}
+      >
+        Paste
+      </Item>
       <Item
         onClick={() => {
           this.handleItemClick("export");

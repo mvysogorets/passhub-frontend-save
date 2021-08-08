@@ -156,8 +156,6 @@ class TablePane extends Component {
   };
 
   render() {
-    console.log("table pane render");
-    console.log(this.props);
     const contentNotEmpty = this.props.folder != null;
     const emptyFolder = !(
       contentNotEmpty &&
@@ -296,6 +294,10 @@ class TablePane extends Component {
           args={this.state.itemModalArgs}
           openDeleteItemModal={this.openDeleteItemModal}
           onClose={this.onItemModalClose}
+          inMemoryView={(blob, filename) => {
+            this.setState({ showModal: "" });
+            this.props.inMemoryView(blob, filename);
+          }}
         ></FileModal>
 
         <NoteModal

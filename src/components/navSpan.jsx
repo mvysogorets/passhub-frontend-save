@@ -136,7 +136,7 @@ class NavSpan extends Component {
         />
         <ContactUsModal
           show={this.state.showModal == "Contact us"}
-          onClose={(success) => {
+          onClose={(dummy, success) => {
             this.setState({ showModal: success ? "success" : "" });
           }}
         ></ContactUsModal>

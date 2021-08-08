@@ -4,6 +4,7 @@ import axios from "axios";
 
 import * as passhubCrypto from "../lib/crypto";
 import { isStrongPassword } from "../lib/utils";
+import { openInExtension } from "../lib/extensionInterface";
 
 import ItemModalFieldNav from "./itemModalFieldNav";
 
@@ -209,8 +210,17 @@ class LoginModal extends Component {
             {this.state.showPassword ? "Hide" : "Show"} Password
           </span>
         </div>
-
-        <div className="itemModalField" style={{ marginBottom: 32 }}>
+        <div
+          className="itemModalField"
+          style={{ marginBottom: 32 }}
+          onClick={
+            !this.state.edit &&
+            this.props.args.item &&
+            this.props.args.item.cleartext[3].length > 0
+              ? () => openInExtension(this.props.args.item)
+              : () => {}
+          }
+        >
           <ItemModalFieldNav copy name="Website Address" />
           <div>
             <input
@@ -221,7 +231,24 @@ class LoginModal extends Component {
             ></input>
           </div>
         </div>
-
+        {this.props.args.item &&
+          this.props.args.item.cleartext[5] &&
+          !this.state.edit && (
+            <div className="itemModalField" style={{ marginBottom: 32 }}>
+              <ItemModalFieldNav copy name="Google authenticator" />
+              <div>
+                <div
+                  className="totp_circle"
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    background: "conic-gradient(red 25%,grey 0%)",
+                  }}
+                ></div>
+              </div>
+            </div>
+          )}
         {this.state.edit && (
           <div className="itemModalPlusField">
             <svg width="24" height="24" fill="none">

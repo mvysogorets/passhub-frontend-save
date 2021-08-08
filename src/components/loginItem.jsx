@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 
+import { openInExtension } from "../lib/extensionInterface";
+
 class LoginItem extends Component {
   state = {};
   showModal = () => {
     this.props.showModal(this.props.item);
   };
+
   render() {
     const item = this.props.item;
     const modified = new Date(item.lastModified).toLocaleString([], {
@@ -17,14 +20,22 @@ class LoginItem extends Component {
 
     return (
       <tr>
-        <td onClick={this.showModal}>
+        <td onClick={this.showModal} style={{ cursor: "pointer" }}>
           <svg width="16" height="16" className="itemIcon">
             <use href="#i-key"></use>
           </svg>
           {item.cleartext[0]}
         </td>
         <td className="d-none d-lg-table-cell">{item.cleartext[1]}</td>
-        <td className="d-none d-lg-table-cell">{item.cleartext[3]}</td>
+        <td
+          className="d-none d-lg-table-cell"
+          onClick={() => {
+            openInExtension(this.props.item);
+          }}
+          style={{ cursor: item.cleartext[3].length ? "pointer" : "" }}
+        >
+          {item.cleartext[3]}
+        </td>
         <td className="rightAlign d-none d-xl-table-cell">{modified}</td>
       </tr>
     );

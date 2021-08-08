@@ -323,6 +323,27 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
     return { filename, buf };
   };
   
+  function moveFile(item, srcSafe, dstSafe) {
+
+    const keyDecipher = forge.cipher.createDecipher('AES-ECB', srcSafe.bstringKey);
+    keyDecipher.start({ iv: atob(item.file.iv) }); // any iv goes: AES-ECB
+    keyDecipher.update(forge.util.createBuffer(atob(item.file.key)));
+    keyDecipher.finish();
+    const fileAesKey = keyDecipher.output.data;
+  
+    const keyCipher = forge.cipher.createCipher('AES-ECB', dstSafe.bstringKey);
+    const keyIV = forge.random.getBytesSync(16);
+    keyCipher.start({ iv: keyIV });
+    keyCipher.update(forge.util.createBuffer(fileAesKey));
+    keyCipher.finish();
+  
+    const pItem = decodeItemGCM(item, srcSafe.bstringKey);
+    const eItem = JSON.parse(encryptItem(pItem, dstSafe.bstringKey));
+    
+    eItem.file = Object.assign({}, {...item.file});
+    eItem.file.key = btoa(keyCipher.output.data);
+    return eItem;
+  }
   
   
 export {
@@ -338,5 +359,6 @@ export {
   encryptItem,
   encryptFile,
   decryptFile,
-  str2uint8
+  str2uint8,
+  moveFile
 };

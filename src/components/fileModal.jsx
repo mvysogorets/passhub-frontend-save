@@ -146,7 +146,9 @@ class FileModal extends Component {
     this.download(saveAs);
   };
 
-  onView = () => {};
+  onView = () => {
+    this.download(this.props.inMemoryView);
+  };
 
   onFileInputChange = (e) => {
     this.setState({

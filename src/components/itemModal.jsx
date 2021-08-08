@@ -6,6 +6,8 @@ import Form from "react-bootstrap/Form";
 import ItemModalFieldNav from "./itemModalFieldNav";
 import ItemViewIcon from "./itemViewIcon";
 
+import { putCopyBuffer } from "../lib/copyBuffer";
+
 class ItemModal extends Component {
   state = {
     edit: true,
@@ -54,6 +56,16 @@ class ItemModal extends Component {
     this.setState({ title: aTitle });
   };
 
+  handleMove = () => {
+    putCopyBuffer({ item: this.props.args.item, operation: "move" });
+    this.props.onClose();
+  };
+
+  handleCopy = () => {
+    putCopyBuffer({ item: this.props.args.item, operation: "copy" });
+    this.props.onClose();
+  };
+
   onView = () => {};
 
   render() {
@@ -94,8 +106,16 @@ class ItemModal extends Component {
             {!this.state.edit && (
               <React.Fragment>
                 <ItemViewIcon iconId="#f-history" opacity="1" title="History" />
-                <ItemViewIcon iconId="#f-move" title="Move" />
-                <ItemViewIcon iconId="#f-copy" title="Copy" />
+                <ItemViewIcon
+                  iconId="#f-move"
+                  title="Move"
+                  onClick={this.handleMove}
+                />
+                <ItemViewIcon
+                  iconId="#f-copy"
+                  title="Copy"
+                  onClick={this.handleCopy}
+                />
                 <ItemViewIcon
                   iconId="#f-trash"
                   title="Delete"

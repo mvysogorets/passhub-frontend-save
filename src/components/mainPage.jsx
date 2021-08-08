@@ -3,6 +3,7 @@ import axios from "axios";
 import IdleTimer from "react-idle-timer";
 import * as passhubCrypto from "../lib/crypto";
 import { keepTicketAlive, getFolderById } from "../lib/utils";
+import * as extensionInterface from "../lib/extensionInterface";
 
 import SafePane from "./safePane";
 import TablePane from "./tablePane";
@@ -108,6 +109,13 @@ class MainPage extends Component {
   constructor(props) {
     super(props);
     this.safePaneRef = React.createRef();
+
+    extensionInterface.connect(this.advise);
+
+    document.addEventListener("passhubExtInstalled", function (data) {
+      console.log("got passhubExtInstalled");
+      extensionInterface.connect(this.advise);
+    });
   }
 
   onAccountMenuCommand = (cmd) => {
@@ -198,6 +206,10 @@ class MainPage extends Component {
     this.getPageData();
   }
 
+  componentWillUnmount() {
+    console.log("mainPage unmount");
+  }
+
   handleOnIdle = () => {
     this.setState({ idleTimeoutAlert: true });
 
@@ -250,7 +262,51 @@ class MainPage extends Component {
     return result;
   }
 
+  advise = (url) => {
+    const u = new URL(url);
+    let hostname = u.hostname.toLowerCase();
+    if (hostname.substring(0, 4) === "www.") {
+      hostname = hostname.substring(4);
+    }
+    const result = [];
+    if (hostname) {
+      for (let s = 0; s < this.state.safes.length; s += 1) {
+        const safe = this.state.safes[s];
+        if (safe.key) {
+          // key!= null => confirmed, better have a class
+          for (let i = 0; i < safe.items.length; i += 1) {
+            try {
+              let itemUrl = safe.items[i].cleartext[3].toLowerCase();
+              if (itemUrl.substring(0, 4) != "http") {
+                itemUrl = "https://" + itemUrl;
+              }
+
+              itemUrl = new URL(itemUrl);
+              let itemHost = itemUrl.hostname.toLowerCase();
+              if (itemHost.substring(0, 4) === "www.") {
+                itemHost = itemHost.substring(4);
+              }
+              if (itemHost == hostname) {
+                result.push({
+                  safe: safe.name,
+                  title: safe.items[i].cleartext[0],
+                  username: safe.items[i].cleartext[1],
+                  password: safe.items[i].cleartext[2],
+                });
+              }
+            } catch (err) {}
+          }
+        }
+      }
+    }
+    // extensionInterface.sendAdvise(result);
+    return result;
+  };
+
   render() {
+    if (!this.props.show) {
+      return null;
+    }
     const searchString = this.props.searchString.trim();
     if (searchString.length > 0) {
       this.searchFolder.items = this.search(searchString);
@@ -258,9 +314,6 @@ class MainPage extends Component {
 
     const idleTimeout =
       "idleTimeout" in this.state ? this.state.idleTimeout : 0;
-
-    console.log("render mainPage, active folder:");
-    console.log(this.state.activeFolder);
 
     return (
       <React.Fragment>
@@ -280,11 +333,12 @@ class MainPage extends Component {
           searchMode={searchString.length > 0}
           setActiveFolder={this.setActiveFolder}
           refreshUserData={this.refreshUserData}
+          inMemoryView={this.props.inMemoryView}
         />
 
         {"idleTimeout" in this.state && (
           <div>
-            Here I am, the idle timer {idleTimeout}
+            {" "}
             <IdleTimer
               ref={(ref) => {
                 this.idleTimer = ref;

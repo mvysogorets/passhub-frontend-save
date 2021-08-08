@@ -19,7 +19,7 @@ class FolderItem extends Component {
 
     return (
       <tr>
-        <td colspan="3" onClick={this.onClick}>
+        <td colspan="3" onClick={this.onClick} style={{ cursor: "pointer" }}>
           <svg width="16" height="16" className="itemIcon">
             <use href="#i-folder"></use>
           </svg>

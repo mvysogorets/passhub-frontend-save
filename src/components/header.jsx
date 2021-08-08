@@ -17,9 +17,9 @@ class Header extends Component {
           }}
         >
           <div>
-            <a href="index.php">
+            <span onClick={this.props.gotoMain}>
               <img src="public/img/new_ph_logo.svg" alt="logo" width="133" />
-            </a>
+            </span>
             <span className="d-md-none" id="xs_indicator"></span>
           </div>
           <NavSpan
