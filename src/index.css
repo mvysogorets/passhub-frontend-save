@@ -441,6 +441,7 @@ input.itemModalTitle:focus {
 
 .mainRow {
   flex-grow: 1;
+  overflow: hidden;
 }
 
 .safe_pane {
