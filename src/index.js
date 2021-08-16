@@ -5,15 +5,9 @@ import App from './App';
 
 import reportWebVitals from './reportWebVitals';
 
-function drawTotpCircle() {
-  const sec = new Date().getTime() / 1000;
-  const fract = Math.ceil(sec % 30 * 10 / 3);
-  document.querySelectorAll('.totp_circle').forEach(e=>{e.style.background  = `conic-gradient(red ${fract}%, grey 0)`})
-}
-setInterval(drawTotpCircle, 1000);
 
 ReactDOM.render(
-    <App />,
+    <App/>,
   document.getElementById('root')
 );
 

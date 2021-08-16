@@ -102,11 +102,7 @@ class ContactUsModal extends Component {
           ></TextAreaField>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="outline-secondary"
-            onClick={this.props.onClose}
-            style={{ marginRight: "12px" }}
-          >
+          <Button variant="outline-secondary" onClick={this.props.onClose}>
             Cancel
           </Button>
           <Button variant="primary" type="button" onClick={this.onSubmit}>

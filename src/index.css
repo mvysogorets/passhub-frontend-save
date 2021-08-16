@@ -297,6 +297,21 @@ input.itemModalTitle:focus {
     monospace;
 }
 
+.totp_circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: conic-gradient(#c4c4c4 25%, #e7e7ee 0%);
+  margin-right: 24px;
+}
+
+.totp_digits {
+  font-size: 24px;
+  color: #1b1b26;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
 .itemModalField.lower.weakPassword {
   background: rgba(235, 101, 0, 0.1);
 }
@@ -320,6 +335,17 @@ input.itemModalTitle:focus {
 
   /* Green/70 */
   color: #009a50;
+  margin-bottom: 32px;
+}
+
+.itemModalField svg {
+  stroke: #1b1b26;
+  opacity: 0.5;
+}
+
+.itemModalField:hover svg {
+  stroke: #00bc62;
+  opacity: 1;
 }
 
 .itemModalField:hover .iconTitle {
@@ -412,15 +438,31 @@ input.itemModalTitle:focus {
 }
 
 /*----------------------*/
+
+.mainRow {
+  flex-grow: 1;
+}
+
 .safe_pane {
   background: rgba(27, 27, 38, 0.86);
   color: white;
   height: 100%;
   display: flex;
   flex-direction: column;
-  border-radius: 16px 0 0 16px;
   padding: 16px 0;
 }
+
+@media (min-width: 576px) {
+  /*
+  .mainRow {
+    border-radius: 6px;
+  }
+  */
+  .safe_pane {
+    border-radius: 16px 0 0 16px;
+  }
+}
+
 .safe_scroll_control {
   overflow-y: auto;
 }
@@ -475,6 +517,25 @@ input.itemModalTitle:focus {
   border-radius: 14px;
 }
 
+.error {
+  color: #b40020;
+}
+.green70 {
+  color: #009a50;
+}
+
+.dark50 {
+  color: #8d8d94;
+}
+
+.mb24 {
+  margin-bottom: 24px;
+}
+
+.mb32 {
+  margin-bottom: 32px;
+}
+
 /* standard bootstrap elements */
 
 .btn-primary {
@@ -483,6 +544,7 @@ input.itemModalTitle:focus {
   border: none;
   background: linear-gradient(264.92deg, #00ba97 4.82%, #00bc62 73.44%);
   border-radius: 12px;
+  margin: 0 0 0 12px;
 }
 
 .btn-primary:hover {
@@ -520,11 +582,11 @@ input.itemModalTitle:focus {
 .btn-outline-secondary {
   min-width: 146px;
   padding: 12px;
+  margin: 0;
   color: #1b1b26;
   border: 1px solid #e7e7ee;
   box-sizing: border-box;
   border-radius: 12px;
-  margin: 0;
 }
 
 .btn-outline-secondary:hover {
@@ -674,6 +736,18 @@ input[type="file"] {
   display: none;
 }
 
+.toast {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: lightyellow;
+  font-size: 1rem;
+}
+.toast-header {
+  background: lemonchiffon;
+  justify-content: space-between;
+}
+
 /* ---------------------------- */
 
 .pmodal {
@@ -774,3 +848,16 @@ h2 {
   /* Dark/100 */
   color: #1b1b26;
 }
+
+/* rc-slider */
+
+.rc-slider-mark-text:last-child {
+  transform: translateX(50%) !important ;
+  right: 0% !important;
+  left: auto !important;
+}
+.rc-slider-dot-active {
+  border-color: #00bc62;
+}
+
+/*---------------*/

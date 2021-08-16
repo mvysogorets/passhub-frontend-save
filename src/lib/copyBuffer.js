@@ -1,6 +1,7 @@
 let theItem = null;
-
 let timer = null;
+
+let copyBufferListeners = [];
 
 function peekCopyBuffer() {
   return theItem;
@@ -13,6 +14,10 @@ function isCopyBufferEmpty() {
 function popCopyBuffer() {
   const result = theItem;
   theItem = null;
+  if(timer) {
+    clearTimeout(timer);
+  }
+  copyBufferListeners.forEach(f => f());
   return result;
 }
 
@@ -21,14 +26,26 @@ function putCopyBuffer(item) {
   if(timer) {
     clearTimeout(timer);
   }
-  timer = setTimeout(300*1000, function () {timer = null; theItem = null;})
+  timer = setTimeout(popCopyBuffer, 30*1000)
+  copyBufferListeners.forEach(f => f());
+}
+
+
+function copyBufferAddListener(f) {
+  copyBufferListeners.push(f);
+}
+
+function copyBufferRemoveListener(f) {
+  copyBufferListeners = copyBufferListeners.filter((e) => e !== f);
 }
 
 export {
   peekCopyBuffer,
   isCopyBufferEmpty,
   popCopyBuffer,
-  putCopyBuffer
+  putCopyBuffer,
+  copyBufferAddListener,
+  copyBufferRemoveListener,
 };
 
 

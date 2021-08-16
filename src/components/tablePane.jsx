@@ -178,7 +178,7 @@ class TablePane extends Component {
     }
     return (
       <Col
-        className="col-xl-9 col-lg-8 col-md-7 d-none d-md-block"
+        className="col-xl-9 col-lg-8 col-md-7 col-sm-6 d-none d-sm-block"
         style={{
           background: "rgba(255,255,255,1)",
           paddingTop: "16px",

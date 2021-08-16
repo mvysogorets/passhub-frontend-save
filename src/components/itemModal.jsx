@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -57,12 +58,12 @@ class ItemModal extends Component {
   };
 
   handleMove = () => {
-    putCopyBuffer({ item: this.props.args.item, operation: "move" });
+    putCopyBuffer({ item: this.props.args.item, operation: "Move" });
     this.props.onClose();
   };
 
   handleCopy = () => {
-    putCopyBuffer({ item: this.props.args.item, operation: "copy" });
+    putCopyBuffer({ item: this.props.args.item, operation: "Copy" });
     this.props.onClose();
   };
 

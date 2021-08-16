@@ -233,7 +233,7 @@ class SafePane extends Component {
 */
 
     return (
-      <Col className="col-xl-3 col-lg-4 col-md-5 col safe_pane">
+      <Col className="col-xl-3 col-lg-4 col-md-5 col-sm-6 col safe_pane">
         <div
           style={{ display: "flex", flexDirection: "column", height: "100%" }}
         >

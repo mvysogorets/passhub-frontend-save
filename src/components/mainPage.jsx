@@ -185,7 +185,6 @@ class MainPage extends Component {
                 console.log("active folder not found" + data.currentSafe);
                 data.activeFolder = data.safes[0];
               }
-              console.log("setting new data state");
               self.setState(data);
 
               keepTicketAlive(data.WWPASS_TICKET_TTL, data.ticketAge);

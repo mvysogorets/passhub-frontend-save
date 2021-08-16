@@ -98,11 +98,7 @@ class UpgradeModal extends Component {
           <div class="payment_request" id="payment"></div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="outline-secondary"
-            onClick={this.props.onClose}
-            style={{ marginRight: "12px" }}
-          >
+          <Button variant="outline-secondary" onClick={this.props.onClose}>
             Cancel
           </Button>
         </Modal.Footer>

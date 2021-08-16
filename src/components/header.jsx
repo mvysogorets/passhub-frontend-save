@@ -11,14 +11,18 @@ class Header extends Component {
         <Col
           style={{
             paddingLeft: 24,
-            paddingRight: 0,
+            paddingRight: 16,
             margin: "20px auto 12px auto",
             display: "flex",
           }}
         >
           <div>
             <span onClick={this.props.gotoMain}>
-              <img src="public/img/new_ph_logo.svg" alt="logo" width="133" />
+              <img
+                src="public/img/new_ph_logo.svg"
+                alt="logo"
+                style={{ width: "133px" }}
+              />
             </span>
             <span className="d-md-none" id="xs_indicator"></span>
           </div>

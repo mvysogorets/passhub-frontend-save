@@ -154,6 +154,12 @@ const isMobile = () => {
   return mobileDevice;
 }
 
+function urlBase() {
+  let url_base = window.location.href;
+  url_base = url_base.substring(0, url_base.lastIndexOf("/")) + '/';
+  return url_base;
+}
+
 export {
   serverLog,
   isStrongPassword,
@@ -163,4 +169,5 @@ export {
   getFolderById,
   humanReadableFileSize,
   isMobile,
+  urlBase,
 };

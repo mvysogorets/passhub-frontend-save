@@ -2,22 +2,63 @@ import React, { Component } from "react";
 
 import axios from "axios";
 
+import * as base32 from "hi-base32";
+
 import * as passhubCrypto from "../lib/crypto";
 import { isStrongPassword } from "../lib/utils";
 import { openInExtension } from "../lib/extensionInterface";
+import getTOTP from "../lib/totp";
+import copyToClipboard from "../lib/copyToClipboard";
 
 import ItemModalFieldNav from "./itemModalFieldNav";
 
 import ItemModal from "./itemModal";
 
+function drawTotpCircle() {
+  const sec = new Date().getTime() / 1000;
+  const fract = Math.ceil(((sec % 30) * 10) / 3);
+  document.querySelectorAll(".totp_circle").forEach((e) => {
+    e.style.background = `conic-gradient(#c4c4c4 ${fract}%, #e7e7ee 0)`;
+  });
+  if (Math.floor(sec % 30) == 0) {
+    totpTimerListeners.forEach((f) => f());
+  }
+}
+
+setInterval(drawTotpCircle, 1000);
+let totpTimerListeners = [];
+
+function totpTimerAddListener(f) {
+  totpTimerListeners.push(f);
+}
+
+function totpTimerRemoveListener(f) {
+  totpTimerListeners = totpTimerListeners.filter((e) => e !== f);
+}
+
 class LoginModal extends Component {
   state = {
     edit: false,
     showPassword: false,
-    errorTitle: "",
     username: "",
     password: "",
     url: "",
+    forceTotp: false,
+    totpSecret: "",
+  };
+
+  timerEvent = () => {
+    this.showOTP();
+  };
+
+  componentDidMount = () => {
+    console.log("loginModal DidMount");
+    totpTimerAddListener(this.timerEvent);
+  };
+
+  componentWillUnmount = () => {
+    console.log("loginModal WillUnmount");
+    totpTimerRemoveListener(this.timerEvent);
   };
 
   isShown = false;
@@ -27,12 +68,14 @@ class LoginModal extends Component {
   };
 
   onEdit = () => {
-    this.setState({ edit: true });
+    this.setState({ edit: true, forceTotp: false });
   };
 
   onUsernameChange = (e) => this.setState({ username: e.target.value });
 
   onPasswordChange = (e) => this.setState({ password: e.target.value });
+  onTotpSecretChange = (e) =>
+    this.setState({ totpSecret: e.target.value.toUpperCase() });
 
   onUrlChange = (e) => this.setState({ url: e.target.value });
 
@@ -48,6 +91,14 @@ class LoginModal extends Component {
       this.state.url,
       note,
     ];
+    const totpSecret = this.state.totpSecret
+      .replace(/-/g, "")
+      .replace(/ /g, "");
+
+    if (totpSecret.length > 0) {
+      pData.push(totpSecret);
+    }
+
     const options = {};
 
     const folder = this.props.args.folder;
@@ -93,6 +144,52 @@ class LoginModal extends Component {
       );
   };
 
+  showOTP = () => {
+    if (
+      this.props.edit ||
+      !this.props.show ||
+      !this.props.item ||
+      this.props.args.item.cleartext.length < 6
+    ) {
+      return;
+    }
+
+    const secret = this.props.args.item.cleartext[5];
+    if (secret.length > 0) {
+      const s = secret.replace(/\s/g, "").toUpperCase();
+      try {
+        const secretBytes = new Uint8Array(base32.decode.asBytes(s));
+
+        window.crypto.subtle
+          .importKey(
+            "raw",
+            secretBytes,
+            { name: "HMAC", hash: { name: "SHA-1" } },
+            false,
+            ["sign"]
+          )
+          .then((key) => getTOTP(key))
+          .then((six) => {
+            document
+              .querySelectorAll(".totp_digits")
+              .forEach((e) => (e.innerText = six));
+          });
+      } catch (err) {
+        console.log(err);
+        document
+          .querySelectorAll(".totp_digits")
+          .forEach((e) => (e.innerText = "invalid TOTP secret"));
+      }
+    }
+  };
+
+  copyToClipboard = (text) => {
+    console.log("CopyToClipboard ", text);
+    if (!this.state.edit) {
+      copyToClipboard(text);
+    }
+  };
+
   render() {
     if (this.props.show) {
       if (!this.isShown) {
@@ -103,9 +200,13 @@ class LoginModal extends Component {
           this.state.password = this.props.args.item.cleartext[2];
           this.state.url = this.props.args.item.cleartext[3];
           this.state.edit = false;
+          this.state.totpSecret =
+            this.props.args.item.cleartext.length > 5
+              ? this.props.args.item.cleartext[5].toUpperCase()
+              : "";
         } else {
           this.state.username = "";
-          this.state.pasword = "";
+          this.state.password = "";
           this.state.url = "";
           this.state.edit = true;
         }
@@ -138,6 +239,85 @@ class LoginModal extends Component {
         ? "weakPassword"
         : "";
 
+    if (
+      this.props.args.item &&
+      this.props.args.item.cleartext[5] &&
+      !this.state.edit
+    ) {
+      this.showOTP();
+    }
+
+    let totp = "";
+
+    if (!this.state.edit) {
+      if (this.props.args.item && this.props.args.item.cleartext.length > 5) {
+        totp = (
+          <div
+            className="itemModalField"
+            style={{ marginBottom: 32 }}
+            onClick={() =>
+              this.copyToClipboard(
+                document.querySelector(".totp_digits").innerText
+              )
+            }
+          >
+            <ItemModalFieldNav
+              copy={!this.state.edit}
+              name="Google authenticator"
+            />
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <div className="totp_circle"></div>
+              <div className="totp_digits"></div>
+            </div>
+          </div>
+        );
+      }
+    } else {
+      if (
+        (this.props.args.item && this.props.args.item.cleartext.length > 5) ||
+        this.state.forceTotp
+      ) {
+        totp = (
+          <div
+            className="itemModalField"
+            style={{ marginBottom: 32 }}
+            onClick={() =>
+              this.copyToClipboard(
+                document.querySelector(".totp_digits").innerText
+              )
+            }
+          >
+            {this.state.totpSecret.length > 0 ? (
+              <ItemModalFieldNav
+                copy={!this.state.edit}
+                name="Google authenticator secret"
+              />
+            ) : (
+              ""
+            )}
+            <input
+              onChange={this.onTotpSecretChange}
+              spellCheck={false}
+              value={this.state.totpSecret}
+              placeholder="Google authenticator secret"
+            ></input>
+          </div>
+        );
+      } else {
+        totp = (
+          <div
+            className="itemModalPlusField"
+            onClick={() => this.setState({ forceTotp: true })}
+          >
+            <svg width="24" height="24" fill="none">
+              <use href="#f-plus-field"></use>
+            </svg>
+            Add Google Authenticator
+          </div>
+        );
+      }
+    }
+
     return (
       <ItemModal
         show={this.props.show}
@@ -146,8 +326,11 @@ class LoginModal extends Component {
         onEdit={this.onEdit}
         onSubmit={this.onSubmit}
       >
-        <div className="itemModalField upper">
-          <ItemModalFieldNav copy name="Username" />
+        <div
+          className="itemModalField upper"
+          onClick={() => this.copyToClipboard(this.state.username)}
+        >
+          <ItemModalFieldNav copy={!this.state.edit} name="Username" />
           <div>
             <input
               className="lp"
@@ -158,23 +341,23 @@ class LoginModal extends Component {
             ></input>
           </div>
         </div>
-        <div className={`itemModalField lower ${passwordBackground}`}>
+        <div
+          className={`itemModalField lower ${passwordBackground}`}
+          onClick={() => this.copyToClipboard(this.state.password)}
+        >
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ fontSize: "14px" }}>
               <span style={{ opacity: "0.5" }}>Password</span>
               {this.state.password.length ? passwordStrength : ""}
             </div>
-            <div>
-              <span className="iconTitle">Copy</span>
-              <svg
-                width="24"
-                height="24"
-                fill="none"
-                style={{ opacity: "0.5" }}
-              >
-                <use href="#f-copy"></use>
-              </svg>
-            </div>
+            {!this.state.edit && (
+              <div>
+                <span className="iconTitle">Copy</span>
+                <svg width="24" height="24" fill="none">
+                  <use href="#f-copy"></use>
+                </svg>
+              </div>
+            )}
           </div>
           <div>
             <input
@@ -221,42 +404,31 @@ class LoginModal extends Component {
               : () => {}
           }
         >
-          <ItemModalFieldNav copy name="Website Address" />
+          <ItemModalFieldNav
+            gotowebsite={!this.state.edit}
+            name="Website Address"
+          />
           <div>
-            <input
-              onChange={this.onUrlChange}
-              readOnly={!this.state.edit}
-              spellCheck={false}
-              value={this.state.url}
-            ></input>
+            {this.state.edit ? (
+              <input
+                onChange={this.onUrlChange}
+                spellCheck={false}
+                value={this.state.url}
+              ></input>
+            ) : (
+              <a
+                href={this.state.url}
+                noreferrer
+                noopener
+                target="_blank"
+                style={{ color: "#1b1b26" }}
+              >
+                {this.state.url}
+              </a>
+            )}
           </div>
         </div>
-        {this.props.args.item &&
-          this.props.args.item.cleartext[5] &&
-          !this.state.edit && (
-            <div className="itemModalField" style={{ marginBottom: 32 }}>
-              <ItemModalFieldNav copy name="Google authenticator" />
-              <div>
-                <div
-                  className="totp_circle"
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    borderRadius: "50%",
-                    background: "conic-gradient(red 25%,grey 0%)",
-                  }}
-                ></div>
-              </div>
-            </div>
-          )}
-        {this.state.edit && (
-          <div className="itemModalPlusField">
-            <svg width="24" height="24" fill="none">
-              <use href="#f-plus-field"></use>
-            </svg>
-            Add Google Authenticator
-          </div>
-        )}
+        {totp}
       </ItemModal>
     );
   }
@@ -376,3 +548,36 @@ export default LoginModal;
           </div>
         </Modal.Body>
             */
+
+/*
+        {this.props.args.item &&
+          this.props.args.item.cleartext[5] &&
+          !this.state.edit && (
+            <div
+              className="itemModalField"
+              style={{ marginBottom: 32 }}
+              onClick={() =>
+                this.copyToClipboard(
+                  document.querySelector(".totp_digits").innerText
+                )
+              }
+            >
+              <ItemModalFieldNav
+                copy={!this.state.edit}
+                name="Google authenticator"
+              />
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <div className="totp_circle"></div>
+                <div className="totp_digits"></div>
+              </div>
+            </div>
+          )}
+        {this.state.edit && (
+          <div className="itemModalPlusField">
+            <svg width="24" height="24" fill="none">
+              <use href="#f-plus-field"></use>
+            </svg>
+            Add Google Authenticator
+          </div>
+        )}
+*/

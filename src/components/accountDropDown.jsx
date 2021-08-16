@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import axios from "axios";
 
 import * as utils from "../lib/utils";
 
@@ -19,7 +18,6 @@ function perCent(part, all) {
 }
 
 class AccountDropDown extends Component {
-  state = { accountData: {} };
   isShown = false;
 
   handleButtonClick = (e) => {
@@ -51,7 +49,7 @@ class AccountDropDown extends Component {
     this.props.onClose();
     this.props.onMenuCommand("upgrade");
   };
-
+  /*
   getAccountData = () => {
     const self = this;
     axios
@@ -70,9 +68,9 @@ class AccountDropDown extends Component {
         }
       });
   };
-
+*/
   componentDidMount = () => {
-    this.getAccountData();
+    this.props.getAccountData();
     console.log("account mounted");
   };
 
@@ -85,31 +83,24 @@ class AccountDropDown extends Component {
   };
 
   render() {
+    const accountData = this.props.accountData;
     if (this.props.show) {
       if (!this.isShown) {
         this.isShown = true;
-        this.getAccountData();
+        this.props.getAccountData();
       }
     } else {
       this.isShown = false;
       return null;
     }
 
-    console.log(this.state);
-
     const modalClasses = this.props.show ? "pmodal" : "pmodal d-none";
     const storage = (
       <b>
-        {utils.humanReadableFileSize(
-          this.state.accountData.used ? this.state.accountData.used : 0
-        )}
+        {utils.humanReadableFileSize(accountData.used ? accountData.used : 0)}
       </b>
     );
-    const records = (
-      <b>
-        {this.state.accountData.records ? this.state.accountData.records : 0}
-      </b>
-    );
+    const records = <b>{accountData.records ? accountData.records : 0}</b>;
 
     return (
       <div className={modalClasses} onClick={this.handleOuterClick}>
@@ -119,10 +110,8 @@ class AccountDropDown extends Component {
           style={{ right: this.props.right }}
         >
           <div style={{ marginBottom: "16px" }}>
-            {this.state.accountData.email && (
-              <div>{this.state.accountData.email}</div>
-            )}
-            {this.state.accountData.upgrade_button && (
+            {accountData.email && <div>{accountData.email}</div>}
+            {accountData.upgrade_button && (
               <div
                 style={{
                   fontSize: "13px",
@@ -138,9 +127,9 @@ class AccountDropDown extends Component {
             )}
           </div>
 
-          {this.state.accountData.maxRecords ? (
+          {accountData.maxRecords ? (
             <div style={{ marginBottom: "18px" }}>
-              {records} of {this.state.accountData.maxRecords} records
+              {records} of {accountData.maxRecords} records
               <div
                 style={{
                   height: "4px",
@@ -152,8 +141,8 @@ class AccountDropDown extends Component {
                   style={{
                     height: "4px",
                     width: `${perCent(
-                      this.state.accountData.records,
-                      this.state.accountData.maxRecords
+                      accountData.records,
+                      accountData.maxRecords
                     )}%`,
                     background: "#00BC62",
                     borderRadius: "4px",
@@ -165,10 +154,9 @@ class AccountDropDown extends Component {
             <div style={{ marginBottom: "18px" }}>{records} records</div>
           )}
 
-          {this.state.accountData.maxStorage ? (
+          {accountData.maxStorage ? (
             <div style={{ marginBottom: "24px" }}>
-              {storage} of{" "}
-              {utils.humanReadableFileSize(this.state.accountData.maxStorage)}
+              {storage} of {utils.humanReadableFileSize(accountData.maxStorage)}
               <div
                 style={{
                   height: "4px",
@@ -180,8 +168,8 @@ class AccountDropDown extends Component {
                   style={{
                     height: "4px",
                     width: `${perCent(
-                      this.state.accountData.used,
-                      this.state.accountData.maxStorage
+                      accountData.used,
+                      accountData.maxStorage
                     )}%`,
                     background: "#00BC62",
                     borderRadius: "4px",
@@ -193,7 +181,7 @@ class AccountDropDown extends Component {
             <div style={{ marginBottom: "24px" }}>{storage}</div>
           )}
 
-          {this.state.accountData.upgrade_button && (
+          {accountData.upgrade_button && (
             <div>
               <button
                 className="btn btn-primary"

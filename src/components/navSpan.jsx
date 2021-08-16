@@ -1,11 +1,15 @@
 import React, { Component } from "react";
+import axios from "axios";
 import AccountDropDown from "./accountDropDown";
 import ContactUsModal from "./contactUsModal";
 import SuccessModal from "./successModal";
 import UpgradeModal from "./upgradeModal";
+import AccountModal from "./accountModal";
+import EmailModal from "./emailModal";
+import VerifyEmailModal from "./verifyEmailModal";
 
 class NavSpan extends Component {
-  state = { showModal: "" };
+  state = { showModal: "", accountData: {} };
   searchClear = () => {
     this.props.onSearchChange("");
   };
@@ -33,6 +37,25 @@ class NavSpan extends Component {
   };
 */
 
+  getAccountData = () => {
+    const self = this;
+    axios
+      .post("account.php", {
+        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      })
+      .then((reply) => {
+        const result = reply.data;
+        if (result.status === "Ok") {
+          self.setState({ accountData: result });
+          return;
+        }
+        if (result.status === "login") {
+          window.location.href = "expired.php";
+          return;
+        }
+      });
+  };
+
   showAccountDropDown = (e) => {
     e.stopPropagation();
     this.right =
@@ -51,7 +74,7 @@ class NavSpan extends Component {
       return;
     }
     if (cmd === "Account settings") {
-      this.setState({ showModal: "upgrade" });
+      this.setState({ showModal: "Account settings" });
       return;
     }
 
@@ -114,6 +137,7 @@ class NavSpan extends Component {
             background: "rgba(255, 255, 255, 0.6)",
             backdropFilter: "blur(40px)",
             overflow: "hidden",
+            cursor: "pointer",
           }}
         >
           <svg width="40" height="34" style={{ opacity: 0.8 }}>
@@ -121,8 +145,9 @@ class NavSpan extends Component {
           </svg>
         </span>
         <span
+          className="d-none d-sm-inline"
           onClick={this.showAccountDropDown}
-          style={{ padding: "8px 16px 0 0" }}
+          style={{ padding: "8px 0 0 0", cursor: "pointer" }}
         >
           <svg width="24" height="24" fill="white">
             <use href="#angle"></use>
@@ -133,7 +158,17 @@ class NavSpan extends Component {
           right={this.right}
           onClose={() => this.setState({ showModal: "" })}
           onMenuCommand={this.handleMenuCommand}
+          getAccountData={this.getAccountData}
+          accountData={this.state.accountData}
         />
+        <AccountModal
+          show={this.state.showModal == "Account settings"}
+          accountData={this.state.accountData}
+          onClose={(dummy, next) => {
+            this.setState({ showModal: next ? next : "" });
+          }}
+        ></AccountModal>
+
         <ContactUsModal
           show={this.state.showModal == "Contact us"}
           onClose={(dummy, success) => {
@@ -152,6 +187,23 @@ class NavSpan extends Component {
             this.setState({ showModal: "" });
           }}
         ></UpgradeModal>
+        <EmailModal
+          show={this.state.showModal == "email"}
+          accountData={this.state.accountData}
+          onClose={(dummy, next, email) => {
+            this.setState({
+              showModal: next ? "verifyEmail" : "",
+              emailToVerify: email,
+            });
+          }}
+        ></EmailModal>
+        <VerifyEmailModal
+          show={this.state.showModal == "verifyEmail"}
+          emailToVerify={this.state.emailToVerify}
+          onClose={(dummy, next) => {
+            this.setState({ showModal: next ? "Contact us" : "" });
+          }}
+        ></VerifyEmailModal>
       </React.Fragment>
     );
   }

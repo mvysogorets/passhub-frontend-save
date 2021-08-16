@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import Container from 'react-bootstrap/Container';
 import Row from "react-bootstrap/Row";
 
@@ -6,6 +7,8 @@ import Header from "./components/header"
 // import UserManagementPage from "./components/userManagementPage";
 import MainPage from "./components/mainPage";
 import ViewFile from "./components/viewFile";
+import CopyMoveToast from "./components/copyMoveToast";
+import {copyBufferAddListener, copyBufferRemoveListener, isCopyBufferEmpty, popCopyBuffer, peekCopyBuffer} from "./lib/copyBuffer";
 
 
 class App extends Component {
@@ -14,11 +17,36 @@ class App extends Component {
     page:"Main",
     filename:"",
     blob: null,
+    showToast:"",
+    copyMoveOperaion:"move",
     accountData:{}
+
   }
+  
   constructor(props) {
     super(props);
     this.mainPageRef = React.createRef();
+  }
+
+  componentDidMount = () => {
+    copyBufferAddListener(this.copyBufferEvent);
+  };
+
+  componentWillUnmount = () => {
+    copyBufferRemoveListener(this.copyBufferEvent);
+  };
+
+  copyBufferEvent = () => {
+    const entry = peekCopyBuffer();
+    if(entry) {
+      this.setState({showToast: "CopyToast", copyMoveOperaion:entry.operation});
+    } else {
+      this.setState({showToast: ""});
+    }
+  }
+
+  onCopyToastClose = () => {
+    popCopyBuffer();
   }
 
   gotoMain = () => {
@@ -54,10 +82,7 @@ class App extends Component {
         gotoMain={this.gotoMain}
         />
 
-        <Row style={{
-          flexGrow: "1",  
-          borderRadius: "6px"
-        }}>
+        <Row className="mainRow">
           <ViewFile 
             show= {this.state.page == "ViewFile"} 
             filename={this.state.filename} 
@@ -71,11 +96,17 @@ class App extends Component {
             ref={this.mainPageRef}/>
           { /* <UserManagementPage /> */}
         </Row>
-        <Row>
+        <Row className="d-none d-sm-block">
           <div style={{height:"3em", display: this.state.page == "Main"? '':"none"}}></div>
         </Row>
+        <CopyMoveToast
+        show={this.state.showToast === "CopyToast"}
+        operation={this.state.copyMoveOperaion}
+        onClose={this.onCopyToastClose}
+      ></CopyMoveToast>
 
       </Container>
+    
     );
   }
 }
