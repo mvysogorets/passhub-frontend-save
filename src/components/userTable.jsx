@@ -4,11 +4,11 @@ import UserRecord from "./userRecord";
 class UserTable extends Component {
   render() {
     return (
-      <table>
-        <thead>
+      <table className="iam_table">
+        <thead style={{ background: "rgba(27,27,38,.86)", color: "white" }}>
           <tr>
-            <th></th>
-            <th style={{ minWidth: "8em" }}>Status</th>
+            <th style={{ minWidth: "2em" }}></th>
+            <th style={{ minWidth: "8em", paddingLeft: "1em" }}>Status</th>
             <th style={{ width: "40%" }}>Email</th>
             <th>
               Safes
@@ -20,7 +20,14 @@ class UserTable extends Component {
               <br />
               shared
             </th>
-            <th className="d-none d-lg-table-cell" style={{ minWidth: "14em" }}>
+            <th
+              className="d-none d-lg-table-cell"
+              style={{
+                minWidth: "10em",
+                textAlign: "right",
+                paddingRight: "1em",
+              }}
+            >
               Last seen <br />
               {Intl.DateTimeFormat().resolvedOptions().timeZone}
             </th>

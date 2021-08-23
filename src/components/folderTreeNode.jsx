@@ -1,30 +1,27 @@
 import React, { Component } from "react";
 
-import { contextMenu, Menu, Item, Separator, Submenu } from "react-contexify";
-import "react-contexify/dist/ReactContexify.css";
-import { isCopyBufferEmpty } from "../lib/copyBuffer";
+import FolderMenu from "./folderMenu";
 
+/*
 const iconStyle = {
   stroke: "white",
   opacity: "0.7",
   verticalAlign: "middle",
   marginRight: "10px",
 };
+*/
 
 const sharedFolderIcon = (
-  <svg width="24" height="24" style={iconStyle}>
+  <svg width="24" height="24" className="safe_pane_icon">
     <use href="#i-folder_shared"></use>
   </svg>
 );
 
 const folderIcon = (
-  <svg width="24" height="24" style={iconStyle}>
+  <svg width="24" height="24" className="safe_pane_icon">
     <use href="#i-folder"></use>
   </svg>
 );
-
-const SAFE_MENU_ID = "safe-menu-id";
-const FOLDER_MENU_ID = "folder-menu-id";
 
 class FolderTreeNode extends Component {
   getClass = () => {
@@ -33,11 +30,12 @@ class FolderTreeNode extends Component {
       : "folder";
   };
 
-  handleItemClick = (cmd) => {
+  handleMenuCmd = (node, cmd) => {
     this.props.onMenuCmd(this.props.node, cmd);
     console.log(cmd);
   };
 
+  /*
   folderMenu = (
     <Menu id={FOLDER_MENU_ID}>
       <Item
@@ -148,6 +146,15 @@ class FolderTreeNode extends Component {
       </svg>
     </div>
   );
+*/
+
+  menuDots = (
+    <FolderMenu
+      node={this.props.node}
+      onMenuCmd={this.handleMenuCmd}
+      isSafe={this.props.isSafe}
+    />
+  );
 
   componentDidMount() {}
 
@@ -156,7 +163,6 @@ class FolderTreeNode extends Component {
     const menuDotsHere =
       this.props.node.id === this.props.activeFolder.id ? this.menuDots : "";
 
-    const menu = this.props.isSafe ? this.safeMenu : this.folderMenu;
     const padding = this.props.padding ? this.props.padding : 0;
     if ("folders" in this.props.node && this.props.node.folders.length > 0) {
       const folders = this.props.open
@@ -204,9 +210,10 @@ class FolderTreeNode extends Component {
             }}
           >
             {angleIcon}
-            {menu}
-            {icon}
-            {this.props.node.name}
+            <span style={{ cursor: "default" }}>
+              {icon}
+              {this.props.node.name}
+            </span>
             {menuDotsHere}
           </div>
           {folders}
@@ -226,9 +233,10 @@ class FolderTreeNode extends Component {
           outline: "none",
         }}
       >
-        {menu}
-        {icon}
-        {this.props.node.name}
+        <span style={{ cursor: "default" }}>
+          {icon}
+          {this.props.node.name}
+        </span>
         {menuDotsHere}
       </div>
     );

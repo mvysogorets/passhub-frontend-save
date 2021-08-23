@@ -7,6 +7,8 @@ import UpgradeModal from "./upgradeModal";
 import AccountModal from "./accountModal";
 import EmailModal from "./emailModal";
 import VerifyEmailModal from "./verifyEmailModal";
+import DeleteAccountModal from "./deleteAccountModal";
+import DeleteAccountFinalModal from "./deleteAccountFinalModal";
 
 class NavSpan extends Component {
   state = { showModal: "", accountData: {} };
@@ -37,23 +39,24 @@ class NavSpan extends Component {
   };
 */
 
-  getAccountData = () => {
+  getAccountData = (newData) => {
     const self = this;
-    axios
-      .post("account.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
-      })
-      .then((reply) => {
-        const result = reply.data;
-        if (result.status === "Ok") {
-          self.setState({ accountData: result });
-          return;
-        }
-        if (result.status === "login") {
-          window.location.href = "expired.php";
-          return;
-        }
-      });
+    const axiosData = newData
+      ? newData
+      : {
+          verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+        };
+    axios.post("account.php", axiosData).then((reply) => {
+      const result = reply.data;
+      if (result.status === "Ok") {
+        self.setState({ accountData: result });
+        return;
+      }
+      if (result.status === "login") {
+        window.location.href = "expired.php";
+        return;
+      }
+    });
   };
 
   showAccountDropDown = (e) => {
@@ -69,6 +72,7 @@ class NavSpan extends Component {
   };
 
   handleMenuCommand = (cmd) => {
+    console.log("handleMenuCommand ", cmd);
     if (cmd === "Contact us") {
       this.setState({ showModal: "Contact us" });
       return;
@@ -77,6 +81,9 @@ class NavSpan extends Component {
       this.setState({ showModal: "Account settings" });
       return;
     }
+    if (cmd === "Iam") {
+      this.props.gotoIam();
+    }
 
     this.props.onMenuCommand(cmd);
   };
@@ -84,49 +91,48 @@ class NavSpan extends Component {
   render() {
     return (
       <React.Fragment>
-        <div
-          style={{
-            flexGrow: 1,
-            padding: "0 36px 0 40px",
-            position: "relative",
-          }}
-        >
-          <input
-            className="search_string"
-            type="text"
-            placeholder="Search.."
-            autoComplete="off"
-            onChange={this.onSearchChange}
-            value={this.props.searchString}
+        {this.props.mainPage && (
+          <div
+            className="d-none d-sm-block"
             style={{
-              width: "100%",
-              background: "rgba(255, 255, 255, 0.6)",
-              backdropFilter: "blur(40px)",
+              flexGrow: 1,
+              padding: "0 36px 0 40px",
+              position: "relative",
             }}
-          />
-
-          <span className="search_clear" onClick={this.searchClear}>
-            <svg width="0.7em" height="0.7em" className="item_icon">
-              <use href="#cross"></use>
-            </svg>
-          </span>
-          <span style={{ position: "absolute", left: "55px", top: "8px" }}>
-            <svg
-              width="24"
-              height="24"
+          >
+            <input
+              className="search_string"
+              type="text"
+              placeholder="Search.."
+              autoComplete="off"
+              onChange={this.onSearchChange}
+              value={this.props.searchString}
               style={{
-                opacity: 0.4,
-                verticalAlign: "text-bottom",
+                width: "100%",
+                background: "rgba(255, 255, 255, 0.6)",
+                backdropFilter: "blur(40px)",
               }}
-            >
-              <use href="#f-search"></use>
-            </svg>
-          </span>
+            />
 
-          <input id="fake_username" type="text" />
-          <input id="fake_password" type="password" />
-        </div>
-
+            <span className="search_clear" onClick={this.searchClear}>
+              <svg width="0.7em" height="0.7em" className="item_icon">
+                <use href="#cross"></use>
+              </svg>
+            </span>
+            <span style={{ position: "absolute", left: "55px", top: "8px" }}>
+              <svg
+                width="24"
+                height="24"
+                style={{
+                  opacity: 0.4,
+                  verticalAlign: "text-bottom",
+                }}
+              >
+                <use href="#f-search"></use>
+              </svg>
+            </span>
+          </div>
+        )}
         <span
           onClick={this.showAccountDropDown}
           style={{
@@ -138,21 +144,24 @@ class NavSpan extends Component {
             backdropFilter: "blur(40px)",
             overflow: "hidden",
             cursor: "pointer",
+            flex: "none",
           }}
         >
           <svg width="40" height="34" style={{ opacity: 0.8 }}>
             <use href="#f-account"></use>
           </svg>
         </span>
-        <span
-          className="d-none d-sm-inline"
-          onClick={this.showAccountDropDown}
-          style={{ padding: "8px 0 0 0", cursor: "pointer" }}
-        >
-          <svg width="24" height="24" fill="white">
-            <use href="#angle"></use>
-          </svg>
-        </span>
+        {/*
+          <span
+            className="d-none d-sm-inline"
+            onClick={this.showAccountDropDown}
+            style={{ padding: "8px 0 0 0", cursor: "pointer" }}
+          >
+            <svg width="24" height="24" fill="white">
+              <use href="#angle"></use>
+            </svg>
+          </span>
+          */}
         <AccountDropDown
           show={this.state.showModal == "AccountDropDown"}
           right={this.right}
@@ -164,11 +173,20 @@ class NavSpan extends Component {
         <AccountModal
           show={this.state.showModal == "Account settings"}
           accountData={this.state.accountData}
+          getAccountData={this.getAccountData}
           onClose={(dummy, next) => {
             this.setState({ showModal: next ? next : "" });
           }}
         ></AccountModal>
-
+        <DeleteAccountModal
+          show={this.state.showModal == "delete account"}
+          onClose={(dummy, next) => {
+            this.setState({ showModal: next ? next : "" });
+          }}
+        ></DeleteAccountModal>
+        <DeleteAccountFinalModal
+          show={this.state.showModal == "delete account final"}
+        ></DeleteAccountFinalModal>
         <ContactUsModal
           show={this.state.showModal == "Contact us"}
           onClose={(dummy, success) => {

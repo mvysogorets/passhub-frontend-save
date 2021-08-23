@@ -38,7 +38,7 @@ class UserRecord extends Component {
       return (
         <tr>
           <td></td>
-          <td>
+          <td style={{ paddingLeft: "1em" }}>
             <b>{role}</b>
           </td>
           <td className="email">
@@ -50,7 +50,7 @@ class UserRecord extends Component {
           <td>
             <b>{user.shared_safe_cnt}</b>
           </td>
-          <td className="d-none d-lg-table-cell">
+          <td className="d-none d-lg-table-cell" style={{ textAlign: "right" }}>
             <b>That's you</b>
           </td>
         </tr>
@@ -76,7 +76,7 @@ class UserRecord extends Component {
               <use href="#cross"></use>
             </svg>
           </td>
-          <td>authorized</td>
+          <td style={{ paddingLeft: "1em" }}>authorized</td>
           <td className="email">{this.props.user.email}</td>
           <td></td>
           <td></td>
@@ -84,6 +84,7 @@ class UserRecord extends Component {
         </tr>
       );
     }
+
     return (
       <tr>
         <td
@@ -111,16 +112,18 @@ class UserRecord extends Component {
           >
             <Dropdown.Toggle
               id={id}
+              variant="secondary"
               style={{
                 background: "transparent",
                 color: "black",
                 border: "none",
                 boxShadow: "none",
+                margin: 0,
               }}
             >
               {role}
             </Dropdown.Toggle>
-            <Dropdown.Menu>
+            <Dropdown.Menu align="left">
               <Dropdown.Item eventKey="active">active</Dropdown.Item>
               <Dropdown.Item eventKey="disabled">disabled</Dropdown.Item>
               <Dropdown.Item eventKey="admin">admin</Dropdown.Item>
@@ -130,8 +133,14 @@ class UserRecord extends Component {
         <td className="email">{this.props.user.email}</td>
         <td>{user.safe_cnt}</td>
         <td>{user.shared_safe_cnt}</td>
-        <td className="d-none d-lg-table-cell">
-          {new Date(this.props.user.lastSeen).toLocaleString()}
+        <td className="d-none d-lg-table-cell" style={{ textAlign: "right" }}>
+          {new Date(this.props.user.lastSeen).toLocaleString([], {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </td>
       </tr>
     );

@@ -58,12 +58,12 @@ class ItemModal extends Component {
   };
 
   handleMove = () => {
-    putCopyBuffer({ item: this.props.args.item, operation: "Move" });
+    putCopyBuffer({ item: this.props.args.item, operation: "move" });
     this.props.onClose();
   };
 
   handleCopy = () => {
-    putCopyBuffer({ item: this.props.args.item, operation: "Copy" });
+    putCopyBuffer({ item: this.props.args.item, operation: "copy" });
     this.props.onClose();
   };
 
@@ -71,7 +71,11 @@ class ItemModal extends Component {
 
   render() {
     let path = "";
+
     if (this.props.show) {
+      if (this.props.args.item) {
+        path = this.props.args.folder.path.join(" > ");
+      }
       if (!this.isShown) {
         this.isShown = true;
         this.state.errorMsg = "";
@@ -79,12 +83,10 @@ class ItemModal extends Component {
           this.state.title = this.props.args.item.cleartext[0];
           this.state.note = this.props.args.item.cleartext[4];
           this.state.edit = false;
-          path = this.props.args.item.path.join(" > ");
         } else {
           this.state.title = "";
           this.state.note = "";
           this.state.edit = true;
-          path = this.props.args.folder.path.join(" > ");
         }
       }
     } else {

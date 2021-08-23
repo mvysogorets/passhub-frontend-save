@@ -9,6 +9,7 @@ import ImportModal from "./importModal";
 import ShareModal from "./shareModal";
 
 import FolderTreeNode from "./folderTreeNode";
+import MobileSafeNode from "./mobileSafeNode";
 
 import * as passhubCrypto from "../lib/crypto";
 import { popCopyBuffer } from "../lib/copyBuffer";
@@ -233,7 +234,10 @@ class SafePane extends Component {
 */
 
     return (
-      <Col className="col-xl-3 col-lg-4 col-md-5 col-sm-6 col safe_pane">
+      <Col
+        className="col-xl-3 col-lg-4 col-md-5 col-sm-6 col d-sm-block safe_pane"
+        id="safe_pane"
+      >
         <div
           style={{ display: "flex", flexDirection: "column", height: "100%" }}
         >
@@ -248,7 +252,17 @@ class SafePane extends Component {
           >
             SAFES
           </div>
-          <div className="safe_scroll_control">
+          <div className="safe_scroll_control d-sm-none">
+            {this.props.safes.map((s) => (
+              <MobileSafeNode
+                key={s.id}
+                node={s}
+                onSelect={this.handleSelect}
+              />
+            ))}
+          </div>
+
+          <div className="safe_scroll_control d-none d-sm-block">
             {this.props.safes.map((s) => (
               <FolderTreeNode
                 key={s.id}

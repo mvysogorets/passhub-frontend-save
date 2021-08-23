@@ -65,7 +65,7 @@ class InviteDiv extends Component {
         }}
       >
         <span style={{ color: "red" }}>{this.state.errorMsg}</span>
-        <span>
+        <div style={{ display: "flex", alignItems: "center" }}>
           Authorize
           <input
             style={{
@@ -99,7 +99,7 @@ class InviteDiv extends Component {
           >
             Ok
           </Button>
-        </span>
+        </div>
       </div>
     );
   }

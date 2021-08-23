@@ -123,6 +123,10 @@ class MainPage extends Component {
     this.safePaneRef.current.onAccountMenuCommand(cmd);
   };
 
+  handleFolderMenuCmd = (node, cmd) => {
+    this.safePaneRef.current.onFolderMenuCmd(node, cmd);
+  };
+
   setActiveFolder = (folder) => {
     this.setState({ activeFolder: folder });
   };
@@ -162,6 +166,18 @@ class MainPage extends Component {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  openParentFolder = (folder) => {
+    if (!folder.SafeID) {
+      return;
+    }
+    if (folder.parent == 0) {
+      this.setActiveFolder(folder.safe);
+    } else {
+      const parent = getFolderById(this.state.safes, folder.parent);
+      this.setActiveFolder(parent);
+    }
   };
 
   getPageData = () => {
@@ -309,6 +325,13 @@ class MainPage extends Component {
     const searchString = this.props.searchString.trim();
     if (searchString.length > 0) {
       this.searchFolder.items = this.search(searchString);
+
+      const safePane = document.querySelector("#safe_pane");
+
+      if (safePane && !safePane.classList.contains("d-none")) {
+        document.querySelector("#safe_pane").classList.add("d-none");
+        document.querySelector("#table_pane").classList.remove("d-none");
+      }
     }
 
     const idleTimeout =
@@ -331,8 +354,11 @@ class MainPage extends Component {
           }
           searchMode={searchString.length > 0}
           setActiveFolder={this.setActiveFolder}
+          openParentFolder={this.openParentFolder}
           refreshUserData={this.refreshUserData}
           inMemoryView={this.props.inMemoryView}
+          onFolderMenuCmd={this.handleFolderMenuCmd}
+          onSearchClear={this.props.onSearchClear}
         />
 
         {"idleTimeout" in this.state && (

@@ -1,12 +1,10 @@
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import Dropdown from "react-bootstrap/Dropdown";
 
 import axios from "axios";
 
 import InputField from "./inputField";
-import TextAreaField from "./textAreaField";
 
 import Slider, { Range } from "rc-slider";
 import "rc-slider/assets/index.css";
@@ -15,11 +13,6 @@ class AccountModal extends Component {
   state = { inactiveTimeout: 15 };
 
   isShown = false;
-
-  onInactiveTimeoutChange = (dummy, b) => {
-    console.log(b.target.attributes.eventkey.nodeValue);
-    this.setState({ inactiveTimeout: b.target.attributes.eventkey.nodeValue });
-  };
 
   onDiscountChange = (e) => {
     this.setState({ discount: e.target.value, errorMsg: "" });
@@ -73,8 +66,13 @@ class AccountModal extends Component {
   };
 
   onSliderChange = (value) => {
-    this.setState({ inactiveTimeout: value });
     console.log("Slider ", value);
+    // restartIdleTimers(value);
+    this.props.getAccountData({
+      verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      operation: "setInactivityTimeout",
+      value: value * 60,
+    });
   };
 
   render() {
@@ -88,6 +86,16 @@ class AccountModal extends Component {
       return null;
     }
     const marks = { 15: "15 min", 60: "1 hour", 240: "4 hours" };
+
+    let slider_position = 240;
+    const { desktop_inactivity } = this.props.accountData;
+    if (desktop_inactivity) {
+      if (desktop_inactivity < 50 * 60) {
+        slider_position = 15;
+      } else if (desktop_inactivity < 110 * 60) {
+        slider_position = 60;
+      }
+    }
 
     return (
       <Modal
@@ -109,12 +117,11 @@ class AccountModal extends Component {
           <div style={{ margin: "0 0 12px 0" }}>Inactvity timeout</div>
           <div style={{ marginBottom: "64px", padding: "0 32px" }}>
             <Slider
-              value={this.state.inactiveTimeout}
+              value={slider_position}
               min={15}
               max={240}
               marks={marks}
               step={null}
-              onAfterChange={this.onSliderChange}
               onChange={this.onSliderChange}
               trackStyle={{ background: "#00BC62" }}
               handleStyle={{ borderColor: "#00BC62" }}
@@ -155,22 +162,28 @@ class AccountModal extends Component {
               </div>
             </div>
           )}
-
           <div
-            style={{
-              color: "#B40020",
-              marginTop: "32px",
-              cursor: "pointer",
+            onClick={() => {
+              console.log("delete account 1");
+              this.props.onClose("dummy", "delete account");
             }}
           >
-            <svg width="24" height="24" style={{ marginRight: "8px" }}>
-              <use href="#f-trash-red"></use>
-            </svg>
-            Delete Account
-          </div>
-          <div style={{ color: "#8D8D94", fontSize: "14px" }}>
-            Once deleted, your records, files, safes and folders cannot be
-            recovered
+            <div
+              style={{
+                color: "#B40020",
+                marginTop: "32px",
+                cursor: "pointer",
+              }}
+            >
+              <svg width="24" height="24" style={{ marginRight: "8px" }}>
+                <use href="#f-trash-red"></use>
+              </svg>
+              Delete Account
+            </div>
+            <div style={{ color: "#8D8D94", fontSize: "14px" }}>
+              Once deleted, your records, files, safes and folders cannot be
+              recovered
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>

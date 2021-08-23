@@ -23,6 +23,7 @@ class UserManagementPage extends Component {
   state = {
     users: [],
     me: "",
+    errorMsg: "",
     delDialogData: { email: "", id: "", show: false },
   };
 
@@ -86,13 +87,16 @@ class UserManagementPage extends Component {
           this.setState({
             users,
             me: result.data.me,
+            errorMsg: "",
             delDialogData: { email: "", id: "", show: false },
           });
+          return;
         }
         if (result.data.status === "login") {
           window.location.href = "expired.php";
           return;
         }
+        this.setState({ errorMsg: result.data.status });
       })
       .catch((error) => {
         console.log(error);
@@ -100,12 +104,17 @@ class UserManagementPage extends Component {
   };
 
   componentDidMount() {
+    console.log("userManagementPage did mount");
     this.getPageData();
   }
 
   render() {
+    if (!this.props.show) {
+      return null;
+    }
+
     return (
-      <Card className="col col-xl-10 phub-dialog">
+      <Card className="col" style={{ padding: 0, borderRadius: "16px" }}>
         <Card.Header
           style={{ display: "flex", justifyContent: "space-between" }}
         >
@@ -115,9 +124,7 @@ class UserManagementPage extends Component {
             className="close"
             style={{ fontSize: "inherit" }}
             aria-label="Close"
-            onClick={() => {
-              window.location.href = "index.php";
-            }}
+            onClick={this.props.gotoMain}
           >
             <svg width="18" height="18" style={{ stroke: "black" }}>
               <use href="#el-x"></use>
@@ -125,18 +132,29 @@ class UserManagementPage extends Component {
           </button>
         </Card.Header>
         <Card.Body>
-          <DelUserModal
-            data={this.state.delDialogData}
-            updatePage={this.updatePage}
-            hide={this.hideDelDialog}
-          />
-          <InviteDiv onNewMail={this.onNewMail} updatePage={this.updatePage} />
-          <UserTable
-            users={this.state.users}
-            me={this.state.me}
-            showDelDialog={this.showDelDialog}
-            userStatusCB={this.userStatusCB}
-          />
+          {this.state.errorMsg.length > 0 ? (
+            <div style={{ fontSize: "32px", color: "red" }}>
+              {this.state.errorMsg}
+            </div>
+          ) : (
+            <React.Fragment>
+              <DelUserModal
+                data={this.state.delDialogData}
+                updatePage={this.updatePage}
+                hide={this.hideDelDialog}
+              />
+              <InviteDiv
+                onNewMail={this.onNewMail}
+                updatePage={this.updatePage}
+              />
+              <UserTable
+                users={this.state.users}
+                me={this.state.me}
+                showDelDialog={this.showDelDialog}
+                userStatusCB={this.userStatusCB}
+              />
+            </React.Fragment>
+          )}
         </Card.Body>
       </Card>
     );

@@ -1,4 +1,5 @@
 import React, { Component, createRef } from "react";
+import { openWithTicket } from "wwpass-frontend";
 
 class ViewFile extends Component {
   ext = "";
@@ -34,8 +35,14 @@ class ViewFile extends Component {
         reader.addEventListener(
           "load",
           function () {
-            self.imgRef.current.src = reader.result;
-            console.log(self.imgRef.current.naturalHeight);
+            const imgElement = self.imgRef.current;
+            imgElement.src = reader.result;
+            imgElement.onload = function () {
+              const { naturalHeight, naturalWidth } = imgElement;
+              const { width, height } = imgElement.parentElement;
+              console.log(naturalHeight, naturalWidth);
+              console.log(width, height);
+            };
             // set_size();
             //     this.forceUpdate();
           },
@@ -59,9 +66,9 @@ class ViewFile extends Component {
         "load",
         function () {
           this.imgRef.current.src = reader.result;
-          console.log(this.imgRef.current.naturalHeight);
+          console.log(this.imgRef.current);
           // set_size();
-          this.forceUpdate();
+          //this.forceUpdate();
         },
         false
       );
@@ -90,7 +97,40 @@ class ViewFile extends Component {
     }
 
     return (
-      <img ref={this.imgRef} style={{ width: "100%", height: "100%" }}></img>
+      <React.Fragment>
+        <div className="col img-view">
+          <div
+            className="green70"
+            style={{ cursor: "pointer", margin: "32px 0 18px 0" }}
+            onClick={this.props.gotoMain}
+          >
+            <svg
+              width="24"
+              height="24"
+              style={{
+                fill: "#009a50",
+                transform: "rotate(90deg)",
+              }}
+            >
+              <use href="#angle"></use>
+            </svg>
+            Back
+          </div>
+
+          <div className="h2">{filename}</div>
+          <div className="img-frame">
+            <img
+              ref={this.imgRef}
+              style={{
+                maxHeight: "100%",
+                maxWidth: "100%",
+                margin: "0 auto",
+                boxShadow: "0px 10px 35px rgba(0, 0, 0, 0.2)",
+              }}
+            ></img>
+          </div>
+        </div>
+      </React.Fragment>
     );
   }
 }

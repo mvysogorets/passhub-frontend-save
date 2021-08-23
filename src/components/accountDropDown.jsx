@@ -71,15 +71,15 @@ class AccountDropDown extends Component {
 */
   componentDidMount = () => {
     this.props.getAccountData();
-    console.log("account mounted");
+    console.log("account dropdown  mounted");
   };
 
   componentDidUpdate = () => {
-    console.log("account updated");
+    console.log("account dropdown updated");
   };
 
   componentWillUnmount = () => {
-    console.log("account will unmount");
+    console.log("account dropdown will unmount");
   };
 
   render() {
@@ -203,15 +203,31 @@ class AccountDropDown extends Component {
             Account settings
           </div>
 
-          <div
-            className="account-menu-item"
-            onClick={(e) => this.handleMenuCommand(e, "Help")}
-          >
-            <svg width="24" height="24">
-              <use href="#f-lightbulb"></use>
-            </svg>
-            How it works (Help)
-          </div>
+          {accountData.site_admin ? (
+            <div
+              className="account-menu-item"
+              onClick={(e) => {
+                this.handleMenuCommand(e, "Iam");
+              }}
+            >
+              <svg width="24" height="24" stroke="#5F5F67">
+                <use href="#i-wrench"></use>
+              </svg>
+              Users
+            </div>
+          ) : (
+            <div
+              className="account-menu-item"
+              onClick={(e) => {
+                this.handleMenuCommand(e, "Help");
+              }}
+            >
+              <svg width="24" height="24">
+                <use href="#f-lightbulb"></use>
+              </svg>
+              How it works (Help)
+            </div>
+          )}
 
           <div
             className="account-menu-item"

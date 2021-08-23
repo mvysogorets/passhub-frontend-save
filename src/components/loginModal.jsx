@@ -25,6 +25,16 @@ function drawTotpCircle() {
   }
 }
 
+// const copiedTimer = null;
+
+function startCopiedTimer() {
+  setTimeout(() => {
+    document
+      .querySelectorAll(".copied")
+      .forEach((e) => (e.style.display = "none"));
+  }, 1000);
+}
+
 setInterval(drawTotpCircle, 1000);
 let totpTimerListeners = [];
 
@@ -52,12 +62,10 @@ class LoginModal extends Component {
   };
 
   componentDidMount = () => {
-    console.log("loginModal DidMount");
     totpTimerAddListener(this.timerEvent);
   };
 
   componentWillUnmount = () => {
-    console.log("loginModal WillUnmount");
     totpTimerRemoveListener(this.timerEvent);
   };
 
@@ -148,7 +156,7 @@ class LoginModal extends Component {
     if (
       this.props.edit ||
       !this.props.show ||
-      !this.props.item ||
+      !this.props.args.item ||
       this.props.args.item.cleartext.length < 6
     ) {
       return;
@@ -175,7 +183,6 @@ class LoginModal extends Component {
               .forEach((e) => (e.innerText = six));
           });
       } catch (err) {
-        console.log(err);
         document
           .querySelectorAll(".totp_digits")
           .forEach((e) => (e.innerText = "invalid TOTP secret"));
@@ -184,7 +191,6 @@ class LoginModal extends Component {
   };
 
   copyToClipboard = (text) => {
-    console.log("CopyToClipboard ", text);
     if (!this.state.edit) {
       copyToClipboard(text);
     }
@@ -254,12 +260,14 @@ class LoginModal extends Component {
         totp = (
           <div
             className="itemModalField"
-            style={{ marginBottom: 32 }}
-            onClick={() =>
+            style={{ marginBottom: 32, position: "relative" }}
+            onClick={() => {
               this.copyToClipboard(
                 document.querySelector(".totp_digits").innerText
-              )
-            }
+              );
+              document.querySelector("#totp_copied").style.display = "flex";
+              startCopiedTimer();
+            }}
           >
             <ItemModalFieldNav
               copy={!this.state.edit}
@@ -268,6 +276,9 @@ class LoginModal extends Component {
             <div style={{ display: "flex", alignItems: "center" }}>
               <div className="totp_circle"></div>
               <div className="totp_digits"></div>
+            </div>
+            <div className="copied green70" id="totp_copied">
+              <div style={{ margin: "0 auto" }}>Copied &#10003;</div>
             </div>
           </div>
         );
@@ -281,11 +292,13 @@ class LoginModal extends Component {
           <div
             className="itemModalField"
             style={{ marginBottom: 32 }}
-            onClick={() =>
-              this.copyToClipboard(
-                document.querySelector(".totp_digits").innerText
-              )
-            }
+            onClick={() => {
+              if (!this.state.edit) {
+                this.copyToClipboard(
+                  document.querySelector(".totp_digits").innerText
+                );
+              }
+            }}
           >
             {this.state.totpSecret.length > 0 ? (
               <ItemModalFieldNav
@@ -328,7 +341,14 @@ class LoginModal extends Component {
       >
         <div
           className="itemModalField upper"
-          onClick={() => this.copyToClipboard(this.state.username)}
+          style={{ position: "relative" }}
+          onClick={() => {
+            if (!this.state.edit) {
+              this.copyToClipboard(this.state.username);
+              document.querySelector("#username_copied").style.display = "flex";
+              startCopiedTimer();
+            }
+          }}
         >
           <ItemModalFieldNav copy={!this.state.edit} name="Username" />
           <div>
@@ -340,10 +360,20 @@ class LoginModal extends Component {
               value={this.state.username}
             ></input>
           </div>
+          <div className="copied" id="username_copied">
+            <div>Copied &#10003;</div>
+          </div>
         </div>
         <div
           className={`itemModalField lower ${passwordBackground}`}
-          onClick={() => this.copyToClipboard(this.state.password)}
+          style={{ position: "relative" }}
+          onClick={() => {
+            if (!this.state.edit) {
+              this.copyToClipboard(this.state.password);
+              document.querySelector("#password_copied").style.display = "flex";
+              startCopiedTimer();
+            }
+          }}
         >
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ fontSize: "14px" }}>
@@ -368,6 +398,9 @@ class LoginModal extends Component {
               spellCheck={false}
               value={this.state.password}
             ></input>
+          </div>
+          <div className="copied green70" id="password_copied">
+            <div style={{ margin: "0 auto" }}>Copied &#10003;</div>
           </div>
         </div>
         <div

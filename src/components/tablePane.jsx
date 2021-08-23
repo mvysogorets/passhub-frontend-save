@@ -16,6 +16,7 @@ import NoteModal from "./noteModal";
 import FileModal from "./fileModal";
 import DeleteItemModal from "./deleteItemModal";
 import AddDropUp from "./addDropUp";
+import FolderMenu from "./folderMenu";
 
 const ADD_BUTTON_MENU_ID = "add-menu-id";
 
@@ -56,6 +57,9 @@ class TablePane extends Component {
     }
     if (cmd === "Note") {
       this.showNoteModal();
+    }
+    if (cmd === "Folder") {
+      this.handleFolderMenuCmd(this.props.folder, "Add folder");
     }
   };
 
@@ -155,16 +159,19 @@ class TablePane extends Component {
     this.props.setActiveFolder(folder);
   };
 
+  handleFolderMenuCmd = (node, cmd) => {
+    this.props.onFolderMenuCmd(this.props.folder, cmd);
+    console.log(cmd);
+  };
+
   render() {
-    const contentNotEmpty = this.props.folder != null;
-    const emptyFolder = !(
-      contentNotEmpty &&
-      this.props.folder.folders.length + this.props.folder.items.length > 0
-    );
-    const isSafe =
-      contentNotEmpty &&
-      this.props.folder.path.length == 1 &&
-      !this.props.searchMode;
+    if (!this.props.folder) {
+      return null;
+    }
+
+    const { folder } = this.props;
+    const emptyFolder = !(folder.folders.length + folder.items.length > 0);
+    const isSafe = folder.path.length == 1 && !this.props.searchMode;
     let EmptyMessage = isSafe ? "Empty safe" : "Empty folder";
     if (this.props.searchMode) {
       EmptyMessage = (
@@ -179,145 +186,197 @@ class TablePane extends Component {
     return (
       <Col
         className="col-xl-9 col-lg-8 col-md-7 col-sm-6 d-none d-sm-block"
-        style={{
-          background: "rgba(255,255,255,1)",
-          paddingTop: "16px",
-          height: "100%",
-          flexDirection: "column",
-          borderRadius: "0 16px 16px 0",
-        }}
+        id="table_pane"
       >
-        {contentNotEmpty && (
-          <div style={{ color: "#1B1B26" }}>
-            {this.props.folder.path.join(" > ")}
-          </div>
-        )}
-
-        {contentNotEmpty && emptyFolder && (
-          <div>
-            <div style={{ textAlign: "center" }}>
-              <svg
-                width="400"
-                height="208"
-                style={{ margin: "2em auto 1em auto", display: "block" }}
-              >
-                <use href={isSafe ? "#f-emptySafe" : "#f-emptyFolder"}></use>
-              </svg>
-              {EmptyMessage}
-            </div>
-          </div>
-        )}
-
-        {contentNotEmpty && !emptyFolder && (
-          <table className="item_table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th className="d-none d-lg-table-cell"></th>
-                <th className="d-none d-lg-table-cell"></th>
-                <th className="rightAlign d-none d-xl-table-cell">Modified</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.props.folder.folders.map((f) => (
-                <FolderItem
-                  item={f}
-                  onClick={(folder) => {
-                    this.openFolder(folder);
-                  }}
-                />
-              ))}
-              {this.props.folder.items.map(
-                (f) =>
-                  (isLoginItem(f) && (
-                    <LoginItem item={f} showModal={this.showLoginModal} />
-                  )) ||
-                  (isNoteItem(f) && (
-                    <NoteItem item={f} showModal={this.showNoteModal} />
-                  )) ||
-                  (isFileItem(f) && (
-                    <FileItem item={f} showModal={this.showFileModal} />
-                  ))
-              )}
-            </tbody>
-          </table>
-        )}
-
-        {this.addMenu}
-        <Button
-          variant="primary"
-          type="submit"
-          ref={this.addButtonRef}
-          style={{
-            width: "80px",
-            height: "80px",
-            position: "absolute",
-            bottom: "16px",
-            right: "16px",
-            minWidth: "0",
-            padding: "20px",
-            borderRadius: "14px",
-          }}
-          onClick={() => {
-            this.addButtonRect =
-              this.addButtonRef.current.getBoundingClientRect();
-            this.showAddMenu();
-          }}
+        <div
+          style={{ display: "flex", flexDirection: "column", height: "100%" }}
         >
-          <svg width="40" height="40">
-            <use href="#f-plus"></use>
-          </svg>
-        </Button>
+          <div
+            className="d-sm-none green70"
+            style={{ cursor: "pointer", marginBottom: "18px" }}
+            onClick={() => {
+              if (this.props.searchMode) {
+                this.props.onSearchClear();
+              }
 
-        <AddDropUp
-          show={this.state.showModal == "addDropUp"}
-          bottom={window.innerHeight - this.addButtonRect.bottom - 8}
-          right={window.innerWidth - this.addButtonRect.right - 8}
-          onClose={() => this.setState({ showModal: "" })}
-          handleAddClick={this.handleAddClick}
-        ></AddDropUp>
+              if (folder.SafeID) {
+                this.props.openParentFolder(folder);
+              } else {
+                document.querySelector("#safe_pane").classList.remove("d-none");
+                document.querySelector("#table_pane").classList.add("d-none");
+              }
+            }}
+          >
+            <svg
+              width="24"
+              height="24"
+              style={{
+                fill: "#009a50",
+                transform: "rotate(90deg)",
+              }}
+            >
+              <use href="#angle"></use>
+            </svg>
 
-        <LoginModal
-          show={this.state.showModal == "LoginModal"}
-          args={this.state.itemModalArgs}
-          openDeleteItemModal={this.openDeleteItemModal}
-          onClose={(refresh = false) => {
-            this.setState({ showModal: "" });
-            if (refresh === true) {
-              this.props.refreshUserData();
-            }
-          }}
-        ></LoginModal>
+            {folder.path.length == 1
+              ? "All safes"
+              : folder.path[folder.path.length - 2]}
+          </div>
+          <div
+            className="d-sm-none"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              position: "relative",
+            }}
+          >
+            <div className="h5">{folder.path[folder.path.length - 1]}</div>
+            {!this.props.searchMode && (
+              <FolderMenu
+                node={folder}
+                onMenuCmd={this.handleFolderMenuCmd}
+                color="black"
+                isSafe={true}
+              />
+            )}
+          </div>
 
-        <FileModal
-          show={this.state.showModal == "FileModal"}
-          args={this.state.itemModalArgs}
-          openDeleteItemModal={this.openDeleteItemModal}
-          onClose={this.onItemModalClose}
-          inMemoryView={(blob, filename) => {
-            this.setState({ showModal: "" });
-            this.props.inMemoryView(blob, filename);
-          }}
-        ></FileModal>
+          <div className="d-none d-sm-block" style={{ color: "#1B1B26" }}>
+            {folder.path.join(" > ")}
+          </div>
 
-        <NoteModal
-          show={this.state.showModal == "NoteModal"}
-          args={this.state.itemModalArgs}
-          openDeleteItemModal={this.openDeleteItemModal}
-          onClose={this.onItemModalClose}
-        ></NoteModal>
+          {emptyFolder && (
+            <div>
+              <div style={{ textAlign: "center" }}>
+                <svg
+                  width="400"
+                  height="208"
+                  style={{ margin: "2em auto 1em auto", display: "block" }}
+                >
+                  <use href={isSafe ? "#f-emptySafe" : "#f-emptyFolder"}></use>
+                </svg>
+                {EmptyMessage}
+              </div>
+            </div>
+          )}
 
-        <DeleteItemModal
-          show={this.state.showModal == "DeleteItemModal"}
-          folder={this.props.folder}
-          args={this.state.itemModalArgs}
-          onClose={(refresh = false) => {
-            this.setState({ showModal: "" });
-            if (refresh === true) {
-              this.props.refreshUserData();
-            }
-          }}
-        ></DeleteItemModal>
+          {!emptyFolder && (
+            <div style={{ overflowY: "auto" }}>
+              <table className="item_table">
+                <thead>
+                  <tr>
+                    <th className="d-none d-sm-table-cell">Title</th>
+                    <th className="d-none d-lg-table-cell"></th>
+                    <th className="d-none d-lg-table-cell"></th>
+                    <th className="rightAlign d-none d-xl-table-cell">
+                      Modified
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {folder.folders.map((f) => (
+                    <FolderItem
+                      item={f}
+                      onClick={(folder) => {
+                        this.openFolder(folder);
+                      }}
+                    />
+                  ))}
+                  {folder.items.map(
+                    (f) =>
+                      (isLoginItem(f) && (
+                        <LoginItem item={f} showModal={this.showLoginModal} />
+                      )) ||
+                      (isNoteItem(f) && (
+                        <NoteItem item={f} showModal={this.showNoteModal} />
+                      )) ||
+                      (isFileItem(f) && (
+                        <FileItem item={f} showModal={this.showFileModal} />
+                      ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {this.addMenu}
+          {!this.props.searchMode && (
+            <Button
+              variant="primary"
+              type="submit"
+              ref={this.addButtonRef}
+              style={{
+                width: "80px",
+                height: "80px",
+                position: "absolute",
+                bottom: "16px",
+                right: "16px",
+                minWidth: "0",
+                padding: "20px",
+                borderRadius: "14px",
+              }}
+              onClick={() => {
+                this.addButtonRect =
+                  this.addButtonRef.current.getBoundingClientRect();
+                this.showAddMenu();
+              }}
+            >
+              <svg width="40" height="40">
+                <use href="#f-plus"></use>
+              </svg>
+            </Button>
+          )}
+
+          <AddDropUp
+            show={this.state.showModal == "addDropUp"}
+            bottom={window.innerHeight - this.addButtonRect.bottom - 8}
+            right={window.innerWidth - this.addButtonRect.right - 8}
+            onClose={() => this.setState({ showModal: "" })}
+            handleAddClick={this.handleAddClick}
+          ></AddDropUp>
+
+          <LoginModal
+            show={this.state.showModal == "LoginModal"}
+            args={this.state.itemModalArgs}
+            openDeleteItemModal={this.openDeleteItemModal}
+            onClose={(refresh = false) => {
+              this.setState({ showModal: "" });
+              if (refresh === true) {
+                this.props.refreshUserData();
+              }
+            }}
+          ></LoginModal>
+
+          <FileModal
+            show={this.state.showModal == "FileModal"}
+            args={this.state.itemModalArgs}
+            openDeleteItemModal={this.openDeleteItemModal}
+            onClose={this.onItemModalClose}
+            inMemoryView={(blob, filename) => {
+              this.setState({ showModal: "" });
+              this.props.inMemoryView(blob, filename);
+            }}
+          ></FileModal>
+
+          <NoteModal
+            show={this.state.showModal == "NoteModal"}
+            args={this.state.itemModalArgs}
+            openDeleteItemModal={this.openDeleteItemModal}
+            onClose={this.onItemModalClose}
+          ></NoteModal>
+
+          <DeleteItemModal
+            show={this.state.showModal == "DeleteItemModal"}
+            folder={folder}
+            args={this.state.itemModalArgs}
+            onClose={(refresh = false) => {
+              this.setState({ showModal: "" });
+              if (refresh === true) {
+                this.props.refreshUserData();
+              }
+            }}
+          ></DeleteItemModal>
+        </div>
       </Col>
     );
   }

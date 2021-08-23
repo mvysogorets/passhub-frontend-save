@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Row from "react-bootstrap/Row";
 
 import Header from "./components/header"
-// import UserManagementPage from "./components/userManagementPage";
+import UserManagementPage from "./components/userManagementPage";
 import MainPage from "./components/mainPage";
 import ViewFile from "./components/viewFile";
 import CopyMoveToast from "./components/copyMoveToast";
@@ -57,6 +57,14 @@ class App extends Component {
     })
   }
 
+  gotoIam = () => {
+    this.setState({
+      page:"Iam",
+      filename:"",
+      blob: null,
+    })
+  }
+
   updateAccountData = (data) => {
     this.setState({accountData:data})
   }
@@ -76,15 +84,18 @@ class App extends Component {
       <Container className='d-flex' style={{flexDirection: "column"}}>
         <Header 
         onSearchChange={this.onSearchStringChange} 
-        searchString = {this.state.searchString} 
+        searchString = {this.state.searchString}
+        mainPage = {this.state.page=="Main"} 
         onAccountMenuCommand={this.onAccountMenuCommand}
         accountData={this.state.AccountData}
         gotoMain={this.gotoMain}
+        gotoIam={this.gotoIam}
         />
 
         <Row className="mainRow">
           <ViewFile 
-            show= {this.state.page == "ViewFile"} 
+            show= {this.state.page == "ViewFile"}
+            gotoMain={this.gotoMain} 
             filename={this.state.filename} 
             blob = {this.state.blob}/>
 
@@ -92,9 +103,14 @@ class App extends Component {
             show={this.state.page=="Main"}
             inMemoryView={this.inMemoryView}
             searchString = {this.state.searchString} 
+            onSearchClear = {() => this.onSearchStringChange('')}
             updateAccountData={this.updateAccountData} 
             ref={this.mainPageRef}/>
-          { /* <UserManagementPage /> */}
+
+          <UserManagementPage 
+            show={this.state.page=="Iam"}
+            gotoMain={this.gotoMain}
+          />
         </Row>
         <Row className="d-none d-sm-block">
           <div style={{height:"3em", display: this.state.page == "Main"? '':"none"}}></div>
