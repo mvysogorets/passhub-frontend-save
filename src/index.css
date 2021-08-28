@@ -121,8 +121,13 @@ table {
 
 .iam_table tbody tr {
   border-bottom: 1px solid #e6e6f0;
-  height: 46px;
-  /*  padding: 7px 0;*/
+  min-height: 48px;
+}
+
+@media (min-width: 576px) {
+  .iam_table tbody tr {
+    min-height: 46px;
+  }
 }
 
 .iam_table tbody tr:hover {
@@ -184,8 +189,13 @@ h1 {
 
 .item_table tbody tr {
   border-bottom: 1px solid #e6e6f0;
-  height: 46px;
-  /*  padding: 7px 0;*/
+  height: 48px;
+}
+
+@media (min-width: 576px) {
+  .item_table tbody tr {
+    min-height: 46px;
+  }
 }
 
 .item_table tbody tr:hover {
@@ -204,8 +214,15 @@ h1 {
 
 .itemModalNav {
   display: flex;
-  justify-content: space-between;
-  padding-top: 18px;
+  padding-top: 0;
+  margin-bottom: 18px;
+}
+
+@media (min-width: 576px) {
+  .itemModalNav {
+    justify-content: space-between;
+    padding-top: 18px;
+  }
 }
 
 .itemModalNav svg {
@@ -213,7 +230,7 @@ h1 {
 }
 .itemModalEditButton {
   display: inline-block;
-  margin: 0 10px;
+  margin-left: 10px;
   border: 1px solid #00bc62;
   color: #009a50;
   border-radius: 12px;
@@ -235,28 +252,25 @@ h1 {
   overflow: hidden;
 }
 
-/*
-.itemModalTitle {
-  border-bottom: 1px solid #dee2e6;
-  font-weight: bold;
-  font-size: 42px;
-  line-height: 57px;
-  padding: 0;
-}
-*/
-
-.itemModalTitle {
-  border-bottom: 1px solid #dee2e6;
-  font-weight: bold;
-  font-size: 24px;
-  line-height: 34px;
-  padding: 0;
+.modalTitle {
+  /* border-bottom: 1px solid #dee2e6; */
+  padding: 32px 0 0 0;
+  display: flex;
+  margin: 0 0 12px 0;
+  align-items: flex-end;
 }
 
+.itemModalTools {
+  flex-shrink: 0;
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: baseline;
+}
 @media (min-width: 576px) {
-  .itemModalTitle {
-    font-size: 35px;
-    line-height: 48px;
+  .itemModalTools {
+    display: block;
+    width: auto;
   }
 }
 
@@ -266,16 +280,17 @@ h1 {
   font-weight: bold;
   font-size: 24px;
   line-height: 34px;
+  margin: 0;
 }
 
 @media (min-width: 576px) {
   .h2 {
     font-size: 35px;
-    line-height: 48px;
+    line-height: 35px;
   }
 }
 
-input.itemModalTitle {
+input.ModalTitle {
   border-top: none;
   border-left: none;
   border-right: none;
@@ -283,11 +298,11 @@ input.itemModalTitle {
   height: auto;
 }
 
-input.itemModalTitle::placeholder {
+input.ModalTitle::placeholder {
   color: #babbc2;
 }
 
-input.itemModalTitle:focus {
+input.ModalTitle:focus {
   border-bottom: 1px solid #dee2e6;
   box-shadow: none;
 }
@@ -369,7 +384,10 @@ input.itemModalTitle:focus {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: conic-gradient(#c4c4c4 25%, #e7e7ee 0%);
+
+  /*  background: conic-gradient(#c4c4c4 25%, #e7e7ee 0%); */
+  background: conic-gradient(#1b1b26 1%, rgba(27, 27, 38, 0.1) 0%);
+
   margin-right: 24px;
 }
 
@@ -515,7 +533,7 @@ input.itemModalTitle:focus {
 .safe_pane {
   background: rgba(27, 27, 38, 0.86);
   color: white;
-  height: 100%;
+  height: 100%; /* safari 13.1*/
   display: flex;
   flex-direction: column;
   padding: 16px 0;
@@ -590,8 +608,8 @@ input.itemModalTitle:focus {
 
 #table_pane {
   background: rgba(255, 255, 255, 1);
-  padding-top: 16px;
-  height: 100%;
+  padding: 16px;
+  height: 100%; /* safari 13.1 */
   flex-direction: column;
 }
 
@@ -708,18 +726,44 @@ input.itemModalTitle:focus {
   border: 1px solid #5f5f68;
 }
 
+/*
 .modal-dialog {
-  max-width: fit-content;
+  max-width: 100%;
+}
+*/
+
+@media (min-width: 768px) {
+  .modal-dialog {
+    min-width: 680px;
+  }
 }
 
 .modal-content {
-  padding: 1rem;
+  padding: 0 1rem 1rem 1rem;
 }
 
 @media (min-width: 576px) {
   .modal-content {
-    width: 680px;
     padding: 0 72px;
+  }
+}
+
+.modal-cross {
+  font-size: 2rem;
+  line-height: 2rem;
+  font-weight: 400;
+  position: absolute;
+  right: 0;
+  top: 16px;
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .modal-cross {
+    margin-right: -50px;
+    color: white;
+    top: 0;
   }
 }
 
@@ -860,9 +904,16 @@ input[type="file"] {
   background: none;
   border: none;
   outline: none;
-  width: 155px;
   height: 48px;
+  width: 126px;
 }
+
+@media (min-width: 576px) {
+  .btn-as-span {
+    width: 155px;
+  }
+}
+
 .btn-as-span svg {
   margin-right: 6px;
 }
@@ -1001,6 +1052,9 @@ h2 {
   border-color: #00bc62;
 }
 
+.note-view {
+  white-space: pre-wrap;
+}
 /*------  UI kit ------------*/
 .h5 {
   /* H5 */

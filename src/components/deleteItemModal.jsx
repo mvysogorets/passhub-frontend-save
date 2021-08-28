@@ -80,7 +80,7 @@ class DeleteItemModal extends Component {
             </span>
           </div>
         </div>
-        <div className="itemModalTitle">{modalTitle}</div>
+        <div className="ModalTitle h2">{modalTitle}</div>
 
         <Modal.Body>
           Do you really want to delete{" "}

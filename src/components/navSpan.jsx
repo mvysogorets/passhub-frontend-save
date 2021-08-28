@@ -133,25 +133,25 @@ class NavSpan extends Component {
             </span>
           </div>
         )}
-        <span
-          onClick={this.showAccountDropDown}
-          style={{
-            width: "40px",
-            height: "40px",
-            padding: "7px 0 0 0",
-            borderRadius: "12px",
-            background: "rgba(255, 255, 255, 0.6)",
-            backdropFilter: "blur(40px)",
-            overflow: "hidden",
-            cursor: "pointer",
-            flex: "none",
-          }}
-        >
-          <svg width="40" height="34" style={{ opacity: 0.8 }}>
-            <use href="#f-account"></use>
-          </svg>
-        </span>
-        {/*
+        <div style={{ display: "flex" }}>
+          <div
+            onClick={this.showAccountDropDown}
+            style={{
+              width: "40px",
+              height: "40px",
+              padding: "7px 0 0 0",
+              borderRadius: "12px",
+              background: "rgba(255, 255, 255, 0.6)",
+              backdropFilter: "blur(40px)",
+              overflow: "hidden",
+              cursor: "pointer",
+              flex: "none",
+            }}
+          >
+            <svg width="40" height="34" style={{ opacity: 0.8 }}>
+              <use href="#f-account"></use>
+            </svg>
+          </div>
           <span
             className="d-none d-sm-inline"
             onClick={this.showAccountDropDown}
@@ -161,7 +161,8 @@ class NavSpan extends Component {
               <use href="#angle"></use>
             </svg>
           </span>
-          */}
+        </div>
+
         <AccountDropDown
           show={this.state.showModal == "AccountDropDown"}
           right={this.right}
@@ -186,6 +187,9 @@ class NavSpan extends Component {
         ></DeleteAccountModal>
         <DeleteAccountFinalModal
           show={this.state.showModal == "delete account final"}
+          onClose={(dummy, next) => {
+            this.setState({ showModal: next ? next : "" });
+          }}
         ></DeleteAccountFinalModal>
         <ContactUsModal
           show={this.state.showModal == "Contact us"}

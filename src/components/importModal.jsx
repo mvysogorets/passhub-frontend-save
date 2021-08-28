@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import ModalCross from "./modalCross";
 
 import importXML from "../lib/importXML";
 import importCSV from "../lib/importCSV";
@@ -28,10 +29,6 @@ class ImportModal extends Component {
       title: e.target.files[0].name,
       errorMsg: "",
     });
-  };
-
-  onClose = () => {
-    this.props.onClose();
   };
 
   uploadImportedData = (safeArray) => {
@@ -129,13 +126,15 @@ class ImportModal extends Component {
     return (
       <Modal
         show={this.props.show}
-        onHide={this.onClose}
+        onHide={this.props.onClose}
         onEnter={this.onEnter}
         animation={false}
       >
-        <Modal.Header closeButton>
-          <h2>Import</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div className="h2">Import</div>
+        </div>
+
         <Modal.Body>
           {this.state.errorMsg != "" ? (
             <p style={{ color: "red" }}>{this.state.errorMsg}</p>
@@ -222,19 +221,10 @@ class ImportModal extends Component {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="outline-secondary"
-            style={{ minWidth: "168px" }}
-            onClick={this.onClose}
-          >
+          <Button variant="outline-secondary" onClick={this.props.onClose}>
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            type="submit"
-            style={{ minWidth: "168px", marginLeft: "12px" }}
-            onClick={this.onSubmit}
-          >
+          <Button variant="primary" type="submit" onClick={this.onSubmit}>
             Import
           </Button>
         </Modal.Footer>

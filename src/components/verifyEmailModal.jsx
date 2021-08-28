@@ -4,6 +4,8 @@ import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
+import ModalCross from "./modalCross";
+
 import InputField from "./inputField";
 
 class VerifyEmailModal extends Component {
@@ -63,9 +65,11 @@ class VerifyEmailModal extends Component {
         animation={false}
         centered
       >
-        <Modal.Header closeButton>
-          <h2>Check your mailbox</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div className="h2">Check your mailbox</div>
+        </div>
+
         <Modal.Body className="edit mb24">
           <div className="mb32">
             Please enter the code we’ve sent to{" "}

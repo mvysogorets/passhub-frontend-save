@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import ModalCross from "./modalCross";
 
 class DeleteFolderModal extends Component {
   state = {
@@ -96,10 +97,13 @@ class DeleteFolderModal extends Component {
         onHide={this.onClose}
         onEnter={this.onEnter}
         animation={false}
+        centered
       >
-        <Modal.Header closeButton>
-          <h2>Delete {folderType}</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div className="h2">Delete {folderType}</div>
+        </div>
+
         <Modal.Body>
           {this.state.phase === "initial" && (
             <p>

@@ -292,10 +292,10 @@ class SafePane extends Component {
         <FolderNameModal
           show={this.state.showModal == "FolderNameModal"}
           args={this.state.folderNameModalArgs}
-          onClose={(refresh = false) => {
+          onClose={(refresh = false, newFolderID) => {
             this.setState({ showModal: "" });
             if (refresh === true) {
-              this.props.refreshUserData();
+              this.props.refreshUserData(newFolderID);
             }
           }}
         ></FolderNameModal>

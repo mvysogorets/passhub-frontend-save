@@ -131,32 +131,47 @@ class MainPage extends Component {
     this.setState({ activeFolder: folder });
   };
 
-  refreshUserData = () => {
+  refreshUserData = (newFolderID) => {
+    let activeFolderID = this.state.activeFolder.id
+      ? this.state.activeFolder.id
+      : null;
+
+    if (newFolderID) {
+      activeFolderID = newFolderID;
+    }
+
     const self = this;
     axios
       .post("../get_user_datar.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
       })
-      .then((result) => {
-        if (result.data.status === "Ok") {
-          const data = result.data.data;
+      .then((response) => {
+        const result = response.data;
+        if (result.status === "Ok") {
+          const data = result.data;
           const safes = data.safes;
           return decryptSafes(safes).then(() => {
             safes.sort((a, b) =>
               a.name.toLowerCase().localeCompare(b.name.toLowerCase())
             );
             normalizeSafes(safes);
-            let activeFolder = getFolderById(data.safes, data.currentSafe);
-            if (!activeFolder) {
+            let activeFolder = getFolderById(data.safes, activeFolderID);
+            console.log("activeFolder ", activeFolder);
+            if (activeFolder === null) {
+              console.log("old activesafe not found");
+              activeFolder = getFolderById(data.safes, data.currentSafe);
+            }
+            if (activeFolder === null) {
+              console.log("recommended activesafe not found");
               activeFolder = safes[0];
-              console.log("activeFolder corrected");
             }
             console.log("setting new state with updated data");
-            self.setState({
+            this.setState({
               safes,
               activeFolder,
             });
           });
+          return;
         }
         if (result.data.status === "login") {
           window.location.href = "expired.php";

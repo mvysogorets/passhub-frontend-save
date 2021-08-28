@@ -17,13 +17,29 @@ class FolderItem extends Component {
       minute: "2-digit",
     });
 
+    const angleIcon = (
+      <svg
+        className="d-sm-none"
+        width="32"
+        height="32"
+        style={{
+          fill: "rgba(27,27,38,0.6)",
+          transform: "rotate(-90deg)",
+          float: "right",
+        }}
+      >
+        <use href="#angle"></use>
+      </svg>
+    );
+
     return (
       <tr>
         <td colspan="3" onClick={this.onClick} style={{ cursor: "pointer" }}>
-          <svg width="16" height="16" className="itemIcon">
+          <svg width="24" height="24" className="itemIcon">
             <use href="#i-folder"></use>
           </svg>
           {item.cleartext[0]}
+          {angleIcon}
         </td>
         <td className="rightAlign d-none d-xl-table-cell">{modified}</td>
       </tr>

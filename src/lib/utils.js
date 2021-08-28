@@ -32,7 +32,7 @@ function serverLog(msg) {
 
 //https://en.wikipedia.org/wiki/List_of_the_most_common_passwords
 const frequentPasswords = [
-"01234567890",
+"01234567890-=",
 "123123321",
 "0000000000",
 "1111111111",
@@ -47,10 +47,11 @@ const frequentPasswords = [
 "1q2w3e4r5t",
 "aa123456789",
 "aaron431",
+"admin1",
 "administrator",
 "access",
 "ashley",
-"asdfghjkl",
+"asdfghjkl;'",
 "azerty",
 "baseball",
 "bailey",
@@ -78,8 +79,8 @@ const frequentPasswords = [
 "princess",
 "qazwsxedc",
 "qqww1122",
-"querty123",
-"quertyiop",
+"qwerty123",
+"qwertyuiop[]\\",
 "shadow",
 "starwars",
 "sunshine",
@@ -88,8 +89,8 @@ const frequentPasswords = [
 "welcome",
 "whatever",
 "zaq1zaq1",
-"zxcvbnm",
-"!@#$%^&*"
+"zxcvbnm,./",
+"!@#$%^&*()_+"
 ];
 
 function isStrongPassword(pw) {

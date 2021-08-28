@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 
 import ItemModalFieldNav from "./itemModalFieldNav";
 import ItemViewIcon from "./itemViewIcon";
+import ModalCross from "./modalCross";
 
 import { putCopyBuffer } from "../lib/copyBuffer";
 
@@ -71,10 +72,13 @@ class ItemModal extends Component {
 
   render() {
     let path = "";
+    let folderName = "";
 
     if (this.props.show) {
       if (this.props.args.item) {
         path = this.props.args.folder.path.join(" > ");
+        folderName =
+          this.props.args.folder.path[this.props.args.folder.path.length - 1];
       }
       if (!this.isShown) {
         this.isShown = true;
@@ -103,64 +107,82 @@ class ItemModal extends Component {
         animation={false}
         centered
       >
-        <div class="itemModalNav">
-          <div className="itemModalPath">{path}</div>
-          <div>
-            {!this.state.edit && (
-              <React.Fragment>
-                <ItemViewIcon iconId="#f-history" opacity="1" title="History" />
-                <ItemViewIcon
-                  iconId="#f-move"
-                  title="Move"
-                  onClick={this.handleMove}
-                />
-                <ItemViewIcon
-                  iconId="#f-copy"
-                  title="Copy"
-                  onClick={this.handleCopy}
-                />
-                <ItemViewIcon
-                  iconId="#f-trash"
-                  title="Delete"
-                  onClick={this.props.args.openDeleteItemModal}
-                />
-                <div class="itemModalEditButton" onClick={this.onEdit}>
-                  <svg
-                    width="24"
-                    height="24"
-                    fill="none"
-                    stroke="#00BC62"
-                    style={{
-                      verticalAlign: "unset",
-                      marginRight: "10px",
-                    }}
-                  >
-                    <use href="#f-edit"></use>
-                  </svg>
-                  <span style={{ verticalAlign: "top" }}>Edit</span>
-                </div>
-              </React.Fragment>
-            )}
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div
+          className="d-sm-none green70"
+          style={{ cursor: "pointer", marginBottom: "18px" }}
+          onClick={() => {
+            /*
+            if (this.props.searchMode) {
+              this.props.onSearchClear();
+            }
 
-            <span
-              style={{
-                fontSize: "2rem",
-                fontWeight: "400",
-                position: "absolute",
-                right: "0",
-                marginRight: "20px",
-                cursor: "pointer",
-              }}
-              onClick={this.props.onClose}
-            >
-              &#215;
-            </span>
-          </div>
+            if (folder.SafeID) {
+              this.props.openParentFolder(folder);
+            } else {
+              document.querySelector("#safe_pane").classList.remove("d-none");
+              document.querySelector("#table_pane").classList.add("d-none");
+            }
+            */
+          }}
+        >
+          <svg
+            width="24"
+            height="24"
+            style={{
+              fill: "#009a50",
+              transform: "rotate(90deg)",
+            }}
+          >
+            <use href="#angle"></use>
+          </svg>
+          {folderName}
+        </div>
+
+        <div class="itemModalNav">
+          <div className="itemModalPath d-none d-sm-block">{path}</div>
+          {!this.state.edit && (
+            <div className="itemModalTools">
+              {/*
+                <ItemViewIcon iconId="#f-history" opacity="1" title="History" />
+                */}
+              <ItemViewIcon
+                iconId="#f-move"
+                title="Move"
+                onClick={this.handleMove}
+              />
+              <ItemViewIcon
+                iconId="#f-copy"
+                title="Copy"
+                onClick={this.handleCopy}
+              />
+              <ItemViewIcon
+                iconId="#f-trash"
+                title="Delete"
+                onClick={this.props.args.openDeleteItemModal}
+              />
+              <div class="itemModalEditButton" onClick={this.onEdit}>
+                <svg
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="#00BC62"
+                  style={{
+                    verticalAlign: "unset",
+                    marginRight: "10px",
+                  }}
+                >
+                  <use href="#f-edit"></use>
+                </svg>
+                <span style={{ verticalAlign: "top" }}>Edit</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {this.state.edit ? (
           <Form.Control
-            className="itemModalTitle"
+            className="ModalTitle h2"
             ref={this.titleInput}
             type="text"
             onChange={this.onTitleChange}
@@ -169,7 +191,9 @@ class ItemModal extends Component {
             placeholder="Title"
           />
         ) : (
-          <div className="itemModalTitle">{this.state.title}</div>
+          <div className="modalTitle">
+            <div className="h2">{this.state.title}</div>
+          </div>
         )}
 
         <Modal.Body className={modalClass}>
@@ -177,15 +201,6 @@ class ItemModal extends Component {
             <div style={{ color: "red" }}>{this.state.errorMsg}</div>
           )}
           {this.props.children}
-
-          {/* this.state.edit && this.state.notes != "" && (
-            <div className="itemModalPlusField">
-              <svg width="24" height="24" fill="none">
-                <use href="#f-plus-field"></use>
-              </svg>
-              Add Notes
-            </div>
-          )*/}
 
           <div className="itemNoteModalField">
             <ItemModalFieldNav name="Note" />
@@ -202,11 +217,14 @@ class ItemModal extends Component {
                   placeholder="Type notes here"
                 ></textarea>
               ) : (
-                <p>{this.state.note}</p>
+                <div class="note-view">{this.state.note}</div>
               )}
             </div>
           </div>
         </Modal.Body>
+        {this.props.errorMsg && this.props.errorMsg.length > 0 && (
+          <div style={{ color: "red" }}>{this.props.errorMsg}</div>
+        )}
 
         {this.state.edit && (
           <Modal.Footer>

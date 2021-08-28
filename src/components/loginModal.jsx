@@ -18,7 +18,8 @@ function drawTotpCircle() {
   const sec = new Date().getTime() / 1000;
   const fract = Math.ceil(((sec % 30) * 10) / 3);
   document.querySelectorAll(".totp_circle").forEach((e) => {
-    e.style.background = `conic-gradient(#c4c4c4 ${fract}%, #e7e7ee 0)`;
+    //    e.style.background = `conic-gradient(#c4c4c4 ${fract}%, #e7e7ee 0)`;
+    e.style.background = `conic-gradient(#1b1b26 ${fract}%, rgba(27, 27, 38, 0.1) 0)`;
   });
   if (Math.floor(sec % 30) == 0) {
     totpTimerListeners.forEach((f) => f());
@@ -323,7 +324,7 @@ class LoginModal extends Component {
             onClick={() => this.setState({ forceTotp: true })}
           >
             <svg width="24" height="24" fill="none">
-              <use href="#f-plus-field"></use>
+              <use href="#f-add"></use>
             </svg>
             Add Google Authenticator
           </div>
@@ -468,149 +469,3 @@ class LoginModal extends Component {
 }
 
 export default LoginModal;
-
-/*
-        <div class="itemModalNav">
-          <div className="itemModalPath">{path}</div>
-          <div>
-            <span
-              style={{
-                fontSize: "2rem",
-                fontWeight: "400",
-                position: "absolute",
-                right: "0",
-                marginRight: "20px",
-                cursor: "pointer",
-              }}
-              onClick={this.props.onClose}
-            >
-              &#215;
-            </span>
-          </div>
-        </div>
-
-        <Modal.Body className={modalClass}>
-          <div className="itemModalField upper">
-            <ItemModalFieldNav copy name="Username" />
-            <div>
-              <input
-                className="lp"
-                onChange={this.onUsernameChange}
-                readOnly={!this.state.edit}
-                spellCheck={false}
-                value={this.state.username}
-              ></input>
-            </div>
-          </div>
-          <div className={`itemModalField lower ${passwordBackground}`}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div style={{ fontSize: "14px" }}>
-                <span style={{ opacity: "0.5" }}>Password</span>
-                {this.state.password.length ? passwordStrength : ""}
-              </div>
-              <div>
-                <span className="iconTitle">Copy</span>
-                <svg
-                  width="24"
-                  height="24"
-                  fill="none"
-                  style={{ opacity: "0.5" }}
-                >
-                  <use href="#f-copy"></use>
-                </svg>
-              </div>
-            </div>
-            <div>
-              <input
-                className="lp"
-                type={passwordType}
-                onChange={this.onPasswordChange}
-                readOnly={!this.state.edit}
-                spellCheck={false}
-                value={this.state.password}
-              ></input>
-            </div>
-          </div>
-          <div
-            className="colored"
-            onClick={this.showPassword}
-            style={{
-              textAlign: "right",
-              margin: "6px 0 16px 0",
-              fontSize: "14px",
-              cursor: "pointer",
-            }}
-          >
-            <svg width="21" height="21" fill="none">
-              <use href="#f-eye"></use>
-            </svg>
-            <span
-              style={{
-                marginLeft: "6px",
-                width: "6.5rem",
-                display: "inline-block",
-              }}
-            >
-              {this.state.showPassword ? "Hide" : "Show"} Password
-            </span>
-          </div>
-
-          <div className="itemModalField">
-            <ItemModalFieldNav copy name="Website Address" />
-            <div>
-              <input
-                onChange={this.onUrlChange}
-                readOnly={!this.state.edit}
-                spellCheck={false}
-                value={this.state.url}
-              ></input>
-            </div>
-          </div>
-
-          <div className="itemModalPlusField">
-            <svg width="24" height="24" fill="none">
-              <use href="#f-plus-field"></use>
-            </svg>
-            Add Google Authenticator
-          </div>
-          <div className="itemModalPlusField">
-            <svg width="24" height="24" fill="none">
-              <use href="#f-plus-field"></use>
-            </svg>
-            Add Notes
-          </div>
-        </Modal.Body>
-            */
-
-/*
-        {this.props.args.item &&
-          this.props.args.item.cleartext[5] &&
-          !this.state.edit && (
-            <div
-              className="itemModalField"
-              style={{ marginBottom: 32 }}
-              onClick={() =>
-                this.copyToClipboard(
-                  document.querySelector(".totp_digits").innerText
-                )
-              }
-            >
-              <ItemModalFieldNav
-                copy={!this.state.edit}
-                name="Google authenticator"
-              />
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <div className="totp_circle"></div>
-                <div className="totp_digits"></div>
-              </div>
-            </div>
-          )}
-        {this.state.edit && (
-          <div className="itemModalPlusField">
-            <svg width="24" height="24" fill="none">
-              <use href="#f-plus-field"></use>
-            </svg>
-            Add Google Authenticator
-          </div>
-        )}
-*/

@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import ModalCross from "./modalCross";
 
 import { contextMenu, Menu, Item, Separator, Submenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
@@ -347,12 +348,16 @@ class ShareModal extends Component {
         animation={false}
         centered
       >
-        <Modal.Header closeButton>
-          <svg width="32" height="32" style={{ margin: "8px 10px 0 0" }}>
-            <use href="#f-safe"></use>
-          </svg>
-          <h2>{title}</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div>
+            <svg width="32" height="32" style={{ margin: "8px 10px 0 0" }}>
+              <use href="#f-safe"></use>
+            </svg>
+          </div>
+
+          <div className="h2">{title}</div>
+        </div>
 
         <Modal.Body className="edit">
           {this.isAdmin && (

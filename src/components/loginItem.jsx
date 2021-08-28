@@ -21,7 +21,7 @@ class LoginItem extends Component {
     return (
       <tr>
         <td onClick={this.showModal} style={{ cursor: "pointer" }}>
-          <svg width="16" height="16" className="itemIcon">
+          <svg width="24" height="24" className="itemIcon">
             <use href="#i-key"></use>
           </svg>
           {item.cleartext[0]}

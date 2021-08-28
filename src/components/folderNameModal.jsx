@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
+import ModalCross from "./modalCross";
+import InputField from "./inputField";
 
 import axios from "axios";
 
@@ -18,7 +19,7 @@ class FolderNameModal extends Component {
   }
 
   onShow = () => {
-    this.textInput.current.focus();
+    // this.textInput.current.focus();
   };
 
   onClose = () => {
@@ -34,7 +35,7 @@ class FolderNameModal extends Component {
       })
       .then((result) => {
         if (result.data.status === "Ok") {
-          this.props.onClose(true);
+          this.props.onClose(true, result.data.id);
         }
         if (result.data.status === "login") {
           window.location.href = "expired.php";
@@ -89,7 +90,7 @@ class FolderNameModal extends Component {
           const result = reply.data;
           if (result.status === "Ok") {
             // safes.setNewFolderID(result.id);
-            this.props.onClose(true);
+            this.props.onClose(true, result.id);
             return;
           }
           if (result.status === "login") {
@@ -173,20 +174,6 @@ class FolderNameModal extends Component {
   handleChange = (e) => this.setState({ name: e.target.value, error_msg: "" });
 
   render() {
-    this.title = "Create";
-    let icon = "#f-safe";
-
-    if (this.props.args.folder) {
-      [this.title, icon] =
-        this.props.args.folder.path.length < 2
-          ? ["Rename Safe", "#f-safe"]
-          : ["Rename Folder", "#f-folderSimplePlus"];
-    } else {
-      [this.title, icon] = this.props.args.parent
-        ? ["Create Folder", "#f-folderSimplePlus"]
-        : ["Create Safe", "#f-safe"];
-    }
-
     if (this.props.show) {
       if (!this.isShown) {
         this.isShown = true;
@@ -201,34 +188,51 @@ class FolderNameModal extends Component {
       }
     } else {
       this.isShown = false;
+      return null;
+    }
+
+    this.title = "Create";
+    let icon = "#f-safe";
+
+    if (this.props.args.folder) {
+      [this.title, icon] =
+        this.props.args.folder.path.length < 2
+          ? ["Rename Safe", "#f-safe"]
+          : ["Rename Folder", "#f-folderSimplePlus"];
+    } else {
+      [this.title, icon] = this.props.args.parent
+        ? ["Create Folder", "#f-folderSimplePlus"]
+        : ["Create Safe", "#f-safe"];
     }
 
     return (
       <Modal
         show={this.props.show}
-        onShow={this.onShow}
         onHide={this.onClose}
         animation={false}
         centered
       >
-        <Modal.Header closeButton>
-          <svg width="32" height="32" style={{ margin: "8px 10px 0 0" }}>
-            <use href={icon}></use>
-          </svg>
-          <h2>{this.title}</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+
+        <div className="modalTitle">
+          <div>
+            <svg width="32" height="32" style={{ margin: "8px 10px 0 0" }}>
+              <use href={icon}></use>
+            </svg>
+          </div>
+
+          <div className="h2">{this.title}</div>
+        </div>
         {this.title == "Create Safe" && <div>Shareable top-level folder</div>}
-        <Modal.Body>
-          <Form.Group>
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              ref={this.textInput}
-              type="text"
-              spellCheck={false}
-              onChange={this.handleChange}
-              value={this.state.name}
-            />
-          </Form.Group>
+
+        <Modal.Body className="edit">
+          <InputField
+            id="folderNameModalInput"
+            label="Name"
+            value={this.state.name}
+            edit
+            onChange={this.handleChange}
+          ></InputField>
           {this.state.error_msg.length > 0 && (
             <div style={{ color: "red" }}>{this.state.error_msg}</div>
           )}
@@ -248,3 +252,20 @@ class FolderNameModal extends Component {
 }
 
 export default FolderNameModal;
+
+/*           &#215;
+
+          <Form.Group>
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              ref={this.textInput}
+              type="text"
+              spellCheck={false}
+              onChange={this.handleChange}
+              value={this.state.name}
+            />
+          </Form.Group>
+
+
+
+*/

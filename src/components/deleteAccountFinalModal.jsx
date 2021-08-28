@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import ModalCross from "./modalCross";
 
 class DeleteAccountFinalModal extends Component {
   state = {};
@@ -13,9 +14,11 @@ class DeleteAccountFinalModal extends Component {
         animation={false}
         centered
       >
-        <Modal.Header>
-          <h2>Close my account</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div className="h2">Close my account</div>
+        </div>
+
         <Modal.Body style={{ marginBottom: "24px" }}></Modal.Body>
         <div style={{ marginBottom: "48px" }}>
           You are about to lose all your data stored in PassHub and you will be

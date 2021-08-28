@@ -12,7 +12,6 @@ class SuccessModal extends Component {
         animation={false}
         centered
       >
-        <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
           <div
             style={{

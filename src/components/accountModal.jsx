@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import ModalCross from "./modalCross";
 
 import axios from "axios";
 
@@ -105,9 +106,11 @@ class AccountModal extends Component {
         animation={false}
         centered
       >
-        <Modal.Header closeButton>
-          <h2>Account Setting</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div className="h2">Account Setting</div>
+        </div>
+
         <Modal.Body style={{ marginBottom: "24px" }}>
           {this.props.accountData.plan && (
             <div style={{ marginBottom: "32px" }}>
@@ -150,15 +153,31 @@ class AccountModal extends Component {
             </InputField>
           ) : (
             <div
+              className="itemModalField"
               style={{
-                background: "#00BC62",
-                opacity: ".1",
-                borderRadius: "16px",
+                marginBottom: 62,
+                position: "relative",
+                background: "#E6F8EF",
               }}
+              onClick={this.onMailClick}
             >
-              <div>
-                an email is needed so that other users can share safes with you,
-                as well as to subscribe to news and updates
+              <div
+                style={{
+                  margin: "12px auto",
+                  color: "#009A50",
+                  display: "table",
+                }}
+              >
+                <div style={{ marginBottom: "10px" }}>
+                  <svg width="24" height="24" style={{ marginRight: "10px" }}>
+                    <use href="#f-add"></use>
+                  </svg>
+                  Add email
+                </div>
+                <div style={{ fontSize: "14px" }}>
+                  an email is needed so that other users can share safes with
+                  you, as well as to subscribe to news and updates
+                </div>
               </div>
             </div>
           )}
@@ -203,3 +222,17 @@ class AccountModal extends Component {
 }
 
 export default AccountModal;
+
+/*
+            <div
+              style={{
+                background: "#00BC62",
+                opacity: ".1",
+                borderRadius: "16px",
+              }}
+            >
+              <div>
+                an email is needed so that other users can share safes with you,
+                as well as to subscribe to news and updates
+              </div>
+</div> */

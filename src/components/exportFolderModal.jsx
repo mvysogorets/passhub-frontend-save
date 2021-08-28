@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import ModalCross from "./modalCross";
 
 import { saveAs } from "file-saver";
 
@@ -70,9 +71,10 @@ class ExportFolderModal extends Component {
         onEnter={this.onEnter}
         animation={false}
       >
-        <Modal.Header closeButton>
-          <h2>{title}</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div className="h2">{title}</div>
+        </div>
         <Modal.Body>
           <div style={{ marginBottom: 32 }}>
             {formatEntries.map((e) => (

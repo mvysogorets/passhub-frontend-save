@@ -203,31 +203,17 @@ class AccountDropDown extends Component {
             Account settings
           </div>
 
-          {accountData.site_admin ? (
-            <div
-              className="account-menu-item"
-              onClick={(e) => {
-                this.handleMenuCommand(e, "Iam");
-              }}
-            >
-              <svg width="24" height="24" stroke="#5F5F67">
-                <use href="#i-wrench"></use>
-              </svg>
-              Users
-            </div>
-          ) : (
-            <div
-              className="account-menu-item"
-              onClick={(e) => {
-                this.handleMenuCommand(e, "Help");
-              }}
-            >
-              <svg width="24" height="24">
-                <use href="#f-lightbulb"></use>
-              </svg>
-              How it works (Help)
-            </div>
-          )}
+          <div
+            className="account-menu-item"
+            onClick={(e) => {
+              this.handleMenuCommand(e, "Help");
+            }}
+          >
+            <svg width="24" height="24">
+              <use href="#f-lightbulb"></use>
+            </svg>
+            How it works (Help)
+          </div>
 
           <div
             className="account-menu-item"
@@ -247,15 +233,30 @@ class AccountDropDown extends Component {
             </svg>
             Import
           </div>
-          <div
-            className="account-menu-item"
-            onClick={(e) => this.handleMenuCommand(e, "Contact us")}
-          >
-            <svg width="24" height="24">
-              <use href="#f-chatCircleText"></use>
-            </svg>
-            Contact us
-          </div>
+
+          {accountData.site_admin ? (
+            <div
+              className="account-menu-item"
+              onClick={(e) => {
+                this.handleMenuCommand(e, "Iam");
+              }}
+            >
+              <svg width="24" height="24" stroke="#5F5F67">
+                <use href="#i-wrench"></use>
+              </svg>
+              Users
+            </div>
+          ) : (
+            <div
+              className="account-menu-item"
+              onClick={(e) => this.handleMenuCommand(e, "Contact us")}
+            >
+              <svg width="24" height="24">
+                <use href="#f-chatCircleText"></use>
+              </svg>
+              Contact us
+            </div>
+          )}
           <div
             className="account-menu-item"
             style={{

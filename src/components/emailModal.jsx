@@ -3,6 +3,7 @@ import axios from "axios";
 
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import ModalCross from "./modalCross";
 
 import InputField from "./inputField";
 
@@ -73,9 +74,11 @@ class EmailModal extends Component {
         animation={false}
         centered
       >
-        <Modal.Header closeButton>
-          <h2>{title}</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div className="h2">{title}</div>
+        </div>
+
         <Modal.Body className="edit mb32">
           <InputField
             id="mailModalInput"

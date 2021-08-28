@@ -268,6 +268,8 @@ class FileModal extends Component {
             window.location.href = "expired.php";
             return;
           }
+          this.setState({ errorMsg: result.status });
+          return;
         })
         .catch((err) => {});
     };
@@ -302,6 +304,7 @@ class FileModal extends Component {
         onClose={this.props.onClose}
         ref={this.wrapperComponent}
         onSubmit={this.onSubmit}
+        errorMsg={this.state.errorMsg}
       >
         {!this.props.args.item ? (
           <div
@@ -320,7 +323,7 @@ class FileModal extends Component {
               }}
             >
               <svg width="24" height="24">
-                <use href="#f-addfile"></use>
+                <use href="#f-add"></use>
               </svg>
               <b>Upload file</b>
               <div>or drag & drop it here</div>

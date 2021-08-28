@@ -3,6 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 
+import ModalCross from "./modalCross";
 class DelUserModal extends Component {
   /*
   state = {
@@ -46,9 +47,11 @@ class DelUserModal extends Component {
   render() {
     return (
       <Modal show={this.props.data.show} onHide={this.closeModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Delete User</Modal.Title>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div className="h2">Delete User</div>
+        </div>
+
         <Modal.Body>
           <div>email: {this.props.data.email}</div>
           <div>id: {this.props.data.id}</div>

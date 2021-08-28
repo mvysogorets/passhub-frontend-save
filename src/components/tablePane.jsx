@@ -16,7 +16,7 @@ import NoteModal from "./noteModal";
 import FileModal from "./fileModal";
 import DeleteItemModal from "./deleteItemModal";
 import AddDropUp from "./addDropUp";
-import FolderMenu from "./folderMenu";
+import FolderMenuMobile from "./folderMenuMobile";
 
 const ADD_BUTTON_MENU_ID = "add-menu-id";
 
@@ -95,15 +95,6 @@ class TablePane extends Component {
       </Item>
     </Menu>
   );
-
-  /*  
-  showAddMenu = (e) => {
-    contextMenu.show({
-      id: ADD_BUTTON_MENU_ID,
-      event: e,
-    });
-  };
-*/
 
   showAddMenu = (e) => {
     this.setState({
@@ -231,8 +222,8 @@ class TablePane extends Component {
             }}
           >
             <div className="h5">{folder.path[folder.path.length - 1]}</div>
-            {!this.props.searchMode && (
-              <FolderMenu
+            {!this.props.searchMode && true && (
+              <FolderMenuMobile
                 node={folder}
                 onMenuCmd={this.handleFolderMenuCmd}
                 color="black"

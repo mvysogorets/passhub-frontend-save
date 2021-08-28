@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import ModalCross from "./modalCross";
 
 import axios from "axios";
 
@@ -72,9 +73,10 @@ class ContactUsModal extends Component {
         animation={false}
         centered
       >
-        <Modal.Header closeButton>
-          <h2>Contact Us</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div className="h2">Contact us</div>
+        </div>
         <Modal.Body className="edit" style={{ marginBottom: "24px" }}>
           {this.state.errorMsg.length > 0 && (
             <p style={{ color: "red" }}>{this.state.errorMsg}</p>

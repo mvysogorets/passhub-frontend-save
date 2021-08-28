@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 
 import InputField from "./inputField";
+import ModalCross from "./modalCross";
 import TextAreaField from "./textAreaField";
 
 class UpgradeModal extends Component {
@@ -72,9 +73,11 @@ class UpgradeModal extends Component {
         animation={false}
         centered
       >
-        <Modal.Header closeButton>
-          <h2>Upgrade to Premium</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div className="h2">Upgrade to Premium</div>
+        </div>
+
         <Modal.Body className="edit" style={{ marginBottom: "24px" }}>
           <div style={{ marginBottom: "32px" }}>
             Get unlimited records and 1GB of free space

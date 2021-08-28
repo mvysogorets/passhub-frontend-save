@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import ModalCross from "./modalCross";
 
 class DeleteAccountModal extends Component {
   state = {};
@@ -13,9 +14,11 @@ class DeleteAccountModal extends Component {
         animation={false}
         centered
       >
-        <Modal.Header>
-          <h2>Before shutting down your account</h2>
-        </Modal.Header>
+        <ModalCross onClose={this.props.onClose}></ModalCross>
+        <div className="modalTitle">
+          <div className="h2">Before shutting down your account</div>
+        </div>
+
         <Modal.Body style={{ marginBottom: "24px" }}></Modal.Body>
         <div style={{ marginBottom: "8px" }}>
           <b>Be sure</b> to transfer ownership of your shared safes to your

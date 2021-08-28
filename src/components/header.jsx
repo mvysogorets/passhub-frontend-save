@@ -16,7 +16,7 @@ class Header extends Component {
               margin: "20px auto 12px auto",
               display: "flex",
               justifyContent: "space-between",
-              alignItems: "baseline",
+              alignItems: "center",
             }}
           >
             <div>
