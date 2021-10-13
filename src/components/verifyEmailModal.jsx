@@ -42,7 +42,7 @@ class VerifyEmailModal extends Component {
         this.setState({ errorMsg: result.status });
       })
       .catch((err) => {
-        this.setState({ errorMsg: err });
+        this.setState({ errorMsg: "Server error. Please try again later" });
       });
   };
 

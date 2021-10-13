@@ -172,7 +172,7 @@ class NavSpan extends Component {
           accountData={this.state.accountData}
         />
         <AccountModal
-          show={this.state.showModal == "Account settings"}
+          show={this.state.showModal === "Account settings"}
           accountData={this.state.accountData}
           getAccountData={this.getAccountData}
           onClose={(dummy, next) => {
@@ -180,37 +180,48 @@ class NavSpan extends Component {
           }}
         ></AccountModal>
         <DeleteAccountModal
-          show={this.state.showModal == "delete account"}
+          show={this.state.showModal === "delete account"}
           onClose={(dummy, next) => {
             this.setState({ showModal: next ? next : "" });
           }}
         ></DeleteAccountModal>
         <DeleteAccountFinalModal
-          show={this.state.showModal == "delete account final"}
+          show={this.state.showModal === "delete account final"}
           onClose={(dummy, next) => {
             this.setState({ showModal: next ? next : "" });
           }}
         ></DeleteAccountFinalModal>
         <ContactUsModal
-          show={this.state.showModal == "Contact us"}
-          onClose={(dummy, success) => {
-            this.setState({ showModal: success ? "success" : "" });
+          show={this.state.showModal === "Contact us"}
+          onClose={(dummy, next) => {
+            this.setState({ showModal: next ? next : "" });
           }}
         ></ContactUsModal>
         <SuccessModal
-          show={this.state.showModal == "success"}
+          show={this.state.showModal === "success"}
           onClose={() => {
             this.setState({ showModal: "" });
           }}
-        ></SuccessModal>
+        >
+          Your message has been sent
+        </SuccessModal>
+        <SuccessModal
+          show={this.state.showModal === "account deleted"}
+          onClose={() => {
+            this.setState({ showModal: "" });
+            window.location.href = "logout.php";
+          }}
+        >
+          Your account has been deleted
+        </SuccessModal>
         <UpgradeModal
-          show={this.state.showModal == "upgrade"}
+          show={this.state.showModal === "upgrade"}
           onClose={() => {
             this.setState({ showModal: "" });
           }}
         ></UpgradeModal>
         <EmailModal
-          show={this.state.showModal == "email"}
+          show={this.state.showModal === "email"}
           accountData={this.state.accountData}
           onClose={(dummy, next, email) => {
             this.setState({
@@ -220,7 +231,7 @@ class NavSpan extends Component {
           }}
         ></EmailModal>
         <VerifyEmailModal
-          show={this.state.showModal == "verifyEmail"}
+          show={this.state.showModal === "verifyEmail"}
           emailToVerify={this.state.emailToVerify}
           onClose={(dummy, next) => {
             this.setState({ showModal: next ? "Contact us" : "" });

@@ -33,15 +33,22 @@ class FolderItem extends Component {
     );
 
     return (
-      <tr>
-        <td colspan="3" onClick={this.onClick} style={{ cursor: "pointer" }}>
+      <tr className="d-flex" style={{ alignItems: "center" }}>
+        <td
+          colspan="3"
+          className="col-md-12 col-lg-8 col-xl-9"
+          onClick={this.onClick}
+          style={{ cursor: "pointer" }}
+        >
           <svg width="24" height="24" className="itemIcon">
             <use href="#i-folder"></use>
           </svg>
           {item.cleartext[0]}
           {angleIcon}
         </td>
-        <td className="rightAlign d-none d-xl-table-cell">{modified}</td>
+        <td className="column-modified d-none d-xl-table-cell col-xl-3">
+          {modified}
+        </td>
       </tr>
     );
   }
