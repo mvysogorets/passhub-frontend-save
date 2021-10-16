@@ -17,10 +17,14 @@ class Header extends Component {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              maxWidth: this.props.narrowPage ? "680px" : "",
             }}
           >
             <div>
-              <span onClick={this.props.gotoMain}>
+              <span
+                onClick={this.props.gotoMain}
+                style={{ cursor: this.props.mainPage ? "default" : "pointer" }}
+              >
                 <img
                   src="public/img/new_ph_logo.svg"
                   alt="logo"

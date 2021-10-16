@@ -103,7 +103,7 @@ class ExportFolderModal extends Component {
                 </div>
                 <div>
                   <div>{e.format}</div>
-                  <div style={{ fontSize: 13, opacity: 0.5 }}>{e.comment}</div>
+                  <div style={{ fontSize: 13, opacity: 0.7 }}>{e.comment}</div>
                 </div>
               </div>
             ))}

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { contextMenu, Menu, Item, Separator, Submenu } from "react-contexify";
+import { contextMenu, Menu, Item, theme } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 import { isCopyBufferEmpty } from "../lib/copyBuffer";
 
@@ -15,7 +15,7 @@ class FolderMenu extends Component {
   };
 
   folderMenu = (
-    <Menu id={FOLDER_MENU_ID}>
+    <Menu id={FOLDER_MENU_ID} theme={theme.dark}>
       <Item
         onClick={() => {
           this.handleItemClick("rename");

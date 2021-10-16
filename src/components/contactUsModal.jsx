@@ -8,6 +8,8 @@ import axios from "axios";
 import InputField from "./inputField";
 import TextAreaField from "./textAreaField";
 
+import progress from "../lib/progress";
+
 class ContactUsModal extends Component {
   state = { name: "", email: "", message: "", errorMsg: "" };
 
@@ -30,7 +32,7 @@ class ContactUsModal extends Component {
       this.setState({ errorMsg: "please fill in the message field" });
       return;
     }
-
+    progress.lock();
     axios
       .post("contact_us.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
@@ -39,6 +41,7 @@ class ContactUsModal extends Component {
         message: this.state.message,
       })
       .then((reply) => {
+        progress.unlock();
         const result = reply.data;
         if (result.status === "Ok") {
           this.props.onClose(1, "success");
@@ -51,7 +54,10 @@ class ContactUsModal extends Component {
         this.setState({ errorMsg: result.status });
       })
       .catch((err) => {
-        this.setState({ errorMsg: err });
+        progress.unlock();
+        this.setState({
+          errorMsg: "Error sending email. Please try again later",
+        });
       });
   };
 

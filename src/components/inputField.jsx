@@ -18,7 +18,7 @@ class InputField extends Component {
           !this.props.edit) && (
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ fontSize: "14px" }}>
-              <span style={{ opacity: "0.5" }}>
+              <span style={{ color: "#1b1b26", opacity: "0.7" }}>
                 <label htmlFor={this.props.id} style={{ margin: 0 }}>
                   {this.props.value.length ? this.props.label : ""}
                 </label>

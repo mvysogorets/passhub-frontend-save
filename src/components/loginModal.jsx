@@ -13,13 +13,15 @@ import copyToClipboard from "../lib/copyToClipboard";
 import ItemModalFieldNav from "./itemModalFieldNav";
 
 import ItemModal from "./itemModal";
+import GeneratePasswordModal from "./generatePasswordModal";
 
 function drawTotpCircle() {
   const sec = new Date().getTime() / 1000;
   const fract = Math.ceil(((sec % 30) * 10) / 3);
   document.querySelectorAll(".totp_circle").forEach((e) => {
-    //    e.style.background = `conic-gradient(#c4c4c4 ${fract}%, #e7e7ee 0)`;
-    e.style.background = `conic-gradient(#1b1b26 ${fract}%, rgba(27, 27, 38, 0.1) 0)`;
+    // e.style.background = `conic-gradient(#c4c4c4 ${fract}%, #e7e7ee 0)`;
+    e.style.background = `conic-gradient(rgba(27, 27, 38, 0.235) ${fract}%, rgba(27, 27, 38, 0.1) 0)`;
+    // e.style.background = `(conic-gradient(red ${fract}%, grey 0)`;
   });
   if (Math.floor(sec % 30) == 0) {
     totpTimerListeners.forEach((f) => f());
@@ -56,6 +58,8 @@ class LoginModal extends Component {
     url: "",
     forceTotp: false,
     totpSecret: "",
+    showModal: "",
+    errorMsg: "",
   };
 
   timerEvent = () => {
@@ -78,6 +82,8 @@ class LoginModal extends Component {
 
   onEdit = () => {
     this.setState({ edit: true, forceTotp: false });
+    // this.props.onClose();
+    // this.props.args.showItemPane(this.props.args);
   };
 
   onUsernameChange = (e) => this.setState({ username: e.target.value });
@@ -110,11 +116,24 @@ class LoginModal extends Component {
 
     const options = {};
 
+    const safe = this.props.args.safe;
+
+    const aesKey = safe.bstringKey;
+    const SafeID = safe.id;
+
+    let folderID = 0;
+    if (this.props.args.item) {
+      folderID = this.props.args.item.folder;
+    } else if (this.props.args.folder.safe) {
+      folderID = this.props.args.folder.id;
+    }
+
+    /*
     const folder = this.props.args.folder;
     const [aesKey, SafeID, folderID] = folder.safe
       ? [folder.safe.bstringKey, folder.safe.id, folder.id]
       : [folder.bstringKey, folder.id, 0];
-
+*/
     const eData = passhubCrypto.encryptItem(pData, aesKey, options);
     const data = {
       verifier: document.getElementById("csrf").getAttribute("data-csrf"),
@@ -125,7 +144,6 @@ class LoginModal extends Component {
     if (this.props.args.item) {
       data.entryID = this.props.args.item._id;
     }
-
     axios
       .post("items.php", data)
       .then((reply) => {
@@ -142,15 +160,13 @@ class LoginModal extends Component {
           window.location.href = "expired.php";
           return;
         }
-        if (result.status === "no rights") {
-          // showAlert("Sorry, you do not have editor rights for this safe");
-          return;
-        }
-        // showAlert(result.status);
+        this.setState({ errorMsg: result.status });
+        return;
       })
-      .catch(
-        (err) => {} /*modalAjaxError($("#safe_users_alert"), "", "", err)*/
-      );
+      .catch((err) => {
+        console.log("err ", err);
+        this.setState({ errorMsg: "Server error. Please try again later" });
+      });
   };
 
   showOTP = () => {
@@ -198,28 +214,32 @@ class LoginModal extends Component {
   };
 
   render() {
-    if (this.props.show) {
-      if (!this.isShown) {
-        this.isShown = true;
-        this.state.showPassword = false;
-        if (this.props.args.item) {
-          this.state.username = this.props.args.item.cleartext[1];
-          this.state.password = this.props.args.item.cleartext[2];
-          this.state.url = this.props.args.item.cleartext[3];
-          this.state.edit = false;
-          this.state.totpSecret =
-            this.props.args.item.cleartext.length > 5
-              ? this.props.args.item.cleartext[5].toUpperCase()
-              : "";
-        } else {
-          this.state.username = "";
-          this.state.password = "";
-          this.state.url = "";
-          this.state.edit = true;
-        }
-      }
-    } else {
+    if (!this.props.show) {
       this.isShown = false;
+      return null;
+    }
+
+    if (!this.isShown) {
+      this.isShown = true;
+      this.state.errorMsg = "";
+
+      this.state.showPassword = false;
+      if (this.props.args.item) {
+        this.state.username = this.props.args.item.cleartext[1];
+        this.state.password = this.props.args.item.cleartext[2];
+        this.state.url = this.props.args.item.cleartext[3];
+        this.state.edit = false;
+        this.state.totpSecret =
+          this.props.args.item.cleartext.length > 5
+            ? this.props.args.item.cleartext[5].toUpperCase()
+            : "";
+      } else {
+        this.state.username = "";
+        this.state.password = "";
+        this.state.url = "";
+        this.state.totpSecret = "";
+        this.state.edit = true;
+      }
     }
 
     let passwordType = this.state.showPassword ? "text" : "password";
@@ -339,6 +359,7 @@ class LoginModal extends Component {
         onClose={this.props.onClose}
         onEdit={this.onEdit}
         onSubmit={this.onSubmit}
+        errorMsg={this.state.errorMsg}
       >
         <div
           className="itemModalField upper"
@@ -378,13 +399,13 @@ class LoginModal extends Component {
         >
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ fontSize: "14px" }}>
-              <span style={{ opacity: "0.5" }}>Password</span>
+              <span style={{ color: "#1b1b26", opacity: "0.7" }}>Password</span>
               {this.state.password.length ? passwordStrength : ""}
             </div>
             {!this.state.edit && (
               <div>
                 <span className="iconTitle">Copy</span>
-                <svg width="24" height="24" fill="none">
+                <svg width="24" height="24" fill="none" stroke="#1b1b26">
                   <use href="#f-copy"></use>
                 </svg>
               </div>
@@ -404,28 +425,61 @@ class LoginModal extends Component {
             <div style={{ margin: "0 auto" }}>Copied &#10003;</div>
           </div>
         </div>
-        <div
-          className="colored"
-          onClick={this.showPassword}
-          style={{
-            textAlign: "right",
-            margin: "6px 0 16px 0",
-            fontSize: "14px",
-            cursor: "pointer",
-          }}
-        >
-          <svg width="21" height="21" fill="none">
-            <use href="#f-eye"></use>
-          </svg>
-          <span
+
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {this.state.edit ? (
+            <div
+              className="green70"
+              onClick={() =>
+                this.setState({ showModal: "GeneratePasswordModal" })
+              }
+              style={{
+                margin: "8px 0 16px",
+                padding: "8px 0 15px",
+                fontSize: "14px",
+                cursor: "pointer",
+              }}
+            >
+              <svg width="24" height="24" fill="none">
+                <use href="#f-shieldShevron"></use>
+              </svg>
+              <span
+                style={{
+                  marginLeft: "6px",
+                  display: "inline-block",
+                }}
+              >
+                Generate password
+              </span>
+            </div>
+          ) : (
+            <div></div>
+          )}
+
+          <div
+            className="green70"
+            onClick={this.showPassword}
             style={{
-              marginLeft: "6px",
-              width: "6.5rem",
-              display: "inline-block",
+              textAlign: "right",
+              margin: "8px 0 16px",
+              padding: "8px 0 15px",
+              fontSize: "14px",
+              cursor: "pointer",
             }}
           >
-            {this.state.showPassword ? "Hide" : "Show"} Password
-          </span>
+            <svg width="21" height="21" fill="none">
+              <use href="#f-eye"></use>
+            </svg>
+            <span
+              style={{
+                marginLeft: "6px",
+                width: "6.5rem",
+                display: "inline-block",
+              }}
+            >
+              {this.state.showPassword ? "Hide" : "Show"} Password
+            </span>
+          </div>
         </div>
         <div
           className="itemModalField"
@@ -463,6 +517,16 @@ class LoginModal extends Component {
           </div>
         </div>
         {totp}
+
+        <GeneratePasswordModal
+          show={this.state.showModal == "GeneratePasswordModal"}
+          onClose={(dummy, newPassword) => {
+            this.setState({ showModal: "" });
+            if (newPassword) {
+              this.setState({ password: newPassword });
+            }
+          }}
+        ></GeneratePasswordModal>
       </ItemModal>
     );
   }

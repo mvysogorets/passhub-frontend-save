@@ -50,7 +50,7 @@ class InviteDiv extends Component {
         self.setState({ errorMsg: result.data.status });
       })
       .catch((error) => {
-        self.setState({ errorMsg: error });
+        this.setState({ errorMsg: "Server error. Please try again later" });
       });
   };
 

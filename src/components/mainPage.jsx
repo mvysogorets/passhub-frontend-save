@@ -7,7 +7,67 @@ import * as extensionInterface from "../lib/extensionInterface";
 
 import SafePane from "./safePane";
 import TablePane from "./tablePane";
+import ImportModal from "./importModal";
 import IdleModal from "./idleModal";
+
+import progress from "../lib/progress";
+
+const mockData = {
+  safes: [
+    {
+      name: "Mock Safe",
+      id: 1,
+      path: ["Mock Safe"],
+      items: [],
+      folders: [
+        {
+          SafeID: 1,
+          id: "f1",
+          path: ["Mock Safe", "Mock Folder"],
+          name: "Mock Folder",
+          cleartext: ["Mock Folder"],
+          parent: 0,
+          folders: [],
+          lastModified: "2021-08-27T02:01:20+00:00",
+          items: [
+            {
+              SafeID: 1,
+              folder: "f1",
+              cleartext: [
+                "Gmail",
+                "alice",
+                "kjhgqw",
+                "https://gmail.com",
+                "Work mail",
+              ],
+              path: ["Mock Safe", "Mock Folder"],
+              lastModified: "2021-08-27T02:01:20+00:00",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "Private",
+      id: 2,
+      path: ["Private"],
+      items: [],
+      folders: [
+        {
+          SafeID: 2,
+          id: "f21",
+          path: ["Private", "SubFolder"],
+          name: "SubFolder",
+          cleartext: ["SubFolder"],
+          parent: 0,
+          folders: [],
+          items: [],
+        },
+      ],
+    },
+    { name: "Work", id: 3, path: ["Work"], items: [], folders: [] },
+  ],
+};
 
 function decryptSafeData(aesKey, safe) {
   for (let i = 0; i < safe.items.length; i += 1) {
@@ -102,8 +162,20 @@ function normalizeSafes(safes) {
 class MainPage extends Component {
   state = {
     safes: [],
+    openNodes: new Set(),
     activeFolder: null,
     idleTimeoutAlert: false,
+    showModal: "",
+  };
+
+  handleOpenFolder = (folder) => {
+    const openNodesCopy = new Set(this.state.openNodes);
+    if (this.state.openNodes.has(folder.id)) {
+      openNodesCopy.delete(folder.id);
+    } else {
+      openNodesCopy.add(folder.id);
+    }
+    this.setState({ openNodes: openNodesCopy });
   };
 
   constructor(props) {
@@ -120,6 +192,14 @@ class MainPage extends Component {
 
   onAccountMenuCommand = (cmd) => {
     console.log("main: " + cmd);
+
+    if (cmd === "Import") {
+      this.setState({
+        showModal: "ImportModal",
+      });
+      return;
+    }
+
     this.safePaneRef.current.onAccountMenuCommand(cmd);
   };
 
@@ -128,7 +208,38 @@ class MainPage extends Component {
   };
 
   setActiveFolder = (folder) => {
+    this.props.onSearchClear();
+
+    if (folder.SafeID) {
+      // isFolder
+      const openNodesCopy = new Set(this.state.openNodes);
+      let parentID = folder.parent;
+      while (parentID != 0) {
+        if (!this.state.openNodes.has(parentID)) {
+          openNodesCopy.add(parentID);
+        }
+        let parentFolder = getFolderById(this.state.safes, parentID);
+        parentID = parentFolder.parent;
+      }
+      if (!this.state.openNodes.has(folder.SafeID)) {
+        openNodesCopy.add(folder.SafeID);
+      }
+      this.setState({ openNodes: openNodesCopy });
+    }
+
     this.setState({ activeFolder: folder });
+  };
+
+  openParentFolder = (folder) => {
+    if (!folder.SafeID) {
+      return;
+    }
+    if (folder.parent == 0) {
+      this.setActiveFolder(folder.safe);
+    } else {
+      const parent = getFolderById(this.state.safes, folder.parent);
+      this.setActiveFolder(parent);
+    }
   };
 
   refreshUserData = (newFolderID) => {
@@ -141,6 +252,7 @@ class MainPage extends Component {
     }
 
     const self = this;
+    progress.lock();
     axios
       .post("../get_user_datar.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
@@ -166,10 +278,12 @@ class MainPage extends Component {
               activeFolder = safes[0];
             }
             console.log("setting new state with updated data");
+            progress.unlock();
+
             this.setState({
               safes,
-              activeFolder,
             });
+            this.setActiveFolder(activeFolder);
           });
           return;
         }
@@ -179,24 +293,22 @@ class MainPage extends Component {
         }
       })
       .catch((error) => {
+        progress.unlock();
         console.log(error);
       });
   };
 
-  openParentFolder = (folder) => {
-    if (!folder.SafeID) {
+  getPageData = () => {
+    if (window.location.href.includes("mock")) {
+      mockData.activeFolder = mockData.safes[0];
+      mockData.safes[0].folders[0].safe = mockData.safes[0];
+      mockData.safes[1].folders[0].safe = mockData.safes[1];
+      this.setState(mockData);
       return;
     }
-    if (folder.parent == 0) {
-      this.setActiveFolder(folder.safe);
-    } else {
-      const parent = getFolderById(this.state.safes, folder.parent);
-      this.setActiveFolder(parent);
-    }
-  };
 
-  getPageData = () => {
     const self = this;
+    progress.lock();
     axios
       .post("../get_user_datar.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
@@ -205,29 +317,41 @@ class MainPage extends Component {
         if (result.data.status === "Ok") {
           const data = result.data.data;
 
-          passhubCrypto.getPrivateKey(data).then(() => {
-            return decryptSafes(data.safes).then(() => {
-              data.safes.sort((a, b) =>
-                a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-              );
-              normalizeSafes(data.safes);
-              data.activeFolder = getFolderById(data.safes, data.currentSafe);
-              if (!data.activeFolder) {
-                console.log("active folder not found" + data.currentSafe);
-                data.activeFolder = data.safes[0];
-              }
-              self.setState(data);
+          passhubCrypto
+            .getPrivateKey(data)
+            .then(() => {
+              return decryptSafes(data.safes).then(() => {
+                data.safes.sort((a, b) =>
+                  a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+                );
+                normalizeSafes(data.safes);
+                data.activeFolder = getFolderById(data.safes, data.currentSafe);
+                if (!data.activeFolder) {
+                  console.log("active folder not found" + data.currentSafe);
+                  data.activeFolder = data.safes[0];
+                }
+                progress.unlock();
+                self.setState(data);
 
-              keepTicketAlive(data.WWPASS_TICKET_TTL, data.ticketAge);
+                keepTicketAlive(data.WWPASS_TICKET_TTL, data.ticketAge);
+              });
+            })
+            .catch((err) => {
+              if (window.location.href.includes("debug")) {
+                alert(`387: ${err}`);
+                return;
+              }
+              window.location.href = `error_page.php?js=387&error=${err}`;
             });
-          });
         }
         if (result.data.status === "login") {
           window.location.href = "expired.php";
+          progress.unlock();
           return;
         }
       })
       .catch((error) => {
+        progress.unlock();
         console.log(error);
       });
   };
@@ -304,9 +428,10 @@ class MainPage extends Component {
         const safe = this.state.safes[s];
         if (safe.key) {
           // key!= null => confirmed, better have a class
-          for (let i = 0; i < safe.items.length; i += 1) {
+          const items = safe.rawItems;
+          for (let i = 0; i < items.length; i += 1) {
             try {
-              let itemUrl = safe.items[i].cleartext[3].toLowerCase();
+              let itemUrl = items[i].cleartext[3].toLowerCase();
               if (itemUrl.substring(0, 4) != "http") {
                 itemUrl = "https://" + itemUrl;
               }
@@ -319,9 +444,9 @@ class MainPage extends Component {
               if (itemHost == hostname) {
                 result.push({
                   safe: safe.name,
-                  title: safe.items[i].cleartext[0],
-                  username: safe.items[i].cleartext[1],
-                  password: safe.items[i].cleartext[2],
+                  title: items[i].cleartext[0],
+                  username: items[i].cleartext[1],
+                  password: items[i].cleartext[2],
                 });
               }
             } catch (err) {}
@@ -329,7 +454,6 @@ class MainPage extends Component {
         }
       }
     }
-    // extensionInterface.sendAdvise(result);
     return result;
   };
 
@@ -360,6 +484,9 @@ class MainPage extends Component {
           activeFolder={this.state.activeFolder}
           refreshUserData={this.refreshUserData}
           ref={this.safePaneRef}
+          handleOpenFolder={this.handleOpenFolder}
+          openNodes={this.state.openNodes}
+          email={this.state.email}
         />
         <TablePane
           folder={
@@ -367,6 +494,7 @@ class MainPage extends Component {
               ? this.searchFolder
               : this.state.activeFolder
           }
+          safes={this.state.safes}
           searchMode={searchString.length > 0}
           setActiveFolder={this.setActiveFolder}
           openParentFolder={this.openParentFolder}
@@ -374,11 +502,11 @@ class MainPage extends Component {
           inMemoryView={this.props.inMemoryView}
           onFolderMenuCmd={this.handleFolderMenuCmd}
           onSearchClear={this.props.onSearchClear}
+          showItemPane={this.props.showItemPane}
         />
 
         {"idleTimeout" in this.state && (
           <div>
-            {" "}
             <IdleTimer
               ref={(ref) => {
                 this.idleTimer = ref;
@@ -390,6 +518,17 @@ class MainPage extends Component {
             />
           </div>
         )}
+
+        <ImportModal
+          show={this.state.showModal == "ImportModal"}
+          safes={this.state.safes}
+          onClose={(refresh = false) => {
+            this.setState({ showModal: "" });
+            if (refresh === true) {
+              this.refreshUserData();
+            }
+          }}
+        ></ImportModal>
 
         <IdleModal
           show={this.state.idleTimeoutAlert}

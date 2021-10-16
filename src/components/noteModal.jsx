@@ -6,6 +6,12 @@ import * as passhubCrypto from "../lib/crypto";
 import ItemModal from "./itemModal";
 
 class NoteModal extends Component {
+  state = {
+    errorMsg: "",
+  };
+
+  isShown = false;
+
   onClose = () => {
     this.props.onClose();
   };
@@ -14,17 +20,19 @@ class NoteModal extends Component {
     const pData = [title, "", "", "", note];
     const options = { note: 1 };
 
-    const folder = this.props.args.folder;
-    const [aesKey, SafeID, folderID] = folder.safe
-      ? [folder.safe.bstringKey, folder.safe.id, folder.id]
-      : [folder.bstringKey, folder.id, 0];
+    const safe = this.props.args.safe;
 
-    const eData = passhubCrypto.encryptItem(
-      pData,
-      aesKey,
-      // init.safe.bstringKey, ?? TODO
-      options
-    );
+    const aesKey = safe.bstringKey;
+    const SafeID = safe.id;
+
+    let folderID = 0;
+    if (this.props.args.item) {
+      folderID = this.props.args.item.folder;
+    } else if (this.props.args.folder.safe) {
+      folderID = this.props.args.folder.id;
+    }
+
+    const eData = passhubCrypto.encryptItem(pData, aesKey, options);
     const data = {
       verifier: document.getElementById("csrf").getAttribute("data-csrf"),
       vault: SafeID,
@@ -51,24 +59,32 @@ class NoteModal extends Component {
           window.location.href = "expired.php";
           return;
         }
-        if (result.status === "no rights") {
-          // showAlert("Sorry, you do not have editor rights for this safe");
-          return;
-        }
-        // showAlert(result.status);
+        this.setState({ errorMsg: result.status });
+        return;
       })
-      .catch(
-        (err) => {} /*modalAjaxError($("#safe_users_alert"), "", "", err)*/
-      );
+      .catch((err) => {
+        this.setState({ errorMsg: "Server error. Please try again later" });
+      });
   };
 
   render() {
+    if (!this.props.show) {
+      this.isShown = false;
+      return null;
+    }
+
+    if (!this.isShown) {
+      this.isShown = true;
+      this.state.errorMsg = "";
+    }
+
     return (
       <ItemModal
         show={this.props.show}
         args={this.props.args}
         onClose={this.props.onClose}
         onSubmit={this.onSubmit}
+        errorMsg={this.state.errorMsg}
       ></ItemModal>
     );
   }

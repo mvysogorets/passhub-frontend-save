@@ -56,7 +56,8 @@ class Root extends Component {
   };
 
   onCopyToastClose = () => {
-    popCopyBuffer();
+    this.setState({ showToast: "" });
+    //    popCopyBuffer();
   };
 
   gotoMain = () => {

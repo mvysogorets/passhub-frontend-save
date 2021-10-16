@@ -16,14 +16,14 @@ class ShareModal extends Component {
     userList: [],
     email: "",
     invitedUserRights: "can view",
-    errMsg: "",
+    errorMsg: "",
   };
 
   isShown = false;
   isAdmin = false;
   refreshOnClose = false;
 
-  onEmailChange = (e) => this.setState({ email: e.target.value, errMsg: "" });
+  onEmailChange = (e) => this.setState({ email: e.target.value, errorMsg: "" });
 
   onClose = (refresh = false) => {
     this.props.onClose(refresh || this.refreshOnClose);
@@ -93,16 +93,27 @@ class ShareModal extends Component {
 
   shareByMailFinal = (username, eAesKey) => {
     let role = "readonly";
-    if (this.invitedUserRights == "can view") {
+    if (this.state.invitedUserRights == "can edit") {
       role = "editor";
     }
-    if (this.invitedUserRights == "site owner") {
+    if (this.state.invitedUserRights == "safe owner") {
       role = "administrator";
     }
 
-    const vault = this.props.folder.safe
-      ? this.props.folder.safe.id
-      : this.props.folder.id;
+    const { folder } = this.props.args;
+    let recipientSafeName = folder.name;
+
+    let { email } = this.props.args;
+    if (email) {
+      const atIdx = email.indexOf("@");
+      if (atIdx > 0) {
+        email = email.substring(0, atIdx);
+      }
+      recipientSafeName += " /" + email;
+    }
+
+    const vault = folder.safe ? folder.safe.id : folder.id;
+
     axios
       .post("safe_acl.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
@@ -110,7 +121,7 @@ class ShareModal extends Component {
         operation: "email_final",
         name: username,
         key: eAesKey,
-        safeName: vault.name,
+        safeName: recipientSafeName,
         role,
       })
       .then((reply) => {
@@ -130,24 +141,26 @@ class ShareModal extends Component {
           this.getSafeUsers();
           return;
         }
-        this.setState({ errMsg: result.status });
+        this.setState({ errorMsg: result.status });
         return;
       })
       .catch((err) => {
-        this.setState({ errMsg: err });
+        this.setState({
+          errorMsg: "Server error. Please try again later",
+        });
       });
   };
 
   onSubmit = () => {
     let name = this.state.email.trim();
     if (name.length < 1) {
-      this.setState({ errMsg: "Recipient email should not be empty" });
+      this.setState({ errorMsg: "Recipient email should not be empty" });
       return;
     }
-
-    const [SafeID, safeAesKey] = this.props.folder.safe
-      ? [this.props.folder.safe.id, this.props.folder.safe.key]
-      : [this.props.folder.id, this.props.folder.key];
+    const { folder } = this.props.args;
+    const [SafeID, safeAesKey] = folder.safe
+      ? [folder.safe.id, folder.safe.key]
+      : [folder.id, folder.key];
 
     axios
       .post("safe_acl.php", {
@@ -174,11 +187,13 @@ class ShareModal extends Component {
           });
           return;
         }
-        this.setState({ errMsg: result.status });
+        this.setState({ errorMsg: result.status });
         return;
       })
       .catch((err) => {
-        this.setState({ errMsg: err });
+        this.setState({
+          errorMsg: "Server error. Please try again later",
+        });
       });
   };
 
@@ -186,20 +201,24 @@ class ShareModal extends Component {
     axios
       .post("safe_acl.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
-        vault: this.props.folder.id,
+        vault: this.props.args.folder.id,
         operation: "delete",
         name,
       })
       .then((reply) => {
         const result = reply.data;
         if (result.status == "Ok") {
-          this.setState({ userList: result.UserList });
+          this.setUserList(result.UserList);
+
+          //          this.setState({ userList: result.UserList });
           return;
         }
-        this.setState({ errMsg: result.status });
+        this.setState({ errorMsg: result.status });
       })
       .catch((err) => {
-        this.setState({ errMsg: err });
+        this.setState({
+          errorMsg: "Server error. Please try again later",
+        });
       });
   };
 
@@ -212,7 +231,7 @@ class ShareModal extends Component {
     axios
       .post("safe_acl.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
-        vault: this.props.folder.id,
+        vault: this.props.args.folder.id,
         operation: "role",
         name,
         role,
@@ -220,20 +239,25 @@ class ShareModal extends Component {
       .then((reply) => {
         const result = reply.data;
         if (result.status == "Ok") {
-          this.setState({ userList: result.UserList });
+          this.setUserList(result.UserList);
+
+          //           this.setState({ userList: result.UserList });
           return;
         }
-        this.setState({ errMsg: result.status });
+        this.setState({ errorMsg: result.status });
       })
       .catch((err) => {
-        this.setState({ errMsg: err });
+        this.setState({
+          errorMsg: "Server error. Please try again later",
+        });
       });
   };
 
   onUnsubscribe = () => {
-    const [SafeID, safeAesKey] = this.props.folder.safe
-      ? [this.props.folder.safe.id, this.props.folder.safe.key]
-      : [this.props.folder.id, this.props.folder.key];
+    const { folder } = this.props.args;
+    const [SafeID, safeAesKey] = folder.safe
+      ? [folder.safe.id, folder.safe.key]
+      : [folder.id, folder.key];
 
     axios
       .post("safe_acl.php", {
@@ -246,23 +270,52 @@ class ShareModal extends Component {
         this.onClose(true);
       })
       .catch((err) => {
-        this.setState({ errMsg: err });
+        this.setState({
+          errorMsg: "Server error. Please try again later",
+        });
       });
   };
 
+  setUserList = (users) => {
+    let filteredUserList = users.filter((user) => {
+      if (user.myself && user.role == "administrator") {
+        this.isAdmin = true;
+      }
+      return user.name.length > 0 || user.myself;
+    });
+    filteredUserList.sort((u1, u2) => {
+      if (u1.myself && !u2.myself) {
+        return -1;
+      }
+      if (!u1.myself && u2.myself) {
+        return 1;
+      }
+      if (u1.name.toUpperCase() < u2.name.toUpperCase()) {
+        return -1;
+      }
+      if (u1.name.toUpperCase() > u2.name.toUpperCase()) {
+        return 1;
+      }
+      return 0;
+    });
+
+    this.setState({ userList: filteredUserList });
+  };
+
   getSafeUsers = () => {
-    const vault = this.props.folder.safe
-      ? this.props.folder.safe.id
-      : this.props.folder.id;
+    const { folder } = this.props.args;
+    const vault = folder.safe ? folder.safe.id : folder.id;
 
     axios
       .post("safe_acl.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
-        vault: this.props.folder.id,
+        vault: this.props.args.folder.id,
       })
       .then((reply) => {
         const result = reply.data;
         if (result.status === "Ok") {
+          this.setUserList(result.UserList);
+          /*
           let filteredUserList = result.UserList.filter((user) => {
             if (user.myself && user.role == "administrator") {
               this.isAdmin = true;
@@ -283,37 +336,38 @@ class ShareModal extends Component {
           });
 
           this.setState({ userList: filteredUserList });
-
+*/
           return;
         }
         if (result.status === "login") {
           window.location.href = "expired.php";
           return;
         }
+        this.setState({ errorMsg: result.status });
       })
       .catch((err) => {
-        // modalAjaxError($("#safe_users_alert"), "", "", err);
+        this.setState({
+          errorMsg: "Server error. Please try again later",
+        });
       });
   };
 
   render() {
-    let title = "";
-    if (this.props.show) {
-      title = this.props.folder.name;
+    if (!this.props.show) {
+      this.isShown = false;
+      return null;
     }
 
-    if (this.props.show) {
-      if (!this.isShown) {
-        this.isShown = true;
-        this.isAdmin = false;
-        this.refreshOnClose = false;
-        this.state.userList = [];
-        this.state.email = "";
-        this.state.errMsg = "";
-        this.getSafeUsers();
-      }
-    } else {
-      this.isShown = false;
+    let title = this.props.args.folder.name;
+
+    if (!this.isShown) {
+      this.isShown = true;
+      this.isAdmin = false;
+      this.refreshOnClose = false;
+      this.state.userList = [];
+      this.state.email = "";
+      this.state.errorMsg = "";
+      this.getSafeUsers();
     }
 
     const recipientField =
@@ -344,14 +398,14 @@ class ShareModal extends Component {
     return (
       <Modal
         show={this.props.show}
-        onHide={() => this.onClose()}
+        onHide={this.onClose}
         animation={false}
         centered
       >
         <ModalCross onClose={this.props.onClose}></ModalCross>
-        <div className="modalTitle">
+        <div className="modalTitle" style={{ alignItems: "center" }}>
           <div>
-            <svg width="32" height="32" style={{ margin: "8px 10px 0 0" }}>
+            <svg width="32" height="32" style={{ marginRight: "14px" }}>
               <use href="#f-safe"></use>
             </svg>
           </div>
@@ -390,10 +444,8 @@ class ShareModal extends Component {
           )}
           {recipientField}
 
-          {this.state.errMsg.length > 0 ? (
-            <div style={{ color: "red" }}>{this.state.errMsg}</div>
-          ) : (
-            ""
+          {this.state.errorMsg.length > 0 && (
+            <div style={{ color: "red" }}>{this.state.errorMsg}</div>
           )}
 
           {this.isAdmin && (
@@ -411,20 +463,24 @@ class ShareModal extends Component {
             style={{
               fontSize: "14px",
               lineHeight: "22px",
-              color: "#8D8D94",
+              color: "rgba(27, 27, 38, 0.7)",
               marginBottom: "20px",
             }}
           >
             {userCount}
           </div>
-          {this.state.userList.map((user) => (
-            <SafeUser
-              key={user.name}
-              user={user}
-              isAdmin={this.isAdmin}
-              setUserRole={this.setUserRole}
-            />
-          ))}
+          {this.state.userList.map((user) => {
+            console.log(user);
+
+            return (
+              <SafeUser
+                key={user.name}
+                user={user}
+                isAdmin={this.isAdmin}
+                setUserRole={this.setUserRole}
+              />
+            );
+          })}
         </Modal.Body>
         <Modal.Footer>
           <Button

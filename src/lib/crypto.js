@@ -76,7 +76,11 @@ function getPrivateKey(data) {
       ).then( (ab) => {
         const pem = ab2str(ab);
         // console.log(pem)
-        return pem2CryptoKey(pem);
+        return pem2CryptoKey(pem).catch(() => { // try old keys, generated in forge
+          serverLog('forge privateKey');
+          ForgePrivateKey = forge.pki.privateKeyFromPem(pem);
+          return ForgePrivateKey;
+        });
 
       });
     });

@@ -8,6 +8,7 @@ import importXML from "../lib/importXML";
 import importCSV from "../lib/importCSV";
 import importMerge from "../lib/importMerge";
 import { createSafeFromFolder } from "../lib/crypto";
+import progress from "../lib/progress";
 
 class ImportModal extends Component {
   state = {
@@ -33,6 +34,7 @@ class ImportModal extends Component {
 
   uploadImportedData = (safeArray) => {
     if (safeArray.length === 0) {
+      progress.unlock();
       this.props.onClose(true);
       return;
     }
@@ -43,16 +45,18 @@ class ImportModal extends Component {
       })
       .then((reply) => {
         const result = reply.data;
+        progress.unlock();
         if (result.status === "Ok") {
           this.props.onClose(true);
           return;
         }
+        progress.unlock();
         this.setState({ errorMsg: result.status });
         return;
       })
       .catch((error) => {
-        this.setState({ errorMsg: error });
-        console.log(error);
+        progress.unlock();
+        this.setState({ errorMsg: "Server error. Please try again later" });
       });
   };
 
@@ -93,6 +97,7 @@ class ImportModal extends Component {
           imported.folders = importCSV(text);
         }
       } catch (err) {
+        progress.unlock();
         this.setState({ errorMsg: err });
         return;
       }
@@ -108,19 +113,21 @@ class ImportModal extends Component {
         this.uploadImportedData(safeArray);
       }
     };
+    progress.lock();
     reader.readAsText(theFile);
   };
 
   render() {
-    if (this.props.show) {
-      if (!this.isShown) {
-        this.isShown = true;
-        this.state.mode = "new safe";
-        this.state.errorMsg = "";
-        this.state.theFile = null;
-      }
-    } else {
+    if (!this.props.show) {
       this.isShown = false;
+      return null;
+    }
+
+    if (!this.isShown) {
+      this.isShown = true;
+      this.state.mode = "new safe";
+      this.state.errorMsg = "";
+      this.state.theFile = null;
     }
 
     return (
@@ -168,7 +175,7 @@ class ImportModal extends Component {
             style={{
               fontSize: 13,
               lineHeight: "22px",
-              color: "#8D8D94",
+              color: "rgba(27, 27, 38, 0.7)",
               marginBottom: 32,
             }}
           >

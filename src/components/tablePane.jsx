@@ -3,20 +3,23 @@ import React, { Component } from "react";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
-import { contextMenu, Menu, Item, Separator, Submenu } from "react-contexify";
+import { Menu, Item } from "react-contexify";
 
 import FolderItem from "./folderItem";
 import LoginItem from "./loginItem";
 import NoteItem from "./noteItem";
 import FileItem from "./fileItem";
 
-// import NoteItemModal from "./noteItemModal";
 import LoginModal from "./loginModal";
+
 import NoteModal from "./noteModal";
 import FileModal from "./fileModal";
+import CreateFileModal from "./createFileModal";
 import DeleteItemModal from "./deleteItemModal";
 import AddDropUp from "./addDropUp";
 import FolderMenuMobile from "./folderMenuMobile";
+
+import { getFolderById } from "../lib/utils";
 
 const ADD_BUTTON_MENU_ID = "add-menu-id";
 
@@ -50,13 +53,13 @@ class TablePane extends Component {
   handleAddClick = (cmd) => {
     console.log(cmd);
     if (cmd === "Password") {
-      this.showLoginModal();
+      this.showItemModal("LoginModal");
     }
     if (cmd === "File") {
-      this.showFileModal();
+      this.showCreateFileModal();
     }
     if (cmd === "Note") {
-      this.showNoteModal();
+      this.showItemModal("NoteModal");
     }
     if (cmd === "Folder") {
       this.handleFolderMenuCmd(this.props.folder, "Add folder");
@@ -102,35 +105,65 @@ class TablePane extends Component {
     });
   };
 
-  showLoginModal = (item) => {
+  showItemModal = (modalName, item) => {
+    let safe = this.props.folder.safe
+      ? this.props.folder.safe
+      : this.props.folder;
+    if (this.props.searchMode && item) {
+      safe = getFolderById(this.props.safes, item.SafeID);
+    }
+    const itemModalArgs = {
+      item,
+      safe,
+      folder: this.props.folder,
+      openDeleteItemModal: this.openDeleteItemModal,
+    };
+
     this.setState({
-      showModal: "LoginModal",
-      itemModalArgs: {
-        item,
-        folder: this.props.folder,
-        openDeleteItemModal: this.openDeleteItemModal,
-      },
+      showModal: modalName,
+      itemModalArgs,
     });
   };
-
+  /*
   showNoteModal = (item) => {
+    const itemModalArgs = {
+      item,
+      folder: this.props.folder,
+      openDeleteItemModal: this.openDeleteItemModal,
+    };
+
+    if (this.props.searchMode && item) {
+      itemModalArgs.safe = getFolderById(this.props.safes, item.SafeID);
+    }
     this.setState({
       showModal: "NoteModal",
-      itemModalArgs: {
-        item,
-        folder: this.props.folder,
-        openDeleteItemModal: this.openDeleteItemModal,
-      },
+      itemModalArgs,
+    });
+  };
+*/
+  showFileModal = (item) => {
+    const itemModalArgs = {
+      item,
+      folder: this.props.folder,
+      openDeleteItemModal: this.openDeleteItemModal,
+    };
+
+    if (this.props.searchMode && item) {
+      itemModalArgs.safe = getFolderById(this.props.safes, item.SafeID);
+    }
+
+    const safe = getFolderById(this.props.safes, item.SafeID);
+    this.setState({
+      showModal: "FileModal",
+      itemModalArgs,
     });
   };
 
-  showFileModal = (item) => {
+  showCreateFileModal = (item) => {
     this.setState({
-      showModal: "FileModal",
+      showModal: "CreateFileModal",
       itemModalArgs: {
-        item,
         folder: this.props.folder,
-        openDeleteItemModal: this.openDeleteItemModal,
       },
     });
   };
@@ -161,8 +194,14 @@ class TablePane extends Component {
     }
 
     const { folder } = this.props;
+
+    const pathToFolder =
+      folder.path.length < 2
+        ? ""
+        : folder.path.slice(0, -1).join(" > ") + " > ";
+
     const emptyFolder = !(folder.folders.length + folder.items.length > 0);
-    const isSafe = folder.path.length == 1 && !this.props.searchMode;
+    const isSafe = folder.path.length === 1 && !this.props.searchMode;
     let EmptyMessage = isSafe ? "Empty safe" : "Empty folder";
     if (this.props.searchMode) {
       EmptyMessage = (
@@ -174,9 +213,10 @@ class TablePane extends Component {
         </div>
       );
     }
+
     return (
       <Col
-        className="col-xl-9 col-lg-8 col-md-7 col-sm-6 d-none d-sm-block"
+        className="col-xl-9 col-lg-8 col-md-7 col-sm-6 d-none d-sm-block wwp_wt_home"
         id="table_pane"
       >
         <div
@@ -209,7 +249,7 @@ class TablePane extends Component {
               <use href="#angle"></use>
             </svg>
 
-            {folder.path.length == 1
+            {folder.path.length === 1
               ? "All safes"
               : folder.path[folder.path.length - 2]}
           </div>
@@ -232,15 +272,19 @@ class TablePane extends Component {
             )}
           </div>
 
-          <div className="d-none d-sm-block" style={{ color: "#1B1B26" }}>
-            {folder.path.join(" > ")}
+          <div
+            className="d-none d-sm-block"
+            style={{ color: "#1B1B26", marginBottom: "28px" }}
+          >
+            {pathToFolder}
+            <b>{folder.path[folder.path.length - 1]}</b>
           </div>
 
           {emptyFolder && (
             <div>
               <div style={{ textAlign: "center" }}>
                 <svg
-                  width="400"
+                  width="260"
                   height="208"
                   style={{ margin: "2em auto 1em auto", display: "block" }}
                 >
@@ -252,14 +296,16 @@ class TablePane extends Component {
           )}
 
           {!emptyFolder && (
-            <div style={{ overflowY: "auto" }}>
+            <div style={{ overflowY: "auto", overflowX: "hidden" }}>
               <table className="item_table">
                 <thead>
-                  <tr>
-                    <th className="d-none d-sm-table-cell">Title</th>
-                    <th className="d-none d-lg-table-cell"></th>
-                    <th className="d-none d-lg-table-cell"></th>
-                    <th className="rightAlign d-none d-xl-table-cell">
+                  <tr className="d-flex">
+                    <th className="d-none d-sm-table-cell col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                      Title
+                    </th>
+                    <th className="d-none d-md-table-cell           col-md-6 col-lg-4 col-xl-3"></th>
+                    <th className="d-none d-lg-table-cell                    col-lg-4 col-xl-3"></th>
+                    <th className="d-none d-xl-table-cell                             col-xl-3 column-modified">
                       Modified
                     </th>
                   </tr>
@@ -276,13 +322,28 @@ class TablePane extends Component {
                   {folder.items.map(
                     (f) =>
                       (isLoginItem(f) && (
-                        <LoginItem item={f} showModal={this.showLoginModal} />
+                        <LoginItem
+                          item={f}
+                          showModal={(item) =>
+                            this.showItemModal("LoginModal", item)
+                          }
+                        />
                       )) ||
                       (isNoteItem(f) && (
-                        <NoteItem item={f} showModal={this.showNoteModal} />
+                        <NoteItem
+                          item={f}
+                          showModal={(item) =>
+                            this.showItemModal("NoteModal", item)
+                          }
+                        />
                       )) ||
                       (isFileItem(f) && (
-                        <FileItem item={f} showModal={this.showFileModal} />
+                        <FileItem
+                          item={f}
+                          showModal={(item) =>
+                            this.showItemModal("FileModal", item)
+                          }
+                        />
                       ))
                   )}
                 </tbody>
@@ -312,14 +373,14 @@ class TablePane extends Component {
                 this.showAddMenu();
               }}
             >
-              <svg width="40" height="40">
+              <svg width="40" height="40" style={{ strokeWidth: 2 }}>
                 <use href="#f-plus"></use>
               </svg>
             </Button>
           )}
 
           <AddDropUp
-            show={this.state.showModal == "addDropUp"}
+            show={this.state.showModal === "addDropUp"}
             bottom={window.innerHeight - this.addButtonRect.bottom - 8}
             right={window.innerWidth - this.addButtonRect.right - 8}
             onClose={() => this.setState({ showModal: "" })}
@@ -327,7 +388,7 @@ class TablePane extends Component {
           ></AddDropUp>
 
           <LoginModal
-            show={this.state.showModal == "LoginModal"}
+            show={this.state.showModal === "LoginModal"}
             args={this.state.itemModalArgs}
             openDeleteItemModal={this.openDeleteItemModal}
             onClose={(refresh = false) => {
@@ -337,9 +398,10 @@ class TablePane extends Component {
               }
             }}
           ></LoginModal>
+          {/* <LoginPane args={this.state.itemModalArgs} /> */}
 
           <FileModal
-            show={this.state.showModal == "FileModal"}
+            show={this.state.showModal === "FileModal"}
             args={this.state.itemModalArgs}
             openDeleteItemModal={this.openDeleteItemModal}
             onClose={this.onItemModalClose}
@@ -349,15 +411,22 @@ class TablePane extends Component {
             }}
           ></FileModal>
 
+          <CreateFileModal
+            show={this.state.showModal === "CreateFileModal"}
+            args={this.state.itemModalArgs}
+            openDeleteItemModal={this.openDeleteItemModal}
+            onClose={this.onItemModalClose}
+          ></CreateFileModal>
+
           <NoteModal
-            show={this.state.showModal == "NoteModal"}
+            show={this.state.showModal === "NoteModal"}
             args={this.state.itemModalArgs}
             openDeleteItemModal={this.openDeleteItemModal}
             onClose={this.onItemModalClose}
           ></NoteModal>
 
           <DeleteItemModal
-            show={this.state.showModal == "DeleteItemModal"}
+            show={this.state.showModal === "DeleteItemModal"}
             folder={folder}
             args={this.state.itemModalArgs}
             onClose={(refresh = false) => {

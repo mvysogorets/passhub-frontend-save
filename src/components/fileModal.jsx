@@ -9,6 +9,9 @@ import * as utils from "../lib/utils";
 import DownloadAndViewButtons from "./downloadAndViewButtons";
 
 import ItemModal from "./itemModal";
+import ViewFile from "./viewFile";
+
+import progress from "../lib/progress";
 
 function getMimeByExt(filename) {
   const mimeType = {
@@ -77,9 +80,14 @@ function isFileViewable(filename) {
 
 class FileModal extends Component {
   state = {
-    edit: true,
+    edit: false,
     errorMsg: "",
     theFile: null,
+    page: "",
+  };
+
+  onEdit = () => {
+    this.setState({ edit: true });
   };
 
   constructor(props) {
@@ -94,6 +102,24 @@ class FileModal extends Component {
   };
 
   download(callBack) {
+    let safe;
+
+    if (this.props.args.safe) {
+      safe = this.props.args.safe;
+    } else if (this.props.args.folder.safe) {
+      safe = this.props.args.folder.safe;
+    } else {
+      safe = this.props.args.folder;
+    }
+
+    const aesKey = safe.bstringKey;
+    const SafeID = safe.id;
+    /*
+    const folderID = this.props.args.item
+      ? this.props.args.item.folder
+      : this.props.args.folder;
+*/
+    /*
     const [eAesKey, SafeID, folderID] = this.props.args.folder.safe
       ? [
           this.props.args.folder.safe.key,
@@ -101,8 +127,9 @@ class FileModal extends Component {
           this.props.args.folder.id,
         ]
       : [this.props.args.folder.key, this.props.args.folder.id, 0];
+      */
 
-    // progress.lock(0);
+    progress.lock(0);
     axios
       .post("file_ops.php", {
         operation: "download",
@@ -111,34 +138,39 @@ class FileModal extends Component {
         itemId: this.props.args.item._id,
       })
       .then((reply) => {
+        progress.unlock();
         const result = reply.data;
         if (result.status === "Ok") {
+          const { filename, buf } = passhubCrypto.decryptFile(result, aesKey);
+          const mime = getMimeByExt(filename);
+          const blob = new Blob([buf], { type: mime });
+          callBack(blob, filename);
+
+          /*
           passhubCrypto.decryptAesKey(eAesKey).then((aesKey) => {
             const { filename, buf } = passhubCrypto.decryptFile(result, aesKey);
             const mime = getMimeByExt(filename);
             const blob = new Blob([buf], { type: mime });
             callBack(blob, filename);
-            // progress.unlock();
           });
+*/
+
           return;
         }
         if (result.status === "File not found") {
-          // progress.unlock();
           // utils.bsAlert('File not found. Could be erased by another user');
           // passhub.refreshUserData();
           return;
         }
         if (result.status === "login") {
-          // progress.unlock();
           window.location.href = "expired.php";
           return;
         }
-        //progress.unlock();
         window.location.href = "error_page.php?js=other";
       })
       .catch((err) => {
-        // progress.unlock();
-        // passhub.modalAjaxError($('#rename_vault_alert'), hdr, status, err);
+        progress.unlock();
+        this.setState({ errorMsg: "Server error. Please try again later" });
       });
   }
 
@@ -146,8 +178,15 @@ class FileModal extends Component {
     this.download(saveAs);
   };
 
+  inMemoryView = (blob, filename) => {
+    this.blob = blob;
+    this.filename = filename;
+    this.setState({ page: "ViewFile" });
+  };
+
   onView = () => {
     this.download(this.props.inMemoryView);
+    //this.download(this.inMemoryView);
   };
 
   onFileInputChange = (e) => {
@@ -170,6 +209,23 @@ class FileModal extends Component {
     const pData = [title, "", "", "", note];
     const options = {};
 
+    let safe;
+
+    if (this.props.args.safe) {
+      safe = this.props.args.safe;
+    } else if (this.props.args.folder.safe) {
+      safe = this.props.args.folder.safe;
+    } else {
+      safe = this.props.args.folder;
+    }
+
+    const aesKey = safe.bstringKey;
+    const SafeID = safe.id;
+    const folderID = this.props.args.item
+      ? this.props.args.item.folder
+      : this.props.args.folder;
+
+    /*
     const [aesKey, SafeID, folderID] = this.props.args.folder.safe
       ? [
           this.props.args.folder.safe.bstringKey,
@@ -177,15 +233,11 @@ class FileModal extends Component {
           this.props.args.folder.id,
         ]
       : [this.props.args.folder.bstringKey, this.props.args.folder.id, 0];
-
-    const eData = passhubCrypto.encryptItem(
-      pData,
-      aesKey,
-      // init.safe.bstringKey, ?? TODO
-      options
-    );
+*/
+    const eData = passhubCrypto.encryptItem(pData, aesKey, options);
 
     if (this.props.args.item) {
+      progress.lock(0);
       axios
         .post("file_ops.php", {
           verifier: document.getElementById("csrf").getAttribute("data-csrf"),
@@ -195,7 +247,7 @@ class FileModal extends Component {
           newName: eData,
         })
         .then((reply) => {
-          //            progress.unlock();
+          progress.unlock();
           const result = reply.data;
           if (result.status == "Ok") {
             this.props.onClose(true);
@@ -209,8 +261,13 @@ class FileModal extends Component {
             window.location.href = "expired.php";
             return;
           }
+          this.setState({ errorMsg: result.status });
+          return;
         })
-        .catch((err) => {});
+        .catch((err) => {
+          progress.unlock();
+          this.setState({ errorMsg: "Server error. Please try again later" });
+        });
       return;
     }
 
@@ -220,8 +277,20 @@ class FileModal extends Component {
     reader.readAsArrayBuffer(this.state.theFile);
 
     reader.onerror = (err) => {
-      // console.log(err, err.loaded, err.loaded === 0, file);
-      alert("fail");
+      let error = "Error reading file";
+      /*      
+      if (
+        err.currentTarget &&
+        err.currentTarget.error &&
+        err.currentTarget.error.message
+      ) {
+        error = err.currentTarget.error;
+      }
+      */
+      if (reader.error && reader.error.message) {
+        error = reader.error.message;
+      }
+      this.setState({ errorMsg: error });
     };
 
     reader.onload = () => {
@@ -245,6 +314,7 @@ class FileModal extends Component {
       const ab = passhubCrypto.str2uint8(cFileContent);
       const bl = new Blob([ab]);
       data.append("blob", bl);
+      progress.lock();
 
       axios
         .post("create_file.php", data, {
@@ -254,7 +324,7 @@ class FileModal extends Component {
           timeout: 600000,
         })
         .then((reply) => {
-          //            progress.unlock();
+          progress.unlock();
           const result = reply.data;
           if (result.status == "Ok") {
             this.props.onClose(true);
@@ -271,26 +341,33 @@ class FileModal extends Component {
           this.setState({ errorMsg: result.status });
           return;
         })
-        .catch((err) => {});
+        .catch((err) => {
+          progress.unlock();
+          this.setState({ errorMsg: "Server error. Please try again later" });
+        });
     };
   };
 
+  gotoMain = () => {
+    this.setState({ page: "" });
+  };
+
   render() {
-    if (this.props.show) {
-      if (!this.isShown) {
-        this.isShown = true;
-        this.state.errorMsg = "";
-        if (this.props.args.item) {
-          this.state.title = this.props.args.item.cleartext[0];
-          this.state.edit = false;
-        } else {
-          this.state.title = "";
-          this.state.edit = true;
-        }
-      }
-    } else {
+    if (!this.props.show) {
       this.isShown = false;
       return null;
+    }
+
+    if (!this.isShown) {
+      this.isShown = true;
+      this.state.errorMsg = "";
+      if (this.props.args.item) {
+        this.state.title = this.props.args.item.cleartext[0];
+        this.state.edit = false;
+      } else {
+        this.state.title = "";
+        this.state.edit = true;
+      }
     }
 
     let modalClass = this.state.edit ? "edit" : "view";
@@ -298,79 +375,88 @@ class FileModal extends Component {
     // const path = this.props.folder ? this.props.folder.path.join(" > ") : [];
 
     return (
-      <ItemModal
-        show={this.props.show}
-        args={this.props.args}
-        onClose={this.props.onClose}
-        ref={this.wrapperComponent}
-        onSubmit={this.onSubmit}
-        errorMsg={this.state.errorMsg}
-      >
-        {!this.props.args.item ? (
-          <div
-            className="itemModalField"
-            style={{
-              marginBottom: 62,
-              position: "relative",
-              background: "#E6F8EF",
-            }}
-          >
+      <React.Fragment>
+        <ItemModal
+          show={this.props.show}
+          args={this.props.args}
+          onEdit={this.onEdit}
+          onClose={this.props.onClose}
+          ref={this.wrapperComponent}
+          onSubmit={this.onSubmit}
+          errorMsg={this.state.errorMsg}
+        >
+          {!this.props.args.item ? (
             <div
+              className="itemModalField"
               style={{
-                margin: "12px auto",
-                color: "#009A50",
-                display: "table",
+                marginBottom: 62,
+                position: "relative",
+                background: "#E6F8EF",
+                overflow: "visible",
               }}
             >
-              <svg width="24" height="24">
-                <use href="#f-add"></use>
-              </svg>
-              <b>Upload file</b>
-              <div>or drag & drop it here</div>
-            </div>
-
-            <svg
-              width="151"
-              height="134"
-              style={{ position: "absolute", top: 16, left: 32 }}
-            >
-              <use href="#f-dragfile"></use>
-            </svg>
-
-            <input
-              type="file"
-              id="inputFileModal"
-              onChange={this.onFileInputChange}
-            ></input>
-          </div>
-        ) : (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "40px",
-            }}
-          >
-            <svg width="105" height="132" style={{ marginBottom: "32px" }}>
-              <use href="#f-file-m"></use>
-            </svg>
-            <div style={{ marginBottom: "24px" }}>
-              {this.props.args.item.cleartext[0]}
-              <span
-                style={{ color: "rgba(27, 27, 38, 0.5)", marginLeft: "8px" }}
+              <div
+                style={{
+                  margin: "12px auto",
+                  color: "#009A50",
+                  display: "table",
+                }}
               >
-                {utils.humanReadableFileSize(this.props.args.item.file.size)}
-              </span>
+                <svg width="24" height="24">
+                  <use href="#f-add"></use>
+                </svg>
+                <b>Upload file</b>
+                <div>or drag & drop it here</div>
+              </div>
+
+              <svg
+                width="151"
+                height="134"
+                style={{ position: "absolute", top: 16, left: 32 }}
+              >
+                <use href="#f-dragfile"></use>
+              </svg>
+
+              <input
+                type="file"
+                id="inputFileModal"
+                onChange={this.onFileInputChange}
+              ></input>
             </div>
-            <DownloadAndViewButtons
-              onDownload={this.onDownload}
-              view={isFileViewable(this.state.title)}
-              onView={this.onView}
-            ></DownloadAndViewButtons>
-          </div>
-        )}
-      </ItemModal>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: "40px",
+              }}
+            >
+              <svg width="105" height="132" style={{ marginBottom: "32px" }}>
+                <use href="#f-file-m"></use>
+              </svg>
+              <div style={{ marginBottom: "24px" }}>
+                <span style={{ color: "rgba(27, 27, 38, 0.5)" }}>
+                  {utils.humanReadableFileSize(this.props.args.item.file.size)}
+                </span>
+              </div>
+              {!this.state.edit && (
+                <DownloadAndViewButtons
+                  onDownload={this.onDownload}
+                  view={isFileViewable(this.state.title)}
+                  onView={this.onView}
+                ></DownloadAndViewButtons>
+              )}
+            </div>
+          )}
+        </ItemModal>
+        <ViewFile
+          show={this.state.page === "ViewFile"}
+          gotoMain={this.gotoMain}
+          filename={this.filename}
+          blob={this.blob}
+        />
+      </React.Fragment>
     );
   }
 }

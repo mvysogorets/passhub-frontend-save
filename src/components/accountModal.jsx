@@ -3,11 +3,9 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import ModalCross from "./modalCross";
 
-import axios from "axios";
-
 import InputField from "./inputField";
 
-import Slider, { Range } from "rc-slider";
+import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 
 class AccountModal extends Component {
@@ -15,55 +13,16 @@ class AccountModal extends Component {
 
   isShown = false;
 
-  onDiscountChange = (e) => {
-    this.setState({ discount: e.target.value, errorMsg: "" });
-  };
-
-  onEmailChange = (e) => {
-    this.setState({ email: e.target.value, errorMsg: "" });
-  };
-
-  onMessageChange = (e) => {
-    this.setState({ message: e.target.value, errorMsg: "" });
-  };
-
   onUpgrade = (e) => {
-    this.props.onClose(e, "upgrade");
-  };
-
-  onSubmit = () => {
-    if (this.state.message.trim().length == 0) {
-      this.setState({ errorMsg: "please fill in the message field" });
-      return;
-    }
-
-    axios
-      .post("contact_us.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
-        name: this.state.name,
-        email: this.state.email,
-        message: this.state.message,
-      })
-      .then((reply) => {
-        const result = reply.data;
-        if (result.status === "Ok") {
-          this.props.onClose("success");
-          return;
-        }
-        if (result.status === "login") {
-          window.location.href = "expired.php";
-          return;
-        }
-        this.setState({ errorMsg: result.status });
-      })
-      .catch((err) => {
-        this.setState({ errorMsg: err });
-      });
+    //    this.props.onClose(e, "upgrade");
+    window.open("payments/checkout.php", "passhub_payment");
+    this.props.onClose();
   };
 
   onMailClick = () => {
-    console.log("on mail click");
-    this.props.onClose("dummy", "email");
+    if (!this.props.accountData.business) {
+      this.props.onClose("dummy", "email");
+    }
   };
 
   onSliderChange = (value) => {
@@ -108,7 +67,7 @@ class AccountModal extends Component {
       >
         <ModalCross onClose={this.props.onClose}></ModalCross>
         <div className="modalTitle">
-          <div className="h2">Account Setting</div>
+          <div className="h2">Account settings</div>
         </div>
 
         <Modal.Body style={{ marginBottom: "24px" }}>
@@ -130,7 +89,6 @@ class AccountModal extends Component {
               handleStyle={{ borderColor: "#00BC62" }}
             ></Slider>
           </div>
-
           {this.props.accountData.email.length ? (
             <InputField
               label="Email"
@@ -138,18 +96,19 @@ class AccountModal extends Component {
               value={this.props.accountData.email}
               onClick={this.onMailClick}
             >
-              <div>
-                <span className="iconTitle">Edit</span>
-                <svg
-                  className="gotowebsite"
-                  width="24"
-                  height="24"
-                  title="Edt"
-                  style={{ opacity: "0.5", stroke: "black", fill: "none" }}
-                >
-                  <use href="#f-edit"></use>
-                </svg>
-              </div>
+              {!this.props.accountData.business && (
+                <div>
+                  <span className="iconTitle">Edit</span>
+                  <svg
+                    width="24"
+                    height="24"
+                    title="Edt"
+                    style={{ opacity: "0.5", stroke: "black", fill: "none" }}
+                  >
+                    <use href="#f-edit"></use>
+                  </svg>
+                </div>
+              )}
             </InputField>
           ) : (
             <div
@@ -199,7 +158,7 @@ class AccountModal extends Component {
               </svg>
               Delete Account
             </div>
-            <div style={{ color: "#8D8D94", fontSize: "14px" }}>
+            <div style={{ color: "rgba(27, 27, 38, 0.7)", fontSize: "14px" }}>
               Once deleted, your records, files, safes and folders cannot be
               recovered
             </div>

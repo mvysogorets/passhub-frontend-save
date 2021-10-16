@@ -6,7 +6,7 @@ import "react-contexify/dist/ReactContexify.css";
 class SafeUSer extends Component {
   state = {};
 
-  handleRoleMenuClick = (cmd, e) => {
+  handleRoleMenuClick = (cmd, user) => {
     let role = "readonly";
     if (cmd == "Can edit") {
       role = "editor";
@@ -17,15 +17,15 @@ class SafeUSer extends Component {
     if (cmd == "Remove") {
       role = "Remove";
     }
-
-    this.props.setUserRole(this.props.user.name, role);
+    console.log(cmd.user);
+    this.props.setUserRole(user.name, role);
   };
 
   safeUserMenu = (
     <Menu id={"safe-user-menu"}>
       <Item
         onClick={(e) => {
-          this.handleRoleMenuClick("Can view", e);
+          this.handleRoleMenuClick("Can view", e.props.user);
         }}
       >
         <div>
@@ -42,7 +42,12 @@ class SafeUSer extends Component {
           </div>
         </div>
       </Item>
-      <Item onClick={(e) => this.handleRoleMenuClick("Can edit", e)}>
+      <Item
+        onClick={(e) => {
+          console.log(e);
+          this.handleRoleMenuClick("Can edit", e.props.user);
+        }}
+      >
         <div>
           <div>Can Edit</div>
           <div
@@ -59,7 +64,7 @@ class SafeUSer extends Component {
       </Item>
       <Item
         onClick={(e) => {
-          this.handleRoleMenuClick("Safe owner", e);
+          this.handleRoleMenuClick("Safe owner", e.props.user);
         }}
       >
         <div>
@@ -76,14 +81,18 @@ class SafeUSer extends Component {
           </div>
         </div>
       </Item>
-      <Item onClick={(e) => this.handleRoleMenuClick("Remove", e)}>
+      <Item onClick={(e) => this.handleRoleMenuClick("Remove", e.props.user)}>
         <div style={{ color: "#B40020", fontWeight: "bold" }}>Remove</div>
       </Item>
     </Menu>
   );
 
   showSafeUserMenu = (e) => {
-    contextMenu.show({ id: "safe-user-menu", event: e });
+    contextMenu.show({
+      id: "safe-user-menu",
+      event: e,
+      props: { user: this.props.user },
+    });
   };
 
   render() {
@@ -100,12 +109,14 @@ class SafeUSer extends Component {
           display: "flex",
           justifyContent: "space-between",
           marginBottom: "20px",
-          fontWeight: "normal",
+          fontWeight: "bold",
         }}
       >
         <div>
           Me &#183;{" "}
-          <span style={{ color: "#8D8D94" }}>{this.props.user.name}</span>
+          <span style={{ color: "rgba(27, 27, 38, 0.7)" }}>
+            {this.props.user.name}
+          </span>
         </div>
         <div style={{ marginRight: role == "owner" ? "40px" : 0 }}>{role}</div>
       </div>

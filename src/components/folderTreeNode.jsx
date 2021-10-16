@@ -2,15 +2,6 @@ import React, { Component } from "react";
 
 import FolderMenu from "./folderMenu";
 
-/*
-const iconStyle = {
-  stroke: "white",
-  opacity: "0.7",
-  verticalAlign: "middle",
-  marginRight: "10px",
-};
-*/
-
 const sharedFolderIcon = (
   <svg width="24" height="24" className="safe_pane_icon">
     <use href="#i-folder_shared"></use>
@@ -34,119 +25,6 @@ class FolderTreeNode extends Component {
     this.props.onMenuCmd(this.props.node, cmd);
     console.log(cmd);
   };
-
-  /*
-  folderMenu = (
-    <Menu id={FOLDER_MENU_ID}>
-      <Item
-        onClick={() => {
-          this.handleItemClick("rename");
-        }}
-      >
-        Rename
-      </Item>
-      <Item
-        onClick={() => {
-          this.handleItemClick("Add folder");
-        }}
-      >
-        Add folder
-      </Item>
-      <Item
-        disabled={isCopyBufferEmpty}
-        onClick={() => {
-          this.handleItemClick("Paste");
-        }}
-      >
-        Paste
-      </Item>
-      <Item
-        onClick={() => {
-          this.handleItemClick("export");
-        }}
-      >
-        Export
-      </Item>
-      <Item
-        onClick={() => {
-          this.handleItemClick("delete");
-        }}
-      >
-        Delete
-      </Item>
-    </Menu>
-  );
-
-  safeMenu = (
-    <Menu id={SAFE_MENU_ID}>
-      <Item
-        onClick={() => {
-          this.handleItemClick("Share");
-        }}
-      >
-        Share
-      </Item>
-      <Item
-        onClick={() => {
-          this.handleItemClick("rename");
-        }}
-      >
-        Rename
-      </Item>
-      <Item
-        onClick={() => {
-          this.handleItemClick("Add folder");
-        }}
-      >
-        Add folder
-      </Item>
-
-      <Item
-        disabled={isCopyBufferEmpty}
-        onClick={() => {
-          this.handleItemClick("Paste");
-        }}
-      >
-        Paste
-      </Item>
-      <Item
-        onClick={() => {
-          this.handleItemClick("export");
-        }}
-      >
-        Export
-      </Item>
-      <Item
-        onClick={() => {
-          this.handleItemClick("delete");
-        }}
-      >
-        Delete
-      </Item>
-    </Menu>
-  );
-
-  showSafeMenu = (e) => {
-    // e.preventDefault();
-    contextMenu.show({ id: SAFE_MENU_ID, event: e });
-  };
-
-  showFolderMenu = (e) => {
-    // e.preventDefault();
-    contextMenu.show({ id: FOLDER_MENU_ID, event: e });
-  };
-
-  menuDots = (
-    <div
-      className="menu-dots"
-      onClick={this.props.isSafe ? this.showSafeMenu : this.showFolderMenu}
-    >
-      <svg width="24" height="24" style={iconStyle}>
-        <use href="#el-dots"></use>
-      </svg>
-    </div>
-  );
-*/
 
   menuDots = (
     <FolderMenu
@@ -207,13 +85,23 @@ class FolderTreeNode extends Component {
               position: "relative",
               paddingLeft: padding + "px",
               outline: "none",
+              display: "flex",
             }}
           >
-            {angleIcon}
-            <span style={{ cursor: "default" }}>
+            <div>
+              {angleIcon}
               {icon}
+            </div>
+            <div
+              style={{
+                cursor: "default",
+                flexGrow: 1,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
               {this.props.node.name}
-            </span>
+            </div>
             {menuDotsHere}
           </div>
           {folders}
@@ -231,12 +119,20 @@ class FolderTreeNode extends Component {
           whiteSpace: "nowrap",
           paddingLeft: padding + 24 + "px",
           outline: "none",
+          display: "flex",
         }}
       >
-        <span style={{ cursor: "default" }}>
-          {icon}
+        <div style={{ cursor: "default" }}>{icon}</div>
+        <div
+          style={{
+            cursor: "default",
+            flexGrow: 1,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
           {this.props.node.name}
-        </span>
+        </div>
         {menuDotsHere}
       </div>
     );

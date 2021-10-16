@@ -9,7 +9,7 @@ import axios from "axios";
 import * as passhubCrypto from "../lib/crypto";
 
 class FolderNameModal extends Component {
-  state = { name: "", error_msg: "" };
+  state = { name: "", errorMsg: "" };
   isShown = false;
   title = "";
 
@@ -17,10 +17,6 @@ class FolderNameModal extends Component {
     super(props);
     this.textInput = React.createRef();
   }
-
-  onShow = () => {
-    // this.textInput.current.focus();
-  };
 
   onClose = () => {
     this.props.onClose();
@@ -33,17 +29,23 @@ class FolderNameModal extends Component {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
         safe,
       })
-      .then((result) => {
-        if (result.data.status === "Ok") {
-          this.props.onClose(true, result.data.id);
+      .then((response) => {
+        const result = response.data;
+
+        if (result.status === "Ok") {
+          this.props.onClose(true, result.id);
+          return;
         }
-        if (result.data.status === "login") {
+        if (result.status === "login") {
           window.location.href = "expired.php";
           return;
         }
+        this.setState({ errorMsg: result.status });
+        return;
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
+        this.setState({ errorMsg: "Server error. Please try again later" });
       });
   };
 
@@ -54,8 +56,8 @@ class FolderNameModal extends Component {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
         newSafeName: newName,
       })
-      .then((reply) => {
-        const result = reply.data;
+      .then((response) => {
+        const result = response.data;
         if (result.status === "Ok") {
           this.props.onClose(true);
           return;
@@ -64,10 +66,10 @@ class FolderNameModal extends Component {
           window.location.href = "expired.php";
           return;
         }
-        this.setState({ error_msg: result.status });
+        this.setState({ errorMsg: result.status });
       })
-      .catch((err) => {
-        this.setState({ error_msg: err });
+      .catch(() => {
+        this.setState({ errorMsg: "Server error. Please try again later" });
       });
   };
 
@@ -86,8 +88,8 @@ class FolderNameModal extends Component {
           folderID,
           name: eFolderName,
         })
-        .then((reply) => {
-          const result = reply.data;
+        .then((response) => {
+          const result = response.data;
           if (result.status === "Ok") {
             // safes.setNewFolderID(result.id);
             this.props.onClose(true, result.id);
@@ -97,10 +99,11 @@ class FolderNameModal extends Component {
             window.location.href = "expired.php";
             return;
           }
-          this.setState({ error_msg: result.status });
+          this.setState({ errorMsg: result.status });
         })
         .catch((err) => {
-          this.setState({ error_msg: err });
+          console.log(err);
+          this.setState({ errorMsg: "Server error. Please try again later" });
         });
     });
   };
@@ -118,8 +121,8 @@ class FolderNameModal extends Component {
             folderID: this.props.args.folder.id,
             name: eFolderName,
           })
-          .then((reply) => {
-            const result = reply.data;
+          .then((response) => {
+            const result = response.data;
             if (result.status === "Ok") {
               this.props.onClose(true);
               return;
@@ -128,10 +131,14 @@ class FolderNameModal extends Component {
               window.location.href = "expired.php";
               return;
             }
-            this.setState({ error_msg: result.status });
+            this.setState({ errorMsg: result.status });
+            return;
           })
           .catch((err) => {
-            this.setState({ error_msg: err });
+            console.log(err);
+            this.setState({
+              errorMsg: "Server error. Please try again later",
+            });
           });
       });
   };
@@ -140,7 +147,10 @@ class FolderNameModal extends Component {
     console.log(`submit ${this.title}`);
     const name = this.state.name.trim();
     if (name.length == 0) {
-      this.setState({ name: name, error_msg: "name cannot be empty" });
+      this.setState({
+        name: name,
+        errorMsg: "* Please fill in the name field",
+      });
       return;
     }
 
@@ -171,38 +181,48 @@ class FolderNameModal extends Component {
     }
   };
 
-  handleChange = (e) => this.setState({ name: e.target.value, error_msg: "" });
+  handleChange = (e) => this.setState({ name: e.target.value, errorMsg: "" });
 
   render() {
-    if (this.props.show) {
-      if (!this.isShown) {
-        this.isShown = true;
-        if (this.props.args.folder) {
-          // rename
-          this.state.name =
-            this.props.args.folder.path[this.props.args.folder.path.length - 1];
-        } else {
-          this.state.name = "";
-        }
-        this.state.error_msg = "";
-      }
-    } else {
+    if (!this.props.show) {
       this.isShown = false;
       return null;
     }
 
+    if (!this.isShown) {
+      this.isShown = true;
+      this.state.errorMsg = "";
+      if (this.props.args.folder) {
+        // rename
+        this.state.name =
+          this.props.args.folder.path[this.props.args.folder.path.length - 1];
+      } else {
+        this.state.name = "";
+      }
+    }
+
     this.title = "Create";
     let icon = "#f-safe";
+    let titleClass = "safe-name-title";
 
     if (this.props.args.folder) {
-      [this.title, icon] =
+      [this.title, icon, titleClass] =
         this.props.args.folder.path.length < 2
-          ? ["Rename Safe", "#f-safe"]
-          : ["Rename Folder", "#f-folderSimplePlus"];
+          ? ["Rename Safe", "#f-safe", "safe-name-title"]
+          : ["Rename Folder", "#f-folderSimplePlus", ""];
     } else {
-      [this.title, icon] = this.props.args.parent
-        ? ["Create Folder", "#f-folderSimplePlus"]
-        : ["Create Safe", "#f-safe"];
+      [this.title, icon, titleClass] = this.props.args.parent
+        ? ["Create Folder", "#f-folderSimplePlus", ""]
+        : ["Create Safe", "#f-safe", "safe-name-title"];
+    }
+
+    let path = "";
+    if (this.props.args.parent) {
+      path = this.props.args.parent.path.join(" > ");
+    } else if (this.props.args.folder) {
+      if (this.props.args.folder.path.length > 1) {
+        path = this.props.args.folder.path.slice(0, -1).join(" > ");
+      }
     }
 
     return (
@@ -213,10 +233,13 @@ class FolderNameModal extends Component {
         centered
       >
         <ModalCross onClose={this.props.onClose}></ModalCross>
+        {path.length > 0 && false && (
+          <div className="itemModalPath d-none d-sm-block">{path}</div>
+        )}
 
-        <div className="modalTitle">
+        <div className="modalTitle" style={{ alignItems: "center" }}>
           <div>
-            <svg width="32" height="32" style={{ margin: "8px 10px 0 0" }}>
+            <svg width="32" height="32" style={{ marginRight: "14px" }}>
               <use href={icon}></use>
             </svg>
           </div>
@@ -233,8 +256,8 @@ class FolderNameModal extends Component {
             edit
             onChange={this.handleChange}
           ></InputField>
-          {this.state.error_msg.length > 0 && (
-            <div style={{ color: "red" }}>{this.state.error_msg}</div>
+          {this.state.errorMsg.length > 0 && (
+            <div style={{ color: "red" }}>{this.state.errorMsg}</div>
           )}
         </Modal.Body>
         <Modal.Footer>

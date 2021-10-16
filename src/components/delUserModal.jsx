@@ -5,14 +5,9 @@ import axios from "axios";
 
 import ModalCross from "./modalCross";
 class DelUserModal extends Component {
-  /*
   state = {
-    isOpen: true,
+    errorMsg: "",
   };
-  openModal = () => {
-    this.setState({ isOpen: true });
-  };
-  */
 
   closeModal = () => {
     this.props.hide();
@@ -39,8 +34,7 @@ class DelUserModal extends Component {
         self.setState({ errorMsg: result.data.status });
       })
       .catch((error) => {
-        // alert(error);
-        self.setState({ errorMsg: error });
+        this.setState({ errorMsg: "Server error. Please try again later" });
       });
   };
 

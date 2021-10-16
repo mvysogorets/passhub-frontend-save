@@ -48,7 +48,6 @@ class ItemModal extends Component {
 
   onEdit = () => {
     this.setState({ edit: true });
-
     if (this.props.onEdit) {
       this.props.onEdit();
     }
@@ -71,30 +70,42 @@ class ItemModal extends Component {
   onView = () => {};
 
   render() {
-    let path = "";
-    let folderName = "";
-
-    if (this.props.show) {
-      if (this.props.args.item) {
-        path = this.props.args.folder.path.join(" > ");
-        folderName =
-          this.props.args.folder.path[this.props.args.folder.path.length - 1];
-      }
-      if (!this.isShown) {
-        this.isShown = true;
-        this.state.errorMsg = "";
-        if (this.props.args.item) {
-          this.state.title = this.props.args.item.cleartext[0];
-          this.state.note = this.props.args.item.cleartext[4];
-          this.state.edit = false;
-        } else {
-          this.state.title = "";
-          this.state.note = "";
-          this.state.edit = true;
-        }
-      }
-    } else {
+    if (!this.props.show) {
       this.isShown = false;
+      return null;
+    }
+
+    let path = [];
+    let folderName = "";
+    if (this.props.args.item) {
+      path = this.props.args.item.path;
+    } else if (this.props.args.folder) {
+      path = this.props.args.folder.path;
+    }
+
+    folderName = path[path.length - 1];
+
+    const pathString = path.join(" > ");
+    /*
+    if (this.props.args.folder) {
+      path = this.props.args.folder.path.join(" > ");
+      folderName =
+        this.props.args.folder.path[this.props.args.folder.path.length - 1];
+    }
+*/
+
+    if (!this.isShown) {
+      this.isShown = true;
+      this.state.errorMsg = "";
+      if (this.props.args.item) {
+        this.state.title = this.props.args.item.cleartext[0];
+        this.state.note = this.props.args.item.cleartext[4];
+        this.state.edit = false;
+      } else {
+        this.state.title = "";
+        this.state.note = "";
+        this.state.edit = true;
+      }
     }
 
     let modalClass = this.state.edit ? "edit" : "view";
@@ -110,8 +121,9 @@ class ItemModal extends Component {
         <ModalCross onClose={this.props.onClose}></ModalCross>
         <div
           className="d-sm-none green70"
-          style={{ cursor: "pointer", marginBottom: "18px" }}
+          style={{ cursor: "pointer", margin: "18px 0" }}
           onClick={() => {
+            this.props.onClose();
             /*
             if (this.props.searchMode) {
               this.props.onSearchClear();
@@ -140,7 +152,7 @@ class ItemModal extends Component {
         </div>
 
         <div class="itemModalNav">
-          <div className="itemModalPath d-none d-sm-block">{path}</div>
+          <div className="itemModalPath d-none d-sm-block">{pathString}</div>
           {!this.state.edit && (
             <div className="itemModalTools">
               {/*
@@ -191,9 +203,21 @@ class ItemModal extends Component {
             placeholder="Title"
           />
         ) : (
-          <div className="modalTitle">
-            <div className="h2">{this.state.title}</div>
-          </div>
+          <React.Fragment>
+            <div className="itemModalTitle">
+              <div className="h2">{this.state.title}</div>
+            </div>
+            <div
+              style={{
+                // position: "absolute",
+                width: "100%",
+                height: "1px",
+                // left: 0,
+                // top: "130px",
+                background: "#E7E7EE",
+              }}
+            ></div>
+          </React.Fragment>
         )}
 
         <Modal.Body className={modalClass}>

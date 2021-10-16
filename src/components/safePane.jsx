@@ -14,12 +14,8 @@ import MobileSafeNode from "./mobileSafeNode";
 import * as passhubCrypto from "../lib/crypto";
 import { popCopyBuffer } from "../lib/copyBuffer";
 
-import { getFolderById } from "../lib/utils";
-import { passkeyAuth } from "wwpass-frontend";
-
 class SafePane extends Component {
   state = {
-    openNodes: new Set(),
     showModal: "",
     folderNameModalArgs: {},
     shareModalArgs: null,
@@ -29,16 +25,6 @@ class SafePane extends Component {
     this.props.setActiveFolder(folder);
   };
 
-  handleOpen = (folder) => {
-    const openNodesCopy = new Set(this.state.openNodes);
-    if (this.state.openNodes.has(folder.id)) {
-      openNodesCopy.delete(folder.id);
-    } else {
-      openNodesCopy.add(folder.id);
-    }
-    this.setState({ openNodes: openNodesCopy });
-  };
-
   onAccountMenuCommand(cmd) {
     if (cmd === "Export") {
       this.setState({
@@ -46,11 +32,13 @@ class SafePane extends Component {
         exportFolderModalArgs: this.props.safes,
       });
     }
+    /*
     if (cmd === "Import") {
       this.setState({
         showModal: "ImportModal",
       });
     }
+    */
   }
 
   onFolderMenuCmd = (node, cmd) => {
@@ -88,7 +76,7 @@ class SafePane extends Component {
     if (cmd === "Share") {
       this.setState({
         showModal: "ShareModal",
-        shareModalArgs: node,
+        shareModalArgs: { folder: node, email: this.props.email },
       });
     }
   };
@@ -242,16 +230,7 @@ class SafePane extends Component {
           style={{ display: "flex", flexDirection: "column", height: "100%" }}
         >
           {/*<div className="folder">Recent and favorities</div> */}
-          <div
-            className="folder"
-            style={{
-              fontSize: "14px",
-              margin: "17px 0 6px 0",
-              letterSpacing: "0.16em",
-            }}
-          >
-            SAFES
-          </div>
+          <div className="folders-header">SAFES</div>
           <div className="safe_scroll_control d-sm-none">
             {this.props.safes.map((s) => (
               <MobileSafeNode
@@ -267,9 +246,9 @@ class SafePane extends Component {
               <FolderTreeNode
                 key={s.id}
                 onSelect={this.handleSelect}
-                onOpen={this.handleOpen}
+                onOpen={this.props.handleOpenFolder}
                 node={s}
-                open={this.state.openNodes.has(s.id) && this.state.openNodes}
+                open={this.props.openNodes.has(s.id) && this.props.openNodes}
                 activeFolder={this.props.activeFolder}
                 isSafe={true}
                 onMenuCmd={this.onFolderMenuCmd}
@@ -316,19 +295,9 @@ class SafePane extends Component {
             this.setState({ showModal: "" });
           }}
         ></ExportFolderModal>
-        <ImportModal
-          show={this.state.showModal == "ImportModal"}
-          safes={this.props.safes}
-          onClose={(refresh = false) => {
-            this.setState({ showModal: "" });
-            if (refresh === true) {
-              this.props.refreshUserData();
-            }
-          }}
-        ></ImportModal>
         <ShareModal
           show={this.state.showModal == "ShareModal"}
-          folder={this.state.shareModalArgs}
+          args={this.state.shareModalArgs}
           onClose={(refresh = false) => {
             this.setState({ showModal: "" });
             if (refresh === true) {
@@ -342,3 +311,17 @@ class SafePane extends Component {
 }
 
 export default SafePane;
+
+/*
+        <ImportModal
+          show={this.state.showModal == "ImportModal"}
+          safes={this.props.safes}
+          onClose={(refresh = false) => {
+            this.setState({ showModal: "" });
+            if (refresh === true) {
+              this.props.refreshUserData();
+            }
+          }}
+        ></ImportModal>
+
+*/

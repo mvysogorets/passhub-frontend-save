@@ -107,8 +107,9 @@ function isStrongPassword(pw) {
 }
 
 function baseName(path) {
-  var base = new String(path).substring(path.lastIndexOf('/') + 1);
-  if (base.lastIndexOf(".") != -1) {
+  // var base = new String(path).substring(path.lastIndexOf('/') + 1);
+  let base = path.substring(path.lastIndexOf('/') + 1);
+  if (base.lastIndexOf(".") !== -1) {
       base = base.substring(0, base.lastIndexOf("."));
   }
   return base;

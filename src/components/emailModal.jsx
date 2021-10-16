@@ -8,26 +8,26 @@ import ModalCross from "./modalCross";
 import InputField from "./inputField";
 
 import { urlBase } from "../lib/utils";
+import progress from "../lib/progress";
 
 class EmailModal extends Component {
   state = { email: "", errorMsg: "" };
   isShown = false;
 
   onSubmit = () => {
-    console.log("Submit");
     const email = this.state.email.trim();
     if (email.length == 0) {
       this.setState({ errorMsg: "Please fill the email field" });
       return;
     }
-
-    const self = this;
+    progress.lock();
     axios
       .post("r-change_mail.php", {
         email,
         base_url: urlBase(),
       })
       .then((reply) => {
+        progress.unlock();
         const result = reply.data;
         if (result.status === "Ok") {
           this.props.onClose("dummy", "verifyEmail", email);
@@ -40,7 +40,8 @@ class EmailModal extends Component {
         this.setState({ errorMsg: result.status });
       })
       .catch((err) => {
-        this.setState({ errorMsg: err });
+        progress.unlock();
+        this.setState({ errorMsg: "Server error. Please try again later" });
       });
   };
 
@@ -49,14 +50,15 @@ class EmailModal extends Component {
   };
 
   render() {
-    if (this.props.show) {
-      if (!this.isShown) {
-        this.isShown = true;
-        this.state.email = this.props.accountData.email;
-      }
-    } else {
+    if (!this.props.show) {
       this.isShown = false;
       return null;
+    }
+
+    if (!this.isShown) {
+      this.isShown = true;
+      this.state.email = this.props.accountData.email;
+      this.state.errorMsg = "";
     }
 
     let title = "Add your email address";

@@ -10,19 +10,19 @@ class ViewFile extends Component {
   }
 
   componentWillUnmount = () => {
-    console.log("viewFile will unmount", this.ext);
+    // console.log("viewFile will unmount", this.ext);
   };
 
   componentWillUpdate = () => {
-    console.log("viewFile will update", this.props, this.ext);
+    // console.log("viewFile will update", this.props, this.ext);
   };
 
   componentWillMount = () => {
-    console.log("viewFile will mount", this.ext);
+    // console.log("viewFile will mount", this.ext);
   };
 
   componentDidUpdate = () => {
-    console.log("viewFile did update", this.props, this.ext);
+    // console.log("viewFile did update", this.props, this.ext);
     if (this.props.show) {
       if (this.ext == "pdf") {
         const obj_url = URL.createObjectURL(this.props.blob);
@@ -54,7 +54,7 @@ class ViewFile extends Component {
   };
 
   componentDidMount = () => {
-    console.log("viewFile did mount", this.ext);
+    // console.log("viewFile did mount", this.ext);
     if (this.ext == "pdf") {
       const obj_url = URL.createObjectURL(this.props.blob);
       this.iframeRef.current.setAttribute("src", obj_url);
@@ -82,7 +82,7 @@ class ViewFile extends Component {
   };
 
   render() {
-    console.log("viewFile render", this.props, this.ext);
+    // console.log("viewFile render", this.props, this.ext);
     if (!this.props.show) {
       return null;
     }

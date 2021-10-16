@@ -21,17 +21,17 @@ class AccountDropDown extends Component {
   isShown = false;
 
   handleButtonClick = (e) => {
-    console.log("button click");
+    //console.log("button click");
     this.props.onClose();
   };
 
   handleBodyClick = (e) => {
     e.stopPropagation();
-    console.log("body click");
+    //console.log("body click");
   };
 
   handleOuterClick = () => {
-    console.log("outer click");
+    //console.log("outer click");
     this.props.onClose();
   };
 
@@ -46,52 +46,33 @@ class AccountDropDown extends Component {
   };
 
   onUpgrade = () => {
+    window.open("payments/checkout.php", "passhub_payment");
     this.props.onClose();
-    this.props.onMenuCommand("upgrade");
+    //    this.props.onMenuCommand("upgrade");
   };
-  /*
-  getAccountData = () => {
-    const self = this;
-    axios
-      .post("account.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
-      })
-      .then((reply) => {
-        const result = reply.data;
-        if (result.status === "Ok") {
-          self.setState({ accountData: result });
-          return;
-        }
-        if (result.status === "login") {
-          window.location.href = "expired.php";
-          return;
-        }
-      });
-  };
-*/
   componentDidMount = () => {
     this.props.getAccountData();
-    console.log("account dropdown  mounted");
+    //console.log("account dropdown  mounted");
   };
 
   componentDidUpdate = () => {
-    console.log("account dropdown updated");
+    //console.log("account dropdown updated");
   };
 
   componentWillUnmount = () => {
-    console.log("account dropdown will unmount");
+    //console.log("account dropdown will unmount");
   };
 
   render() {
     const accountData = this.props.accountData;
-    if (this.props.show) {
-      if (!this.isShown) {
-        this.isShown = true;
-        this.props.getAccountData();
-      }
-    } else {
+
+    if (!this.props.show) {
       this.isShown = false;
       return null;
+    }
+    if (!this.isShown) {
+      this.isShown = true;
+      this.props.getAccountData();
     }
 
     const modalClasses = this.props.show ? "pmodal" : "pmodal d-none";
@@ -185,8 +166,8 @@ class AccountDropDown extends Component {
             <div>
               <button
                 className="btn btn-primary"
-                style={{ width: "100%", marginBottom: "14px" }}
-                onCLick={this.onUpgrade}
+                style={{ width: "100%", margin: "0 0 14px 0", display: "none" }}
+                onClick={this.onUpgrade}
               >
                 Get more
               </button>

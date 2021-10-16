@@ -9,24 +9,16 @@ class ItemModalFieldNav extends Component {
       clickAction = (
         <div>
           <span className="iconTitle">Copy</span>
-          <svg width="24" height="24" fill="none" title="Copy">
+          <svg width="24" height="24" fill="none" stroke="#1b1b26" title="Copy">
             <use href="#f-copy"></use>
           </svg>
         </div>
       );
     } else if (this.props.gotowebsite) {
       clickAction = (
-        <div>
-          <span className="iconTitle">Go to website</span>
-          <svg
-            className="gotowebsite"
-            width="24"
-            height="24"
-            title="Go to website"
-            style={{ opacity: "0.5", stroke: "black", fill: "none" }}
-          >
-            <use href="#f-gotowebsite"></use>
-          </svg>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div className="iconTitle">Go to website</div>
+          <div className="gotowebsite"></div>
         </div>
       );
     }
@@ -41,3 +33,16 @@ class ItemModalFieldNav extends Component {
 }
 
 export default ItemModalFieldNav;
+
+/*
+          <svg
+            className="gotowebsite"
+            width="40"
+            height="32"
+            title="Go to website"
+            stroke="white"
+          >
+            <use href="#f-gotowebsite"></use>
+          </svg>
+
+*/

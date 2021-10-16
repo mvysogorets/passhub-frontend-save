@@ -7,6 +7,7 @@ import ModalCross from "./modalCross";
 class DeleteFolderModal extends Component {
   state = {
     phase: "initial",
+    errorMsg: "",
   };
   stats = {};
 
@@ -76,8 +77,14 @@ class DeleteFolderModal extends Component {
           window.location.href = "expired.php";
           return;
         }
+        this.setState({ errorMsg: result.status });
+        return;
       })
-      .catch((err) => {});
+      .catch(() => {
+        this.setState({
+          errorMsg: "Server error. Please try again later",
+        });
+      });
   };
 
   render() {
@@ -137,6 +144,9 @@ class DeleteFolderModal extends Component {
             <div>
               Deleted folders: {this.stats.folders} items: {this.stats.items}
             </div>
+          )}
+          {this.state.errorMsg.length > 0 && (
+            <div style={{ color: "red" }}>{this.state.errorMsg}</div>
           )}
         </Modal.Body>
         <Modal.Footer>

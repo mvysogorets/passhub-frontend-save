@@ -30,7 +30,7 @@ class UserManagementPage extends Component {
   onNewMail = (email) => {
     this.setState({ email });
     this.getPageData();
-    console.log(email);
+    // console.log(email);
   };
 
   updatePage = () => {
@@ -50,7 +50,7 @@ class UserManagementPage extends Component {
   };
 
   userStatusCB = (data) => {
-    console.log(data);
+    //console.log(data);
     axios
       .post("iam.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
@@ -75,13 +75,16 @@ class UserManagementPage extends Component {
   };
 
   getPageData = () => {
+    if (window.location.href.includes("mock")) {
+      return;
+    }
     axios
       .post("../iam.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
         operation: "users",
       })
       .then((result) => {
-        console.log(result);
+        // console.log(result);
         if (result.data.status === "Ok") {
           let users = result.data.users.sort(cmp);
           this.setState({
@@ -104,7 +107,7 @@ class UserManagementPage extends Component {
   };
 
   componentDidMount() {
-    console.log("userManagementPage did mount");
+    // console.log("userManagementPage did mount");
     this.getPageData();
   }
 

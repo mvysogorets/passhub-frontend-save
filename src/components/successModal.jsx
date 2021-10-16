@@ -23,12 +23,10 @@ class SuccessModal extends Component {
             <svg width="112" height="112" fill="none">
               <use href="#f-success"></use>
             </svg>
-            <div style={{ marginBottom: "1em" }}>
-              <h2>Success</h2>
+            <div clasName="h2" style={{ marginBottom: "1em" }}>
+              Success
             </div>
-            <div style={{ marginBottom: "108px" }}>
-              Your message has been sent
-            </div>
+            <div style={{ marginBottom: "108px" }}>{this.props.children}</div>
             <Button
               variant="primary"
               type="submit"

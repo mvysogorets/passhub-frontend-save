@@ -2,11 +2,8 @@ import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-import axios from "axios";
-
 import InputField from "./inputField";
 import ModalCross from "./modalCross";
-import TextAreaField from "./textAreaField";
 
 class UpgradeModal extends Component {
   state = { discount: "", errorMsg: "" };
@@ -15,44 +12,6 @@ class UpgradeModal extends Component {
 
   onDiscountChange = (e) => {
     this.setState({ discount: e.target.value, errorMsg: "" });
-  };
-
-  onEmailChange = (e) => {
-    this.setState({ email: e.target.value, errorMsg: "" });
-  };
-
-  onMessageChange = (e) => {
-    this.setState({ message: e.target.value, errorMsg: "" });
-  };
-
-  onSubmit = () => {
-    if (this.state.message.trim().length == 0) {
-      this.setState({ errorMsg: "please fill in the message field" });
-      return;
-    }
-
-    axios
-      .post("contact_us.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
-        name: this.state.name,
-        email: this.state.email,
-        message: this.state.message,
-      })
-      .then((reply) => {
-        const result = reply.data;
-        if (result.status === "Ok") {
-          this.props.onClose("success");
-          return;
-        }
-        if (result.status === "login") {
-          window.location.href = "expired.php";
-          return;
-        }
-        this.setState({ errorMsg: result.status });
-      })
-      .catch((err) => {
-        this.setState({ errorMsg: err });
-      });
   };
 
   render() {

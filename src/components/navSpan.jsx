@@ -12,6 +12,19 @@ import DeleteAccountFinalModal from "./deleteAccountFinalModal";
 
 class NavSpan extends Component {
   state = { showModal: "", accountData: {} };
+
+  init = window.addEventListener(
+    "message",
+    (event) => {
+      if (event.data === "payment_success") {
+        // console.log("Message event");
+        // console.log(event);
+        this.getAccountData();
+      }
+    },
+    false
+  );
+
   searchClear = () => {
     this.props.onSearchChange("");
   };
@@ -79,6 +92,10 @@ class NavSpan extends Component {
     }
     if (cmd === "Account settings") {
       this.setState({ showModal: "Account settings" });
+      return;
+    }
+    if (cmd === "Help") {
+      window.open("doc", "_blank", []);
       return;
     }
     if (cmd === "Iam") {
