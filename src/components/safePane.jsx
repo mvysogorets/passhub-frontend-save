@@ -201,6 +201,9 @@ class SafePane extends Component {
   };
 
   render() {
+    if (!this.props.show) {
+      return null;
+    }
     /*
     if (this.props.activeFolder && this.props.activeFolder.safe) {
       let parentId = this.props.activeFolder.parent;

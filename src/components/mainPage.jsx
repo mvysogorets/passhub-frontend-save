@@ -69,7 +69,7 @@ const mockData = {
   ],
 };
 
-function decryptSafeData(aesKey, safe) {
+function decryptSafeData(safe, aesKey) {
   for (let i = 0; i < safe.items.length; i += 1) {
     safe.items[i].cleartext = passhubCrypto.decodeItem(safe.items[i], aesKey);
   }
@@ -91,7 +91,8 @@ function decryptSafes(eSafes) {
       promises.push(
         passhubCrypto.decryptAesKey(safe.key).then((bstringKey) => {
           safe.bstringKey = bstringKey;
-          return decryptSafeData(bstringKey, safe);
+          safe.name = passhubCrypto.decryptSafeName(safe, safe.bstringKey);
+          return decryptSafeData(safe, safe.bstringKey);
         })
       );
     }
@@ -413,6 +414,11 @@ class MainPage extends Component {
         }
       }
     }
+
+    result.sort((a, b) =>
+      a.cleartext[0].toLowerCase().localeCompare(b.cleartext[0].toLowerCase())
+    );
+
     return result;
   }
 
@@ -479,6 +485,7 @@ class MainPage extends Component {
     return (
       <React.Fragment>
         <SafePane
+          show={this.state.ePrivateKey}
           safes={this.state.safes}
           setActiveFolder={this.setActiveFolder}
           activeFolder={this.state.activeFolder}

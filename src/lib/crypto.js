@@ -149,11 +149,74 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
     return hexEncryptedAesKey;
  }
 
+ function encryptSafeName(newName, aesKey) {
+  const iv = forge.random.getBytesSync(12);
+  const cipher = forge.cipher.createCipher('AES-GCM', aesKey);
+  cipher.start({ iv });
+  cipher.update(forge.util.createBuffer(newName, 'utf8')); // already joined by encode_item (
+  const result = cipher.finish(); // check 'result' for true/false
+  const eName = {
+    iv: btoa(iv),
+    data: btoa(cipher.output.data),
+    tag: btoa(cipher.mode.tag.data),
+  };
+  console.log(eName);
+  return eName;
+}
+
+
   function createSafe(name) {
     const aesKey = forge.random.getBytesSync(32);
+    const eName = encryptSafeName(name, aesKey);
+/*
+    const iv = forge.random.getBytesSync(12);
+    const cipher = forge.cipher.createCipher('AES-GCM', aesKey);
+    cipher.start({ iv });
+    cipher.update(forge.util.createBuffer(name, 'utf8')); // already joined by encode_item (
+    const result = cipher.finish(); // check 'result' for true/false
+    const eName = {
+      iv: btoa(iv),
+      data: btoa(cipher.output.data),
+      tag: btoa(cipher.mode.tag.data),
+    };
+    console.log(eName);
+    */
     const hexEncryptedAesKey = encryptAesKey(publicKeyPem, aesKey);
-    return { name, aes_key: hexEncryptedAesKey };
+    return { /*name, */ eName, aes_key: hexEncryptedAesKey, version:3 };
   };
+
+  function createSafeFromFolder(folder) {
+    const aesKey = forge.random.getBytesSync(32);
+    const hexEncryptedAesKey = encryptAesKey(publicKeyPem, aesKey);
+    const result = {};
+    result.key = hexEncryptedAesKey;
+//     result.name = folder.name;
+    result.eName = encryptSafeName(folder.name, aesKey);
+    result.version = 3;
+    result.entries = [];
+    for (let e = 0; e < folder.entries.length; e++) {
+      result.entries.push(encryptItem(folder.entries[e].cleartext, aesKey, folder.entries[e].options));
+    }
+    result.folders = [];
+    if ('folders' in folder) {
+      for (let f = 0; f < folder.folders.length; f++) {
+        result.folders.push(encryptFolder(folder.folders[f], aesKey));
+      }
+    }
+    return result;
+  }
+
+  function decryptSafeName(safe, aesKey) {
+    if("version" in safe) {
+      const decipher = forge.cipher.createDecipher('AES-GCM', aesKey);
+      decipher.start({ iv: atob(safe.eName.iv), tag: atob(safe.eName.tag) });
+      decipher.update(forge.util.createBuffer(atob(safe.eName.data)));
+      const pass = decipher.finish();
+      return decipher.output.toString('utf8').split('\0')[0];
+    } else {
+      return safe.name; 
+    }
+  }
 
   function encryptFolder(folder, aes_key) {
     const result = { entries: [], folders: [] };
@@ -168,25 +231,6 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
     }
     for (let f = 0; f < folder.folders.length; f++) {
       result.folders.push(encryptFolder(folder.folders[f], aes_key));
-    }
-    return result;
-  }
-
-  function createSafeFromFolder(folder) {
-    const aesKey = forge.random.getBytesSync(32);
-    const hexEncryptedAesKey = encryptAesKey(publicKeyPem, aesKey);
-    const result = {};
-    result.key = hexEncryptedAesKey;
-    result.name = folder.name;
-    result.entries = [];
-    for (let e = 0; e < folder.entries.length; e++) {
-      result.entries.push(encryptItem(folder.entries[e].cleartext, aesKey, folder.entries[e].options));
-    }
-    result.folders = [];
-    if ('folders' in folder) {
-      for (let f = 0; f < folder.folders.length; f++) {
-        result.folders.push(encryptFolder(folder.folders[f], aesKey));
-      }
     }
     return result;
   }
@@ -356,6 +400,8 @@ export {
   encryptAesKey,
   decodeItem,
   decodeFolder,
+  decryptSafeName,
+  encryptSafeName,
   createSafe,
   createSafeFromFolder,
   encryptFolderName,

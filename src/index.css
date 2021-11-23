@@ -175,6 +175,14 @@ h1 {
   padding-right: 0;
 }
 
+.item_table .login-item-link {
+  color: #007b40;
+}
+
+.item_table .login-item-link:hover {
+  text-decoration: underline;
+}
+
 .itemIcon {
   /*stroke: #e6e6f0; */
   stroke: #808080;
@@ -474,15 +482,17 @@ input.ModalTitle:focus {
 
 .roleChanger {
   display: inline-block;
+  /*
   border: 1px solid #00bc62;
-  color: #009a50;
   border-radius: 12px;
+  padding: 7px 0 9px;
+*/
+  color: #007b40;
   font-size: 16px;
   line-height: 24px;
-  padding: 7px 0 9px;
-  text-align: center;
+  text-align: end;
   cursor: pointer;
-  width: 125px;
+  width: 7em;
 }
 
 /* -------------------- */
@@ -505,6 +515,7 @@ input.ModalTitle:focus {
   background: #f4f4f7;
 }
 
+/*
 @media (max-width: 576px) {
   .react-contexify {
     background: rgba(27, 27, 38);
@@ -525,7 +536,7 @@ input.ModalTitle:focus {
     background: rgba(27, 27, 38);
   }
 }
-
+*/
 /*----------------------*/
 
 .mainRow {
@@ -771,6 +782,12 @@ input.ModalTitle:focus {
 
 .z-index-2040 {
   z-index: 2040;
+}
+
+@media (max-width: 575px) {
+  .modal-dialog {
+    margin: 0;
+  }
 }
 
 @media (min-width: 768px) {
@@ -1045,6 +1062,8 @@ input[type="file"] {
   border: 1px solid #e7e7ee;
   border-radius: 16px;
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: flex-end;
 }
 
@@ -1101,6 +1120,7 @@ textarea:focus {
 
 .note-view {
   white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 /*------  UI kit ------------*/
 .h5 {

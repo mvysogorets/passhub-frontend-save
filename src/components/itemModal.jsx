@@ -77,8 +77,14 @@ class ItemModal extends Component {
 
     let path = [];
     let folderName = "";
+    let lastModified = "";
+
     if (this.props.args.item) {
       path = this.props.args.item.path;
+      if (this.props.args.item.lastModified) {
+        lastModified = new Date(this.props.args.item.lastModified);
+        lastModified = lastModified.toLocaleString();
+      }
     } else if (this.props.args.folder) {
       path = this.props.args.folder.path;
     }
@@ -217,6 +223,16 @@ class ItemModal extends Component {
                 background: "#E7E7EE",
               }}
             ></div>
+            <div
+              style={{
+                color: "#1b1b26",
+                opacity: 0.7,
+                fontStyle: "italic",
+                textAlign: "end",
+              }}
+            >
+              {lastModified}
+            </div>
           </React.Fragment>
         )}
 
@@ -227,10 +243,11 @@ class ItemModal extends Component {
           {this.props.children}
 
           <div className="itemNoteModalField">
-            <ItemModalFieldNav name="Note" />
+            <ItemModalFieldNav name="Note" for="notes" />
             <div>
               {this.state.edit ? (
                 <textarea
+                  id="notes"
                   className="notes"
                   onChange={this.onNoteChange}
                   readOnly={!this.state.edit}

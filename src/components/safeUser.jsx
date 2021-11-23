@@ -1,6 +1,13 @@
 import React, { Component } from "react";
 
-import { contextMenu, Menu, Item, Separator, Submenu } from "react-contexify";
+import {
+  contextMenu,
+  Menu,
+  Item,
+  theme,
+  Separator,
+  Submenu,
+} from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 
 class SafeUSer extends Component {
@@ -109,16 +116,27 @@ class SafeUSer extends Component {
           display: "flex",
           justifyContent: "space-between",
           marginBottom: "20px",
-          fontWeight: "bold",
         }}
       >
-        <div>
-          Me &#183;{" "}
-          <span style={{ color: "rgba(27, 27, 38, 0.7)" }}>
-            {this.props.user.name}
-          </span>
+        <div
+          style={{
+            color: "rgba(27, 27, 38, 0.7)",
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+          }}
+        >
+          <b>Me&nbsp;&#183;</b>&nbsp;
+          {this.props.user.name}
         </div>
-        <div style={{ marginRight: role == "owner" ? "40px" : 0 }}>{role}</div>
+        <div
+          style={{
+            marginRight: "1em",
+            textAlign: "end",
+            width: "7em",
+          }}
+        >
+          {role}
+        </div>
       </div>
     ) : (
       <div
@@ -128,7 +146,9 @@ class SafeUSer extends Component {
           marginBottom: "20px",
         }}
       >
-        <div>{this.props.user.name}</div>
+        <div style={{ textOverflow: "ellipsis", overflow: "hidden" }}>
+          {this.props.user.name}
+        </div>
         {this.safeUserMenu}
         {this.props.isAdmin ? (
           <div className="roleChanger" onClick={this.showSafeUserMenu}>

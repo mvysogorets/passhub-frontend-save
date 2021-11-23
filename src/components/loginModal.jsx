@@ -372,9 +372,14 @@ class LoginModal extends Component {
             }
           }}
         >
-          <ItemModalFieldNav copy={!this.state.edit} name="Username" />
+          <ItemModalFieldNav
+            copy={!this.state.edit}
+            name="Username"
+            for="username"
+          />
           <div>
             <input
+              id="username"
               className="lp"
               onChange={this.onUsernameChange}
               readOnly={!this.state.edit}
@@ -493,12 +498,14 @@ class LoginModal extends Component {
           }
         >
           <ItemModalFieldNav
-            gotowebsite={!this.state.edit}
+            gotowebsite={!this.state.edit && this.state.url.length > 0}
             name="Website Address"
+            for="websiteaddress"
           />
           <div>
             {this.state.edit ? (
               <input
+                id="websiteaddress"
                 onChange={this.onUrlChange}
                 spellCheck={false}
                 value={this.state.url}

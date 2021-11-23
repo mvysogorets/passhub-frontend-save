@@ -3,16 +3,22 @@ import { updateTicket } from 'wwpass-frontend';
 function keepTicketAlive(ttl, age) {
   const maxTicketAge = ttl / 2 + 30;
   let ticketTimeStamp = new Date() / 1000 - age;
+  let intervalID;
 
   function CheckIdleTime() {
     const secondsNow = new Date() / 1000;
-
     if ((secondsNow - ticketTimeStamp) > maxTicketAge) {
       ticketTimeStamp = new Date() / 1000;
-      updateTicket('update_ticket.php');
+      updateTicket('update_ticket.php')
+        .catch((error) => {
+          console.log('updateticket error');
+          console.log(error);
+          clearInterval(intervalID);
+          window.location='logout.php';
+      })
     }
   }
-  window.setInterval(CheckIdleTime, 1000);
+  intervalID = window.setInterval(CheckIdleTime, 1000);
 }
 
 function serverLog(msg) {

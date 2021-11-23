@@ -142,7 +142,6 @@ class AccountModal extends Component {
           )}
           <div
             onClick={() => {
-              console.log("delete account 1");
               this.props.onClose("dummy", "delete account");
             }}
           >

@@ -70,6 +70,7 @@ class ExportFolderModal extends Component {
         onHide={this.onClose}
         onEnter={this.onEnter}
         animation={false}
+        centered
       >
         <ModalCross onClose={this.props.onClose}></ModalCross>
         <div className="modalTitle">

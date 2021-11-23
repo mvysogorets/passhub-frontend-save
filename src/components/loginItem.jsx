@@ -2,6 +2,16 @@ import React, { Component } from "react";
 
 import { openInExtension } from "../lib/extensionInterface";
 
+function prepareUrl(url) {
+  if (url.startsWith("www")) {
+    return `<a target='_blank' href='http://${url}' rel="noreferrer noopener">${url}</a>`;
+  }
+  if (url.startsWith("https://") || url.startsWith("http://")) {
+    return `<a target='_blank' href='${url}' rel="noreferrer noopener">${url}</a>`;
+  }
+  return url;
+}
+
 class LoginItem extends Component {
   state = {};
   showModal = () => {
@@ -17,6 +27,13 @@ class LoginItem extends Component {
       hour: "2-digit",
       minute: "2-digit",
     });
+
+    let link_text = item.cleartext[3];
+    if (link_text.startsWith("https://")) {
+      link_text = link_text.substring(8);
+    } else if (link_text.startsWith("http://")) {
+      link_text = link_text.substring(7);
+    }
 
     return (
       <tr className="d-flex" style={{ alignItems: "center" }}>
@@ -34,15 +51,15 @@ class LoginItem extends Component {
           {item.cleartext[1]}
         </td>
         <td
-          className="d-none d-lg-table-cell                    col-lg-4 col-xl-3"
+          className="d-none d-lg-table-cell                    col-lg-4 col-xl-3 login-item-link "
           onClick={() => {
             openInExtension(this.props.item);
           }}
           style={{
-            cursor: item.cleartext[3].length ? "pointer" : "",
+            cursor: link_text.length ? "pointer" : "",
           }}
         >
-          {item.cleartext[3]}
+          {link_text}
         </td>
         <td className="d-none d-xl-table-cell                             col-xl-3 column-modified">
           {modified}

@@ -4,6 +4,12 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 class DeleteItemModal extends Component {
+  state = {
+    errorMsg: "",
+  };
+
+  isShown = false;
+
   onClose = (refresh = false) => {
     this.props.onClose(false);
   };
@@ -15,7 +21,7 @@ class DeleteItemModal extends Component {
 
     axios
       .post("delete.php", {
-        vault,
+        vault: this.props.args.safe.id,
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
         id: this.props.args.item._id,
       })
@@ -25,34 +31,41 @@ class DeleteItemModal extends Component {
           this.props.onClose(true);
           return;
         }
-        if (result.status === "Record not found") {
-          // utils.bsAlert('Record not found. Erased by another user?');
-          // passhub.refreshUserData();
-          return;
-        }
 
         if (result.status === "login") {
           window.location.href = "expired.php";
           return;
         }
+        this.setState({ errorMsg: result.status });
       })
-      .catch((err) => {});
+      .catch((err) => {
+        this.setState({ errorMsg: "Server error. Please try again later" });
+      });
   };
 
   render() {
     let path = [];
     let title = "";
     let modalTitle = "Delete Record";
-    if (this.props.show) {
-      path = this.props.folder ? this.props.folder.path.join(" > ") : [];
-      title = this.props.args.item.cleartext[0];
 
-      if (this.props.args.item.file) {
-        modalTitle = "Delete File";
-      }
-      if (this.props.args.item.note) {
-        modalTitle = "Delete Note";
-      }
+    if (!this.props.show) {
+      this.isShown = false;
+      return null;
+    }
+
+    if (!this.isShown) {
+      this.isShown = true;
+      this.state.errorMsg = "";
+    }
+
+    path = this.props.folder ? this.props.folder.path.join(" > ") : [];
+    title = this.props.args.item.cleartext[0];
+
+    if (this.props.args.item.file) {
+      modalTitle = "Delete File";
+    }
+    if (this.props.args.item.note) {
+      modalTitle = "Delete Note";
     }
 
     return (
@@ -83,6 +96,9 @@ class DeleteItemModal extends Component {
         <div className="ModalTitle h2">{modalTitle}</div>
 
         <Modal.Body>
+          {this.state.errorMsg && (
+            <div style={{ color: "red" }}>{this.state.errorMsg}</div>
+          )}
           Do you really want to delete{" "}
           <span style={{ fontSize: "larger", fontWeight: "bold" }}>
             {title} ?

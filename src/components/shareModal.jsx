@@ -111,6 +111,10 @@ class ShareModal extends Component {
       }
       recipientSafeName += " /" + email;
     }
+    const eName = passhubCrypto.encryptSafeName(
+      recipientSafeName,
+      this.props.args.folder.bstringKey
+    );
 
     const vault = folder.safe ? folder.safe.id : folder.id;
 
@@ -121,7 +125,9 @@ class ShareModal extends Component {
         operation: "email_final",
         name: username,
         key: eAesKey,
-        safeName: recipientSafeName,
+        eName,
+        vesrion: 3,
+        // safeName: recipientSafeName,
         role,
       })
       .then((reply) => {
@@ -418,11 +424,7 @@ class ShareModal extends Component {
             <div style={{ marginBottom: "12px" }}>
               User invited:{" "}
               <span
-                style={{
-                  color: "#009A50",
-                  cursor: "pointer",
-                  marginLeft: "6px",
-                }}
+                class="roleChanger"
                 onClick={(e) => {
                   contextMenu.show({ id: "invited-user-menu", event: e });
                 }}

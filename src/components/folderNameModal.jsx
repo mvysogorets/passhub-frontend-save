@@ -24,6 +24,7 @@ class FolderNameModal extends Component {
 
   createSafe = (safeName) => {
     const safe = passhubCrypto.createSafe(safeName);
+    console.log(safe);
     axios
       .post("create_safe.php", {
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
@@ -50,11 +51,16 @@ class FolderNameModal extends Component {
   };
 
   renameSafe = (newName) => {
+    const eName = passhubCrypto.encryptSafeName(
+      newName,
+      this.props.args.folder.bstringKey
+    );
     axios
       .post("update_vault.php", {
         vault: this.props.args.folder.id,
         verifier: document.getElementById("csrf").getAttribute("data-csrf"),
-        newSafeName: newName,
+        eName,
+        version: 3,
       })
       .then((response) => {
         const result = response.data;

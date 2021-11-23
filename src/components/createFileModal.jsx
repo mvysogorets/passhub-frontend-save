@@ -209,6 +209,7 @@ class CreateFileModal extends React.Component {
                 fontSize: "18px",
                 lineHeight: "24px",
                 padding: "12px 0 0 12px",
+                overflowWrap: "anywhere",
               }}
             >
               {this.state.theFile ? this.state.theFile.name : "Choose file"}
