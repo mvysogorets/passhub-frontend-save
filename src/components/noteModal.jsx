@@ -85,6 +85,7 @@ class NoteModal extends Component {
         onClose={this.props.onClose}
         onSubmit={this.onSubmit}
         errorMsg={this.state.errorMsg}
+        isNote
       ></ItemModal>
     );
   }

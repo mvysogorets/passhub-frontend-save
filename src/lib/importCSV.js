@@ -146,7 +146,7 @@ function importCSV(text) {
 
   const titles = data.shift();
 
-  if (titles.length === 1) { // dashline?
+  if (titles.length === 1) { // old dashline?
     const t = data.shift();
     data.unshift(t);
     if (t.length === 7) {
@@ -159,6 +159,30 @@ function importCSV(text) {
       return safes;
     }
   }
+
+  // Dashlane credentials.csv: username,username2,username3,title,password,note,url,category,otpSecret
+  if ((titles.length === 9)
+    && (titles[0] === 'username')
+    && (titles[1] === 'username2')
+    && (titles[2] === 'username3')
+    && (titles[3] === 'title')
+    && (titles[4] === 'password')
+    && (titles[5] === 'note')
+    && (titles[6] === 'url')
+    && (titles[7] === 'category')
+    && (titles[8] === 'otpSecret')
+    ) {
+      data.forEach((e) => {
+        if(e.length === 9) {
+          let title = e[3]==''?'unnamed':e[3];
+          let path = e[7] == '' ? 'dashlane':`dashlane/${e[7]}`; 
+          addRecord(safes, [path, title, e[0], e[4], e[6], e[5]]);
+        }
+      });
+      return safes;
+    }
+
+
 
   // url,username,password,extra,name,grouping,fav -- lastpass
   if ((titles.length === 7)

@@ -244,7 +244,7 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
   }
   
   function decodeItem(item, aesKey) {
-    if ( (item.version === 3) || (item.version === 4)) {
+    if ( (item.version === 3) || (item.version === 4) || (item.version === 5)) {
       return decodeItemGCM(item, aesKey);
     }
 
@@ -305,9 +305,13 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
       tag: btoa(cipher.mode.tag.data),
       version: 3,
     };
-    if (cleartextItem.length === 6) {
+
+    if(options.version) {
+      obj.version = options.version;
+    } else if (cleartextItem.length === 6) {
       obj.version = 4;
     }
+
     if (typeof options !== 'undefined') {
       // Object.assign "polifill"
       for (let prop1 in options) {

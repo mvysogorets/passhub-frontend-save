@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { humanReadableFileSize } from "../lib/utils";
+import { humanReadableFileSize, lastModified } from "../lib/utils";
 
 class FileItem extends Component {
   state = {};
@@ -9,6 +9,7 @@ class FileItem extends Component {
 
   render() {
     const item = this.props.item;
+    /*
     const modified = new Date(item.lastModified).toLocaleString([], {
       year: "numeric",
       month: "2-digit",
@@ -16,6 +17,7 @@ class FileItem extends Component {
       hour: "2-digit",
       minute: "2-digit",
     });
+    */
     return (
       <tr className="d-flex" style={{ alignItems: "center" }}>
         <td
@@ -33,7 +35,7 @@ class FileItem extends Component {
           {humanReadableFileSize(item.file.size)}
         </td>
         <td className="column-modified d-none d-xl-table-cell col-xl-3">
-          {modified}
+          {lastModified(item)}
         </td>
       </tr>
     );

@@ -143,6 +143,7 @@ class ShareModal extends Component {
           const body = `${state.userMail} shared a Passhub safe with you.\n\n Please visit ${url}`;
           openmailclient.openMailClient(username, subj, body);
           */
+          this.setState({ email: "", errorMsg: "" });
           this.refreshOnClose = true;
           this.getSafeUsers();
           return;
@@ -388,6 +389,7 @@ class ShareModal extends Component {
               readOnly={false}
               spellCheck={false}
               value={this.state.email}
+              type="email"
             ></input>
           </div>
         </div>

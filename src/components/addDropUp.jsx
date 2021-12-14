@@ -83,6 +83,19 @@ class AddDropUp extends Component {
           </div>
           <div
             className="addModalItem"
+            onClick={(e) => this.handleMenuCommand(e, "Bank Card")}
+          >
+            <svg
+              width="24"
+              height="24"
+              style={{ marginRight: 10, verticalAlign: "text-bottom" }}
+            >
+              <use href="#f-file"></use>
+            </svg>
+            Bank Card
+          </div>
+          <div
+            className="addModalItem"
             onClick={(e) => this.handleMenuCommand(e, "Folder")}
           >
             <svg

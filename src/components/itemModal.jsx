@@ -23,11 +23,17 @@ class ItemModal extends Component {
   constructor(props) {
     super(props);
     this.titleInput = React.createRef();
+    this.textAreaRef = React.createRef();
   }
 
   onTitleChange = (e) => this.setState({ title: e.target.value, errorMsg: "" });
 
-  onNoteChange = (e) => this.setState({ note: e.target.value });
+  onNoteChange = (e) => {
+    this.setState({ note: e.target.value });
+    e.target.style.height = "auto";
+    console.log(e.target.scrollHeight);
+    e.target.style.height = e.target.scrollHeight + "px";
+  };
 
   onShow = () => {
     this.state.edit && this.titleInput.current.focus();
@@ -106,6 +112,10 @@ class ItemModal extends Component {
       if (this.props.args.item) {
         this.state.title = this.props.args.item.cleartext[0];
         this.state.note = this.props.args.item.cleartext[4];
+        if (this.props.args.item.version == 5) {
+          this.state.title = this.props.args.item.cleartext[1];
+          this.state.note = this.props.args.item.cleartext[2];
+        }
         this.state.edit = false;
       } else {
         this.state.title = "";
@@ -115,6 +125,8 @@ class ItemModal extends Component {
     }
 
     let modalClass = this.state.edit ? "edit" : "view";
+
+    const maxHeight = this.props.isNote ? "" : "150px";
 
     return (
       <Modal
@@ -244,21 +256,25 @@ class ItemModal extends Component {
 
           <div className="itemNoteModalField">
             <ItemModalFieldNav name="Note" for="notes" />
-            <div>
+            <div className="xxx">
               {this.state.edit ? (
                 <textarea
                   id="notes"
                   className="notes"
-                  onChange={this.onNoteChange}
                   readOnly={!this.state.edit}
                   spellCheck={false}
                   value={this.state.note}
-                  style={{ width: "100%" }}
-                  rows="5"
+                  style={{
+                    width: "100%",
+                    maxHeight: this.props.isNote ? "430px" : "180px",
+                  }}
+                  onChange={this.onNoteChange}
                   placeholder="Type notes here"
+                  rows="2"
+                  ref={this.textAreaRef}
                 ></textarea>
               ) : (
-                <div class="note-view">{this.state.note}</div>
+                <div className="note-view">{this.state.note}</div>
               )}
             </div>
           </div>

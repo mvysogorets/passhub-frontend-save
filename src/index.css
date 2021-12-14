@@ -1205,3 +1205,22 @@ textarea:focus {
 .itemModalField:hover .gotowebsite {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"  width="40" height="32" viewBox="0 0 40 32" fill="none" ><rect width="40" height="32" rx="12" fill="%2300BC62"/><path d="M16.1519 20.0911L25.118 11.125" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M25.118 20.2689V11.125H15.9741" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 }
+
+.date-selector .dropdown-menu {
+  height: 210px;
+  overflow-y: scroll;
+}
+.date-selector .btn-outline-secondary {
+  min-width: auto;
+  border: none;
+  padding: 0 12px;
+}
+
+.date-selector .btn-outline-secondary:active {
+  outline: none;
+  box-shadow: none;
+}
+.date-selector .btn-outline-secondary:focus {
+  outline: none;
+  box-shadow: none;
+}

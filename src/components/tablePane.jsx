@@ -8,12 +8,14 @@ import { Menu, Item } from "react-contexify";
 import FolderItem from "./folderItem";
 import LoginItem from "./loginItem";
 import NoteItem from "./noteItem";
+import BankCardItem from "./bankCardItem";
 import FileItem from "./fileItem";
 
 import LoginModal from "./loginModal";
 
 import NoteModal from "./noteModal";
 import FileModal from "./fileModal";
+import BankCardModal from "./bankCardModal";
 import CreateFileModal from "./createFileModal";
 import DeleteItemModal from "./deleteItemModal";
 import AddDropUp from "./addDropUp";
@@ -24,11 +26,15 @@ import { getFolderById } from "../lib/utils";
 const ADD_BUTTON_MENU_ID = "add-menu-id";
 
 function isLoginItem(item) {
-  return !item.note && !item.file;
+  return !item.note && !item.file && item.version !== 5;
 }
 
 function isFileItem(item) {
   return item.file ? true : false;
+}
+
+function isBankCardItem(item) {
+  return item.version === 5 && item.cleartext[0] === "card";
 }
 
 function isNoteItem(item) {
@@ -60,6 +66,9 @@ class TablePane extends Component {
     }
     if (cmd === "Note") {
       this.showItemModal("NoteModal");
+    }
+    if (cmd === "Bank Card") {
+      this.showItemModal("BankCardModal");
     }
     if (cmd === "Folder") {
       this.handleFolderMenuCmd(this.props.folder, "Add folder");
@@ -344,6 +353,14 @@ class TablePane extends Component {
                             this.showItemModal("FileModal", item)
                           }
                         />
+                      )) ||
+                      (isBankCardItem(f) && (
+                        <BankCardItem
+                          item={f}
+                          showModal={(item) =>
+                            this.showItemModal("BankCardModal", item)
+                          }
+                        />
                       ))
                   )}
                 </tbody>
@@ -424,6 +441,13 @@ class TablePane extends Component {
             openDeleteItemModal={this.openDeleteItemModal}
             onClose={this.onItemModalClose}
           ></NoteModal>
+
+          <BankCardModal
+            show={this.state.showModal === "BankCardModal"}
+            args={this.state.itemModalArgs}
+            openDeleteItemModal={this.openDeleteItemModal}
+            onClose={this.onItemModalClose}
+          ></BankCardModal>
 
           <DeleteItemModal
             show={this.state.showModal === "DeleteItemModal"}

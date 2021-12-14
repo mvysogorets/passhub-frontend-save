@@ -485,7 +485,7 @@ class MainPage extends Component {
     return (
       <React.Fragment>
         <SafePane
-          show={this.state.ePrivateKey}
+          show={this.state.ePrivateKey || window.location.href.includes("mock")}
           safes={this.state.safes}
           setActiveFolder={this.setActiveFolder}
           activeFolder={this.state.activeFolder}

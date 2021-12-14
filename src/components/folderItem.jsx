@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { lastModified } from "../lib/utils";
 
 class FolderItem extends Component {
   state = {};
@@ -9,13 +10,6 @@ class FolderItem extends Component {
 
   render() {
     const item = this.props.item;
-    const modified = new Date(item.lastModified).toLocaleString([], {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
 
     const angleIcon = (
       <svg
@@ -47,7 +41,7 @@ class FolderItem extends Component {
           {angleIcon}
         </td>
         <td className="column-modified d-none d-xl-table-cell col-xl-3">
-          {modified}
+          {lastModified(item)}
         </td>
       </tr>
     );

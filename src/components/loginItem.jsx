@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import { openInExtension } from "../lib/extensionInterface";
+import { lastModified } from "../lib/utils";
 
 function prepareUrl(url) {
   if (url.startsWith("www")) {
@@ -20,13 +21,18 @@ class LoginItem extends Component {
 
   render() {
     const item = this.props.item;
-    const modified = new Date(item.lastModified).toLocaleString([], {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    /*
+    let modified = "";
+    if ("lastModified" in item) {
+      modified = new Date(item.lastModified).toLocaleString([], {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+    */
 
     let link_text = item.cleartext[3];
     if (link_text.startsWith("https://")) {
@@ -62,7 +68,7 @@ class LoginItem extends Component {
           {link_text}
         </td>
         <td className="d-none d-xl-table-cell                             col-xl-3 column-modified">
-          {modified}
+          {lastModified(item)}
         </td>
       </tr>
     );

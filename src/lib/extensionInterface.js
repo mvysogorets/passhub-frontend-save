@@ -2,8 +2,8 @@
 
 let extensionId = 'bamjbfhfacpdkenilcibkmpdahkgfejh';
 if (window.location.hostname === 'localhost') {
-    extensionId = 'dnplcljbgfioahaahlndfpkljfdhkcca'; 
-//    extensionId = 'iiohcppkjekblgemjlbodlddgpbkdmdl'; 
+   extensionId = 'dnplcljbgfioahaahlndfpkljfdhkcca'; 
+   // extensionId = 'iiohcppkjekblgemjlbodlddgpbkdmdl'; 
 }
 
 if (navigator.userAgent.includes('Firefox')) {

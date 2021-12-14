@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { lastModified } from "../lib/utils";
 
-class NoteItem extends Component {
+class BankCardItem extends Component {
   state = {};
   showModal = () => {
     this.props.showModal(this.props.item);
@@ -21,7 +21,7 @@ class NoteItem extends Component {
           <svg width="24" height="24" className="itemIcon">
             <use href="#i-note"></use>
           </svg>
-          {item.cleartext[0]}
+          {item.cleartext[1]}
         </td>
         <td className="column-modified d-none d-xl-table-cell col-xl-3">
           {lastModified(item)}
@@ -31,4 +31,4 @@ class NoteItem extends Component {
   }
 }
 
-export default NoteItem;
+export default BankCardItem;

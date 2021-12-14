@@ -82,6 +82,7 @@ const frequentPasswords = [
 "monkey",
 "mustang",
 "mynoob",
+"password1",
 "princess",
 "qazwsxedc",
 "qqww1122",
@@ -168,6 +169,21 @@ function urlBase() {
   return url_base;
 }
 
+function lastModified(item) {
+
+  if ((typeof item != "undefined") && ('lastModified' in item)) {
+    const date = new Date(item.lastModified);
+    return date.toLocaleString([], {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+  return '';
+}
+
 export {
   serverLog,
   isStrongPassword,
@@ -178,4 +194,5 @@ export {
   humanReadableFileSize,
   isMobile,
   urlBase,
+  lastModified
 };
