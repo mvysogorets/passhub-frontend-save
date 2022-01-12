@@ -88,9 +88,14 @@ class AddDropUp extends Component {
             <svg
               width="24"
               height="24"
-              style={{ marginRight: 10, verticalAlign: "text-bottom" }}
+              style={{
+                marginRight: 10,
+                verticalAlign: "text-bottom",
+                fill: "white",
+                opacity: "0.7",
+              }}
             >
-              <use href="#f-file"></use>
+              <use href="#credit_card"></use>
             </svg>
             Bank Card
           </div>

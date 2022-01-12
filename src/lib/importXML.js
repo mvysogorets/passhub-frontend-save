@@ -48,23 +48,47 @@ function importEntry(entry) {
       result[strings[s].Key] = strings[s].Value;
     }
   }
-  const cleartext = [
-    (typeof result.Title === 'string') ? result.Title : 'unnamed',
-    (typeof result.UserName === 'string') ? result.UserName : '',
-    (typeof result.Password === 'string') ? result.Password : '',
-    (typeof result.URL === 'string') ? result.URL : '',
-    (typeof result.Notes === 'string') ? result.Notes : '',
-  ];
-  if (typeof result.TOTP === 'string') {
-    cleartext.push(result.TOTP);
+
+  const options = {};
+
+  let cleartext;
+  if('card_num' in result) { // version 5 as of today
+    cleartext = [
+      "card",
+      (typeof result.Title === 'string') ? result.Title : 'unnamed',
+      (typeof result.Notes === 'string') ? result.Notes : '',
+      (typeof result.card_num === 'string') ? result.card_num : '',
+      (typeof result.card_name === 'string') ? result.card_name : '',
+      (typeof result.exp_month === 'string') ? result.exp_month : '',
+      (typeof result.exp_year === 'string') ? result.exp_year : '',
+      (typeof result.card_code === 'string') ? result.card_code : '',
+    ];
+    options.version = 5;
   }
+
+  else {
+    cleartext = [
+      (typeof result.Title === 'string') ? result.Title : 'unnamed',
+      (typeof result.UserName === 'string') ? result.UserName : '',
+      (typeof result.Password === 'string') ? result.Password : '',
+      (typeof result.URL === 'string') ? result.URL : '',
+      (typeof result.Notes === 'string') ? result.Notes : '',
+    ];
+    if (typeof result.TOTP === 'string') {
+      cleartext.push(result.TOTP);
+    }
+    if ((typeof result.Note === 'string') && (result.Note === '1')) {
+      options.note = 1;
+    }
+  }
+
+
+
 
   // check_limits_on_import(cleartext); // raises exception
 
-  const options = {};
-  if ((typeof result.Note === 'string') && (result.Note === '1')) {
-    options.note = 1;
-  }
+
+
   if (entry.hasOwnProperty('Times') && entry.Times.hasOwnProperty('LastModificationTime')) {
     options.lastModified = entry.Times.LastModificationTime;
   }

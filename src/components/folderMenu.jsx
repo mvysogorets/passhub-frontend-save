@@ -11,7 +11,6 @@ class FolderMenu extends Component {
 
   handleItemClick = (cmd) => {
     this.props.onMenuCmd(this.props.node, cmd);
-    console.log(cmd);
   };
 
   folderMenu = (

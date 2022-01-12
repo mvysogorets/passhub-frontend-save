@@ -395,13 +395,15 @@ class ShareModal extends Component {
         </div>
       );
 
-    let userCount = "";
+    let userCount = "Safe users";
+    /*
     if (this.state.userList.length == 1) {
       userCount = "1 user has access";
     }
     if (this.state.userList.length > 1) {
       userCount = `${this.state.userList.length} users have access`;
     }
+    */
 
     return (
       <Modal
@@ -446,12 +448,35 @@ class ShareModal extends Component {
               {this.safeUserMenu}
             </div>
           )}
+          {!this.isAdmin && this.state.userList.length > 0 && (
+            <div
+              style={{
+                marginBottom: "12px",
+                color: "rgb(222, 95, 0)",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <svg
+                style={{
+                  fill: "none",
+                  width: "64px",
+                  height: "64px",
+                  marginRight: "14px",
+                }}
+              >
+                <use href="#info-circle"></use>
+              </svg>
+              <div>
+                Only safe owners can share access to the safe or change access
+                rights of other users.
+              </div>
+            </div>
+          )}
           {recipientField}
-
           {this.state.errorMsg.length > 0 && (
             <div style={{ color: "red" }}>{this.state.errorMsg}</div>
           )}
-
           {this.isAdmin && (
             <div
               style={{

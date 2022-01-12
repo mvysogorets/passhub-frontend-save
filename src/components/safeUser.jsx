@@ -89,7 +89,9 @@ class SafeUSer extends Component {
         </div>
       </Item>
       <Item onClick={(e) => this.handleRoleMenuClick("Remove", e.props.user)}>
-        <div style={{ color: "#B40020", fontWeight: "bold" }}>Remove</div>
+        <div style={{ color: "#B40020", fontWeight: "bold" }}>
+          Revoke access
+        </div>
       </Item>
     </Menu>
   );

@@ -46,9 +46,11 @@ class AccountDropDown extends Component {
   };
 
   onUpgrade = () => {
+    /*
     window.open("payments/checkout.php", "passhub_payment");
     this.props.onClose();
-    //    this.props.onMenuCommand("upgrade");
+    */
+    this.props.onMenuCommand("upgrade");
   };
   componentDidMount = () => {
     this.props.getAccountData();
@@ -101,7 +103,7 @@ class AccountDropDown extends Component {
                 }}
               >
                 Free acount{" "}
-                <a className="link" href="#">
+                <a className="link" href="#" onClick={this.onUpgrade}>
                   Upgrade
                 </a>
               </div>
@@ -165,8 +167,7 @@ class AccountDropDown extends Component {
           {accountData.upgrade_button && (
             <div>
               <button
-                className="btn btn-primary"
-                style={{ width: "100%", margin: "0 0 14px 0", display: "none" }}
+                className="btn btn-primary upgrade-button"
                 onClick={this.onUpgrade}
               >
                 Get more

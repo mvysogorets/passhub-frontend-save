@@ -4,6 +4,23 @@ import Button from "react-bootstrap/Button";
 
 class SuccessModal extends Component {
   render() {
+    let iconId = "#f-success";
+    let iconStyle = { width: "112px", height: "112px" };
+    let title = "Success";
+    if (this.props.error) {
+      iconId = "#a-error";
+      title = "Error";
+    } else if (this.props.norights) {
+      iconId = "#a-forbidden";
+      iconStyle.fill = "red";
+      iconStyle.margin = "1em";
+      title = "Forbidden";
+    } else if (this.props.thankyou) {
+      title = "Thank you";
+    } else {
+      iconStyle.fill = "none";
+    }
+
     return (
       <Modal
         show={this.props.show}
@@ -20,11 +37,11 @@ class SuccessModal extends Component {
               alignItems: "center",
             }}
           >
-            <svg width="112" height="112" fill="none">
-              <use href="#f-success"></use>
+            <svg style={iconStyle}>
+              <use href={iconId}></use>
             </svg>
-            <div clasName="h2" style={{ marginBottom: "1em" }}>
-              Success
+            <div className="h2" style={{ marginBottom: "1em" }}>
+              {title}
             </div>
             <div style={{ marginBottom: "108px" }}>{this.props.children}</div>
             <Button
@@ -33,7 +50,7 @@ class SuccessModal extends Component {
               style={{ minWidth: "168px", marginLeft: "12px" }}
               onClick={this.props.onClose}
             >
-              Got it
+              Close
             </Button>
           </div>
         </Modal.Body>

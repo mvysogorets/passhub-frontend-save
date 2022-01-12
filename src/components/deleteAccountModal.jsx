@@ -15,11 +15,23 @@ class DeleteAccountModal extends Component {
         centered
       >
         <ModalCross onClose={this.props.onClose}></ModalCross>
-        <div className="modalTitle">
-          <div className="h2">Before shutting down your account</div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: "48px 0 0 0",
+          }}
+        >
+          <svg style={{ width: 80, height: 80, fill: "red" }}>
+            <use href="#a-error"></use>
+          </svg>
+          <div style={{ margin: "24px 0 32px 0", fontSize: "32px" }}>
+            Before shutting down your account
+          </div>
         </div>
 
-        <Modal.Body style={{ marginBottom: "24px" }}></Modal.Body>
         <div style={{ marginBottom: "8px" }}>
           <b>Be sure</b> to transfer ownership of your shared safes to your
           peers.

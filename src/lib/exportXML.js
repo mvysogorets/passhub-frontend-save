@@ -17,48 +17,110 @@ function dump_item(item, indent) {
     xml += id1 + '</Times>\r\n';
   }
 
-  if (item.cleartext[4] != '') {
+  let title, username, password, url, notes;
+
+  if(item.version != 5) {
+
+    title=item.cleartext[0];
+    username=item.cleartext[1];
+    password=item.cleartext[2];
+    url=item.cleartext[3];
+    notes=item.cleartext[4];
+
+
+    if (notes != '') {
+      xml += id1 + '<String>\r\n';
+      xml += id2 + '<Key>Notes</Key>\r\n';
+      xml += id2 + '<Value>' + utils.escapeHtml(notes) + '</Value>\r\n';
+      xml += id1 + '</String>\r\n';
+    }
+  
+    if (password != '') {
+      xml += id1 + '<String>\r\n';
+      xml += id2 + '<Key>Password</Key>\r\n';
+      xml += id2 + '<Value ProtectInMemory="True">' + utils.escapeHtml(password) + '</Value>\r\n';
+      xml += id1 + '</String>\r\n';
+    }
+    if (title != '') {
+      xml += id1 + '<String>\r\n';
+      xml += id2 + '<Key>Title</Key>\r\n';
+      xml += id2 + '<Value>' + utils.escapeHtml(title) + '</Value>\r\n';
+      xml += id1 + '</String>\r\n';
+    }
+    if (url != '') {
+      xml += id1 + '<String>\r\n';
+      xml += id2 + '<Key>URL</Key>\r\n';
+      xml += id2 + '<Value>' + utils.escapeHtml(url) + '</Value>\r\n';
+      xml += id1 + '</String>\r\n';
+    }
+    if (username != '') {
+      xml += id1 + '<String>\r\n';
+      xml += id2 + '<Key>UserName</Key>\r\n';
+      xml += id2 + '<Value>' + utils.escapeHtml(username) + '</Value>\r\n';
+      xml += id1 + '</String>\r\n';
+    }
+    if (item.hasOwnProperty('note')) {
+      xml += id1 + '<String>\r\n';
+      xml += id2 + '<Key>Note</Key>\r\n';
+      xml += id2 + '<Value>' + 1 + '</Value>\r\n';
+      xml += id1 + '</String>\r\n';
+    }
+    if (item.cleartext.length == 6) {
+      xml += id1 + '<String>\r\n';
+      xml += id2 + '<Key>TOTP</Key>\r\n';
+      xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[5]) + '</Value>\r\n';
+      xml += id1 + '</String>\r\n';
+    }
+    xml += indent + '</Entry>\r\n';
+    return;
+  }
+  
+  // else version 5
+  title=item.cleartext[1];
+  username='';
+  password='';
+  url='';
+  notes=item.cleartext[2];
+
+  if (notes != '') {
     xml += id1 + '<String>\r\n';
     xml += id2 + '<Key>Notes</Key>\r\n';
-    xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[4]) + '</Value>\r\n';
+    xml += id2 + '<Value>' + utils.escapeHtml(notes) + '</Value>\r\n';
     xml += id1 + '</String>\r\n';
   }
-  if (item.cleartext[2] != '') {
-    xml += id1 + '<String>\r\n';
-    xml += id2 + '<Key>Password</Key>\r\n';
-    xml += id2 + '<Value ProtectInMemory="True">' + utils.escapeHtml(item.cleartext[2]) + '</Value>\r\n';
-    xml += id1 + '</String>\r\n';
-  }
-  if (item.cleartext[0] != '') {
+
+  if (title != '') {
     xml += id1 + '<String>\r\n';
     xml += id2 + '<Key>Title</Key>\r\n';
-    xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[0]) + '</Value>\r\n';
+    xml += id2 + '<Value>' + utils.escapeHtml(title) + '</Value>\r\n';
     xml += id1 + '</String>\r\n';
   }
-  if (item.cleartext[3] != '') {
-    xml += id1 + '<String>\r\n';
-    xml += id2 + '<Key>URL</Key>\r\n';
-    xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[3]) + '</Value>\r\n';
-    xml += id1 + '</String>\r\n';
-  }
-  if (item.cleartext[1] != '') {
-    xml += id1 + '<String>\r\n';
-    xml += id2 + '<Key>UserName</Key>\r\n';
-    xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[1]) + '</Value>\r\n';
-    xml += id1 + '</String>\r\n';
-  }
-  if (item.hasOwnProperty('note')) {
-    xml += id1 + '<String>\r\n';
-    xml += id2 + '<Key>Note</Key>\r\n';
-    xml += id2 + '<Value>' + 1 + '</Value>\r\n';
-    xml += id1 + '</String>\r\n';
-  }
-  if (item.cleartext.length == 6) {
-    xml += id1 + '<String>\r\n';
-    xml += id2 + '<Key>TOTP</Key>\r\n';
-    xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[5]) + '</Value>\r\n';
-    xml += id1 + '</String>\r\n';
-  }
+
+  xml += id1 + '<String>\r\n';
+  xml += id2 + '<Key>card_code</Key>';
+  xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[7]) + '</Value>\r\n';
+  xml += id1 + '</String>\r\n';
+
+  xml += id1 + '<String>\r\n';
+  xml += id2 + '<Key>card_name</Key>';
+  xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[4]) + '</Value>\r\n';
+  xml += id1 + '</String>\r\n';
+
+  xml += id1 + '<String>\r\n';
+  xml += id2 + '<Key>card_num</Key>';
+  xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[3]) + '</Value>\r\n';
+  xml += id1 + '</String>\r\n';
+
+  xml += id1 + '<String>\r\n';
+  xml += id2 + '<Key>exp_month</Key>';
+  xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[5]) + '</Value>\r\n';
+  xml += id1 + '</String>\r\n';
+
+  xml += id1 + '<String>\r\n';
+  xml += id2 + '<Key>exp_year</Key>';
+  xml += id2 + '<Value>' + utils.escapeHtml(item.cleartext[6]) + '</Value>\r\n';
+  xml += id1 + '</String>\r\n';
+
   xml += indent + '</Entry>\r\n';
 }
 

@@ -2,6 +2,15 @@
   font-family: OpenSans;
   src: url("fonts/OpenSans-Regular.ttf");
 }
+@font-face {
+  font-family: OpenSansBold;
+  src: url("fonts/OpenSans-Bold.ttf");
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
 
 * {
   font-family: OpenSans;
@@ -27,7 +36,7 @@
 
 @media (min-width: 576px) {
   .search_string {
-    border-radius: 6px;
+    border-radius: 12px;
   }
 }
 
@@ -172,7 +181,7 @@ h1 {
 .item_table .column-modified {
   text-align: right;
   /*  min-width: 11em; */
-  padding-right: 0;
+  padding-right: 1em;
 }
 
 .item_table .login-item-link {
@@ -317,7 +326,8 @@ input.ModalTitle:focus {
 
 .edit .itemModalField {
   background: white;
-  border: 1px solid #e7e7ee;
+  /*  border: 1px solid #e7e7ee; */
+  border: 1px solid #b7b7be;
 }
 
 .edit .itemModalField:hover {
@@ -419,7 +429,7 @@ input.ModalTitle:focus {
 }
 
 .itemModalField svg {
-  /* stroke: #1b1b26; */
+  stroke: #1b1b26;
   opacity: 0.5;
 }
 
@@ -649,7 +659,7 @@ input.ModalTitle:focus {
 
 #table_pane {
   background: rgba(255, 255, 255, 1);
-  padding: 24px 16px 16px 16px;
+  padding: 24px 0 16px 16px;
   height: 100%; /* safari 13.1 */
   flex-direction: column;
 }
@@ -991,18 +1001,6 @@ input[type="file"] {
   display: none;
 }
 
-.toast {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  background: lightyellow;
-  font-size: 1rem;
-}
-.toast-header {
-  background: lemonchiffon;
-  justify-content: space-between;
-}
-
 /* ---------------------------- */
 
 .pmodal {
@@ -1224,3 +1222,296 @@ textarea:focus {
   outline: none;
   box-shadow: none;
 }
+
+.upgrade-button {
+  width: 100%;
+  margin: 0 0 14px 0;
+}
+
+@media (max-height: 625px) {
+  .upgrade-button {
+    display: none;
+  }
+}
+
+.card-exp-csc {
+  display: flex;
+  gap: 0 32px;
+}
+
+@media (max-width: 576px) {
+  .card-exp-csc {
+    flex-wrap: wrap;
+  }
+}
+
+/* --- toasts---*/
+
+.toast-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+@media (min-width: 576px) {
+  .toast-container {
+    bottom: 32px;
+    right: 32px;
+    left: unset;
+  }
+}
+
+.toast {
+  padding: 20px 22px 22px;
+  background: linear-gradient(282.86deg, #00ba97 8.08%, #00bc62 68.47%);
+  border-radius: 12px 12px 0 0;
+  color: white;
+  max-width: 35em;
+}
+
+@media (min-width: 576px) {
+  .toast {
+    border-radius: 12px;
+    /*
+    width: 450px;
+    max-width: 450px;
+
+    border-radius: 14px;
+
+    bottom: 32px;
+    right: 32px;
+    left: unset;
+    */
+  }
+}
+
+.toast-header {
+  background: unset;
+  color: unset;
+  justify-content: space-between;
+  font-family: OpenSansBold;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0 0 6px 0;
+  padding: 0;
+  border: none;
+  align-items: flex-start;
+}
+
+.toast .btn-primary {
+  background: white;
+  color: #1b1b26;
+  margin: 0 12px 0 0;
+}
+
+.toast .btn-outline-secondary {
+  color: unset;
+  outline: none;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 12px 24px;
+  min-width: 1px;
+}
+.toast .btn-outline-secondary:hover {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.toast .btn-outline-secondary:focus {
+  box-shadow: none;
+}
+
+.toast .btn-outline-secondary:not(:disabled):not(.disabled).active {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  outline: none;
+  background: none;
+}
+
+.toast-body {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 20px;
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  margin: 6px 2em 6px 0;
+  padding: 0;
+}
+
+/* Firefox */
+
+.custom-scroll {
+  scrollbar-color: grey rgba(0, 0, 0, 0);
+  scrollbar-width: thin;
+}
+
+/* chrome, safari */
+
+.custom-scroll::-webkit-scrollbar {
+  width: 18px; /* width of the entire scrollbar */
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0); /* color of the tracking area */
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: rgb(127, 127, 127);
+  border-radius: 20px;
+  border: 6px solid white;
+  /*  width: 6px; */
+}
+
+.safe_scroll_control.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: rgb(127, 127, 127);
+  border-radius: 20px;
+  border: 6px solid rgba(27, 27, 38, 0.7);
+  /*  width: 6px; */
+}
+
+/*
+.custom-scroll::-webkit-scrollbar {
+  width: 0.3em;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: rgb(144, 144, 144);
+  border-radius: 0.2em;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgb(176, 176, 176);
+}
+*/
+
+/*
+.custom-scroll::-webkit-scrollbar-track {
+  background: yellow;
+  border-radius: 0.15em;
+}
+*/
+/*
+
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+ 
+body::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+*/
+
+/*
+
+.toast {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: lightyellow;
+  font-size: 1rem;
+}
+
+.toast-header {
+  background: unset;
+  justify-content: space-between;
+  font-family: OpenSansBold;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0 0 6px 0;
+  padding: 0;
+  border: none;
+}
+
+.toast-header button {
+  opacity: 1;
+  color: white;
+  text-shadow: unset;
+}
+
+.toast-header button:hover {
+  color: white;
+}
+
+------
+.toast-ph {
+  padding: 20px 22px 22px;
+
+  background: linear-gradient(282.86deg, #00ba97 8.08%, #00bc62 68.47%);
+  border-radius: 12px;
+}
+----
+
+.toast-ph .btn-primary {
+  background: white;
+  color: #1b1b26;
+  margin: 0 12px 0 0;
+}
+
+.toast-header-ph {
+  font-family: OpenSansBold;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 24px;
+  margin: 0 0 6px 0;
+}
+
+.toast-body-ph {
+  font-family: OpenSans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 20px;
+
+  color: #ffffff;
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  margin: 6px 0px;
+}
+
+@media (min-width: 576px) {
+  .go-premium-toast {
+    width: 450px;
+    max-width: 450px;
+
+    border-radius: 14px;
+
+    bottom: 32px;
+    right: 32px;
+    left: unset;
+  }
+}
+
+.go-premium-toast .toast-body {
+  padding: 0;
+}
+
+
+.go-premium-toast .btn-outline-secondary {
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 12px 24px;
+  min-width: 1px;
+}
+.go-premium-toast .btn-outline-secondary:hover {
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.go-premium-toast .btn-outline-secondary:not(:disabled):not(.disabled).active,
+.btn-outline-secondary:not(:disabled):not(.disabled):active,
+active {
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  outline: none;
+  background: 0;
+}
+*/

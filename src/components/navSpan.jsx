@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import AccountDropDown from "./accountDropDown";
 import ContactUsModal from "./contactUsModal";
-import SuccessModal from "./successModal";
+import MessageModal from "./messageModal";
 import UpgradeModal from "./upgradeModal";
 import AccountModal from "./accountModal";
 import EmailModal from "./emailModal";
@@ -34,24 +34,6 @@ class NavSpan extends Component {
   };
 
   right = 0;
-  /*
-  handleToggleAccount = (e) => {
-    e.stopPropagation();
-    if (this.state.showModal != "AccountDropDown") {
-      this.right =
-        document.body.getBoundingClientRect().right -
-        e.currentTarget.parentElement.getBoundingClientRect().right -
-        27;
-      if (this.right <= 16) {
-        this.right = 16;
-      }
-      this.setState({ showModal: "AccountDropDown" });
-    } else {
-      this.setState({ showModal: "" });
-    }
-  };
-*/
-
   getAccountData = (newData) => {
     const self = this;
     const axiosData = newData
@@ -92,6 +74,10 @@ class NavSpan extends Component {
     }
     if (cmd === "Account settings") {
       this.setState({ showModal: "Account settings" });
+      return;
+    }
+    if (cmd === "upgrade") {
+      this.setState({ showModal: "upgrade" });
       return;
     }
     if (cmd === "Help") {
@@ -214,15 +200,15 @@ class NavSpan extends Component {
             this.setState({ showModal: next ? next : "" });
           }}
         ></ContactUsModal>
-        <SuccessModal
+        <MessageModal
           show={this.state.showModal === "success"}
           onClose={() => {
             this.setState({ showModal: "" });
           }}
         >
           Your message has been sent
-        </SuccessModal>
-        <SuccessModal
+        </MessageModal>
+        <MessageModal
           show={this.state.showModal === "account deleted"}
           onClose={() => {
             this.setState({ showModal: "" });
@@ -230,7 +216,7 @@ class NavSpan extends Component {
           }}
         >
           Your account has been deleted
-        </SuccessModal>
+        </MessageModal>
         <UpgradeModal
           show={this.state.showModal === "upgrade"}
           onClose={() => {

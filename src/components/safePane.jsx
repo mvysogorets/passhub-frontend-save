@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 import FolderNameModal from "./folderNameModal";
 import DeleteFolderModal from "./deleteFolderModal";
 import ExportFolderModal from "./exportFolderModal";
-import ImportModal from "./importModal";
+import MessageModal from "./messageModal";
 import ShareModal from "./shareModal";
 
 import FolderTreeNode from "./folderTreeNode";
@@ -19,7 +19,10 @@ class SafePane extends Component {
     showModal: "",
     folderNameModalArgs: {},
     shareModalArgs: null,
+    messageModalArgs: null,
   };
+
+  modalKey = 1;
 
   handleSelect = (folder) => {
     this.props.setActiveFolder(folder);
@@ -43,6 +46,8 @@ class SafePane extends Component {
 
   onFolderMenuCmd = (node, cmd) => {
     if (cmd === "delete") {
+      this.modalKey++;
+
       this.setState({
         showModal: "DeleteFolderModal",
         deleteFolderModalArgs: node,
@@ -135,17 +140,24 @@ class SafePane extends Component {
       .then((response) => {
         const result = response.data;
         if (result.status === "no src write") {
-          // -->>>          utils.bsAlert(
-          console.log(
-            'Sorry, "Cut" operation is forbidden. You have only read access to the source safe.'
-          );
+          this.setState({
+            showModal: "NoRightsModal",
+            messageModalArgs: {
+              message:
+                'Sorry, "Move" operation is forbidden. You have only read access to the source safe.',
+            },
+          });
+
           return;
         }
         if (result.status === "no dst write") {
-          // ->>>          utils.bsAlert(
-          console.log(
-            'Sorry, "Paste" is forbidden. You have only read access to the destination safe.'
-          );
+          this.setState({
+            showModal: "NoRightsModal",
+            messageModalArgs: {
+              message:
+                'Sorry, "Paste" is forbidden. You have only read access to the destination safe.',
+            },
+          });
           return;
         }
         if (result.status === "Ok") {
@@ -155,7 +167,7 @@ class SafePane extends Component {
             );
             console.log(eItem);
             return this.moveItemFinalize(
-              clip.item.id,
+              clip.item._id,
               dst_safe,
               dstFolder,
               eItem,
@@ -230,11 +242,16 @@ class SafePane extends Component {
         id="safe_pane"
       >
         <div
-          style={{ display: "flex", flexDirection: "column", height: "100%" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            // marginRight: "0.3em",
+          }}
         >
           {/*<div className="folder">Recent and favorities</div> */}
           <div className="folders-header">SAFES</div>
-          <div className="safe_scroll_control d-sm-none">
+          <div className="safe_scroll_control custom-scroll d-sm-none">
             {this.props.safes.map((s) => (
               <MobileSafeNode
                 key={s.id}
@@ -244,7 +261,7 @@ class SafePane extends Component {
             ))}
           </div>
 
-          <div className="safe_scroll_control d-none d-sm-block">
+          <div className="safe_scroll_control custom-scroll d-none d-sm-block">
             {this.props.safes.map((s) => (
               <FolderTreeNode
                 key={s.id}
@@ -284,6 +301,7 @@ class SafePane extends Component {
         <DeleteFolderModal
           show={this.state.showModal == "DeleteFolderModal"}
           folder={this.state.deleteFolderModalArgs}
+          key={`deleteFolderModal${this.modalKey}`}
           onClose={(refresh = false) => {
             this.setState({ showModal: "" });
             if (refresh === true) {
@@ -308,6 +326,17 @@ class SafePane extends Component {
             }
           }}
         ></ShareModal>
+
+        <MessageModal
+          show={this.state.showModal == "NoRightsModal"}
+          args={this.state.shareModalArgs}
+          norights
+          onClose={() => {
+            this.setState({ showModal: "" });
+          }}
+        >
+          {this.state.messageModalArgs && this.state.messageModalArgs.message}
+        </MessageModal>
       </Col>
     );
   }

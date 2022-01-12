@@ -39,11 +39,45 @@ class UpgradeModal extends Component {
 
         <Modal.Body className="edit" style={{ marginBottom: "24px" }}>
           <div style={{ marginBottom: "32px" }}>
-            Get unlimited records and 1GB of free space
+            <p>
+              Your <b>FREE</b> account is limited to 200 records and 100 MB
+              storage.
+            </p>
+            <p>
+              Get <span style={{ fontWeight: "normal" }}>unlimited</span>{" "}
+              records and <span style={{ fontWeight: "normal" }}>1GB</span> of
+              storage space with <b>PREMIUM</b> plan for only $4 per month ($48
+              per year).
+            </p>
           </div>
           {this.state.errorMsg.length > 0 && (
             <p style={{ color: "red" }}>{this.state.errorMsg}</p>
           )}
+
+          <div class="payment_request" id="payment"></div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-secondary" onClick={this.props.onClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              window.open("payments/checkout.php", "passhub_payment");
+              this.props.onClose();
+            }}
+          >
+            Continue
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+}
+
+export default UpgradeModal;
+
+/*
 
           <InputField
             value={this.state.discount}
@@ -57,16 +91,4 @@ class UpgradeModal extends Component {
             </Button>
           </InputField>
 
-          <div class="payment_request" id="payment"></div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="outline-secondary" onClick={this.props.onClose}>
-            Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  }
-}
-
-export default UpgradeModal;
+          */

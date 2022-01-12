@@ -13,7 +13,7 @@ class NoteItem extends Component {
     return (
       <tr className="d-flex" style={{ alignItems: "center" }}>
         <td
-          colspan="3"
+          colSpan="3"
           className="col-md-12 col-lg-8 col-xl-9"
           onClick={this.showModal}
           style={{ cursor: "pointer" }}

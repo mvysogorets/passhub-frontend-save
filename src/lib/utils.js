@@ -62,9 +62,6 @@ const frequentPasswords = [
 "baseball",
 "bailey",
 "batman",
-"password1",
-"passw0rd",
-"picture1",
 "abc123",
 "charlie",
 "donald",
@@ -82,7 +79,9 @@ const frequentPasswords = [
 "monkey",
 "mustang",
 "mynoob",
-"password1",
+"password1!",
+"passw0rd",
+"picture1",
 "princess",
 "qazwsxedc",
 "qqww1122",
@@ -100,17 +99,23 @@ const frequentPasswords = [
 "!@#$%^&*()_+"
 ];
 
-function isStrongPassword(pw) {
-  if(pw.length < 6) {
-    return false;
-  }
+function isStrongPassword(pwi) {
+
+  const pw = pwi.replace(/\s+/g, ' ');
   const lpw = pw.toLowerCase();
+
+  if(pw.length < 6) {
+    return {strongPassword: false, reason:"too short"};
+  }
   for(const p of frequentPasswords) {
     if(p.indexOf(lpw) !== -1) {
-      return false;
+      return {strongPassword: false, reason:"blacklisted"};
     }
   }
-  return true;
+  if(pw.length < 8) {
+    return {strongPassword: false, reason:"too short"};
+  }
+  return {strongPassword: true, reason:""};
 }
 
 function baseName(path) {
@@ -184,6 +189,12 @@ function lastModified(item) {
   return '';
 }
 
+// https://www.programiz.com/javascript/examples/first-letter-uppercase
+
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export {
   serverLog,
   isStrongPassword,
@@ -194,5 +205,6 @@ export {
   humanReadableFileSize,
   isMobile,
   urlBase,
-  lastModified
+  lastModified,
+  capitalizeFirstLetter,
 };

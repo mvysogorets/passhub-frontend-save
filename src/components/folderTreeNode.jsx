@@ -23,7 +23,6 @@ class FolderTreeNode extends Component {
 
   handleMenuCmd = (node, cmd) => {
     this.props.onMenuCmd(this.props.node, cmd);
-    console.log(cmd);
   };
 
   menuDots = (

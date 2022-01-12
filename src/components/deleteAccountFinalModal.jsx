@@ -53,11 +53,22 @@ class DeleteAccountFinalModal extends Component {
         centered
       >
         <ModalCross onClose={this.props.onClose}></ModalCross>
-        <div className="modalTitle">
-          <div className="h2">Close my account</div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: "48px 0 0 0",
+          }}
+        >
+          <svg style={{ width: 80, height: 80, fill: "red" }}>
+            <use href="#a-danger"></use>
+          </svg>
+          <div style={{ margin: "24px 0 32px 0", fontSize: "32px" }}>
+            Close my account
+          </div>
         </div>
 
-        <Modal.Body style={{ marginBottom: "24px" }}></Modal.Body>
         <div style={{ marginBottom: "48px" }}>
           You are about to lose all your data stored in PassHub and you will be
           unable to restore it.

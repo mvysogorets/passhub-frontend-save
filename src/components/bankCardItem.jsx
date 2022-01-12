@@ -13,13 +13,18 @@ class BankCardItem extends Component {
     return (
       <tr className="d-flex" style={{ alignItems: "center" }}>
         <td
-          colspan="3"
+          colSpan="3"
           className="col-md-12 col-lg-8 col-xl-9"
           onClick={this.showModal}
           style={{ cursor: "pointer" }}
         >
-          <svg width="24" height="24" className="itemIcon">
-            <use href="#i-note"></use>
+          <svg
+            width="24"
+            height="24"
+            className="itemIcon"
+            style={{ stroke: "none", opacity: "0.5" }}
+          >
+            <use href="#credit_card"></use>
           </svg>
           {item.cleartext[1]}
         </td>

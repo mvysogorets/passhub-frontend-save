@@ -8,7 +8,7 @@ import * as passhubCrypto from "../lib/crypto";
 import { isStrongPassword } from "../lib/utils";
 import { openInExtension } from "../lib/extensionInterface";
 import getTOTP from "../lib/totp";
-import copyToClipboard from "../lib/copyToClipboard";
+import { copyToClipboard } from "../lib/copyToClipboard";
 
 import ItemModalFieldNav from "./itemModalFieldNav";
 
@@ -248,7 +248,8 @@ class LoginModal extends Component {
       ? this.props.args.folder.path.join(" > ")
       : [];
 
-    const strongPassword = isStrongPassword(this.state.password);
+    const { strongPassword, reason } = isStrongPassword(this.state.password);
+
     const passwordStrength = strongPassword ? (
       <span className="colored" style={{ opacity: "1" }}>
         <span style={{ margin: "0 .3em" }}>&#183;</span>
@@ -257,7 +258,7 @@ class LoginModal extends Component {
     ) : (
       <span style={{ color: "#EB6500", opacity: "1" }}>
         <span style={{ margin: "0 .3em" }}>&#183;</span>
-        Weak
+        Weak: {reason}
       </span>
     );
 
@@ -391,9 +392,10 @@ class LoginModal extends Component {
             <div>Copied &#10003;</div>
           </div>
         </div>
+
         <div
           className={`itemModalField lower ${passwordBackground}`}
-          style={{ position: "relative" }}
+          style={{ position: "relative", display: "flex" }}
           onClick={() => {
             if (!this.state.edit) {
               this.copyToClipboard(this.state.password);
@@ -402,32 +404,36 @@ class LoginModal extends Component {
             }
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <div style={{ fontSize: "14px" }}>
-              <span style={{ color: "#1b1b26", opacity: "0.7" }}>Password</span>
-              {this.state.password.length ? passwordStrength : ""}
-            </div>
-            {!this.state.edit && (
-              <div>
-                <span className="iconTitle">Copy</span>
-                <svg width="24" height="24" fill="none" stroke="#1b1b26">
-                  <use href="#f-copy"></use>
-                </svg>
+          <div style={{ flexGrow: 1 }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{ fontSize: "14px" }}>
+                <span style={{ color: "#1b1b26", opacity: "0.7" }}>
+                  Password
+                </span>
+                {this.state.password.length ? passwordStrength : ""}
               </div>
-            )}
-          </div>
-          <div>
-            <input
-              className="lp"
-              type={passwordType}
-              onChange={this.onPasswordChange}
-              readOnly={!this.state.edit}
-              spellCheck={false}
-              value={this.state.password}
-            ></input>
-          </div>
-          <div className="copied green70" id="password_copied">
-            <div style={{ margin: "0 auto" }}>Copied &#10003;</div>
+              {!this.state.edit && (
+                <div>
+                  <span className="iconTitle">Copy</span>
+                  <svg width="24" height="24" fill="none" stroke="#1b1b26">
+                    <use href="#f-copy"></use>
+                  </svg>
+                </div>
+              )}
+            </div>
+            <div>
+              <input
+                className="lp"
+                type={passwordType}
+                onChange={this.onPasswordChange}
+                readOnly={!this.state.edit}
+                spellCheck={false}
+                value={this.state.password}
+              ></input>
+            </div>
+            <div className="copied green70" id="password_copied">
+              <div style={{ margin: "0 auto" }}>Copied &#10003;</div>
+            </div>
           </div>
         </div>
 

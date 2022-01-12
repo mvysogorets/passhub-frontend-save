@@ -51,6 +51,7 @@ class ContactUsModal extends Component {
           window.location.href = "expired.php";
           return;
         }
+
         this.setState({ errorMsg: result.status });
       })
       .catch((err) => {
@@ -84,8 +85,22 @@ class ContactUsModal extends Component {
           <div className="h2">Contact us</div>
         </div>
         <Modal.Body className="edit" style={{ marginBottom: "24px" }}>
-          {this.state.errorMsg.length > 0 && (
-            <p style={{ color: "red" }}>{this.state.errorMsg}</p>
+          {this.state.errorMsg.length > 0 ? (
+            <div style={{ color: "red", margin: "0 16px 16px" }}>
+              <svg
+                style={{
+                  width: "24px",
+                  height: "24px",
+                  fill: "red",
+                  marginRight: "16px",
+                }}
+              >
+                <use href="#a-error"></use>
+              </svg>
+              {this.state.errorMsg}
+            </div>
+          ) : (
+            ""
           )}
           <InputField
             value={this.state.name}

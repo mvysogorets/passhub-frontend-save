@@ -10,64 +10,9 @@ import TablePane from "./tablePane";
 import ImportModal from "./importModal";
 import IdleModal from "./idleModal";
 
-import progress from "../lib/progress";
+import mockData from "../lib/mockdata";
 
-const mockData = {
-  safes: [
-    {
-      name: "Mock Safe",
-      id: 1,
-      path: ["Mock Safe"],
-      items: [],
-      folders: [
-        {
-          SafeID: 1,
-          id: "f1",
-          path: ["Mock Safe", "Mock Folder"],
-          name: "Mock Folder",
-          cleartext: ["Mock Folder"],
-          parent: 0,
-          folders: [],
-          lastModified: "2021-08-27T02:01:20+00:00",
-          items: [
-            {
-              SafeID: 1,
-              folder: "f1",
-              cleartext: [
-                "Gmail",
-                "alice",
-                "kjhgqw",
-                "https://gmail.com",
-                "Work mail",
-              ],
-              path: ["Mock Safe", "Mock Folder"],
-              lastModified: "2021-08-27T02:01:20+00:00",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Private",
-      id: 2,
-      path: ["Private"],
-      items: [],
-      folders: [
-        {
-          SafeID: 2,
-          id: "f21",
-          path: ["Private", "SubFolder"],
-          name: "SubFolder",
-          cleartext: ["SubFolder"],
-          parent: 0,
-          folders: [],
-          items: [],
-        },
-      ],
-    },
-    { name: "Work", id: 3, path: ["Work"], items: [], folders: [] },
-  ],
-};
+import progress from "../lib/progress";
 
 function decryptSafeData(safe, aesKey) {
   for (let i = 0; i < safe.items.length; i += 1) {
@@ -300,15 +245,21 @@ class MainPage extends Component {
   };
 
   getPageData = () => {
+    const self = this;
+
     if (window.location.href.includes("mock")) {
       mockData.activeFolder = mockData.safes[0];
       mockData.safes[0].folders[0].safe = mockData.safes[0];
       mockData.safes[1].folders[0].safe = mockData.safes[1];
       this.setState(mockData);
+      if ("goPremium" in mockData && mockData.goPremium == true) {
+        self.props.showToast("goPremiumToast");
+      } else if ("takeSurvey" in mockData && mockData.takeSurvey == true) {
+        self.props.showToast("takeSurveyToast");
+      }
       return;
     }
 
-    const self = this;
     progress.lock();
     axios
       .post("../get_user_datar.php", {
@@ -333,7 +284,11 @@ class MainPage extends Component {
                 }
                 progress.unlock();
                 self.setState(data);
-
+                if ("goPremium" in data && data.goPremium == true) {
+                  self.props.showGoPremium();
+                } else if ("takeSurvey" in data && data.takeSurvey == true) {
+                  self.props.showToast("takeSurveyToast");
+                }
                 keepTicketAlive(data.WWPASS_TICKET_TTL, data.ticketAge);
               });
             })
@@ -536,7 +491,6 @@ class MainPage extends Component {
             }
           }}
         ></ImportModal>
-
         <IdleModal
           show={this.state.idleTimeoutAlert}
           onClose={this.onIdleModalClose}
@@ -547,3 +501,92 @@ class MainPage extends Component {
 }
 
 export default MainPage;
+
+/*
+const mockData1 = {
+  goPremium: false,
+  takeSurvey: false,
+  plan: "FREE",
+  safes: [
+    {
+      name: "Mock Safe",
+      id: 1,
+      path: ["Mock Safe"],
+      items: [],
+      folders: [
+        {
+          SafeID: 1,
+          id: "f1",
+          path: ["Mock Safe", "Mock Folder"],
+          name: "Mock Folder",
+          cleartext: ["Mock Folder"],
+          parent: 0,
+          folders: [],
+          lastModified: "2021-08-27T02:01:20+00:00",
+          items: [
+            {
+              SafeID: 1,
+              folder: "f1",
+              cleartext: [
+                "Gmail",
+                "alice",
+                "kjhgqw",
+                "https://gmail.com",
+                "Work mail",
+              ],
+              path: ["Mock Safe", "Mock Folder"],
+              lastModified: "2021-08-27T02:01:20+00:00",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "Private",
+      id: 2,
+      path: ["Private"],
+      items: [],
+      folders: [
+        {
+          SafeID: 2,
+          id: "f21",
+          path: ["Private", "SubFolder"],
+          name: "SubFolder",
+          cleartext: ["SubFolder"],
+          parent: 0,
+          folders: [],
+          items: [],
+        },
+      ],
+    },
+    { name: "Work", id: 3, path: ["Work"], items: [], folders: [] },
+    {
+      name: "Cards",
+      id: 4,
+      path: ["Cards"],
+      items: [
+        {
+          SafeID: 11,
+          folder: 0,
+          cleartext: [
+            "card",
+            "Card1",
+            "first card",
+            "3700 000000 00000",
+            "Mike",
+            "03",
+            "2024",
+            "777",
+          ],
+          version: 5,
+          path: ["Cards"],
+          lastModified: "2021-08-27T02:01:20+00:00",
+        },
+      ],
+      folders: [],
+    },
+  ],
+};
+
+
+*/

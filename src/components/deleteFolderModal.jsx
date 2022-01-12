@@ -4,6 +4,16 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import ModalCross from "./modalCross";
 
+const onEnter = () => {
+  console.log("onEnter");
+};
+const onEntering = () => {
+  console.log("onEntering");
+};
+const onEntered = () => {
+  console.log("onEntered");
+};
+
 class DeleteFolderModal extends Component {
   state = {
     phase: "initial",
@@ -88,23 +98,27 @@ class DeleteFolderModal extends Component {
   };
 
   render() {
-    let folderType = "";
-    let folderName = "";
-
-    if (this.props.show) {
-      folderName = this.props.folder.path[this.props.folder.path.length - 1];
-      const isSafe = this.props.folder.path.length < 2;
-      folderType = isSafe ? "Safe" : "Folder";
+    if (!this.props.show) {
+      return null;
     }
+    console.log("render, show");
+
+    const folderName =
+      this.props.folder.path[this.props.folder.path.length - 1];
+    const isSafe = this.props.folder.path.length < 2;
+    const folderType = isSafe ? "Safe" : "Folder";
+
     const showSecondary = this.state.phase !== "safeDeleted";
 
     return (
       <Modal
         show={this.props.show}
         onHide={this.onClose}
-        onEnter={this.onEnter}
-        animation={false}
         centered
+        animation={false}
+        onEnter={onEnter}
+        onEntering={onEntering}
+        onEntered={onEntered}
       >
         <ModalCross onClose={this.props.onClose}></ModalCross>
         <div className="modalTitle">
@@ -172,3 +186,9 @@ class DeleteFolderModal extends Component {
 }
 
 export default DeleteFolderModal;
+/*
+        onEnter={() => console.log("onEntering")}
+        onEntering={() => console.log("onEntering")}
+        onEntered={() => console.log("onEntered")}
+
+*/

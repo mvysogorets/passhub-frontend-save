@@ -229,7 +229,12 @@ class TablePane extends Component {
         id="table_pane"
       >
         <div
-          style={{ display: "flex", flexDirection: "column", height: "100%" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            // marginRight: "0.3em",
+          }}
         >
           <div
             className="d-sm-none green70"
@@ -305,7 +310,10 @@ class TablePane extends Component {
           )}
 
           {!emptyFolder && (
-            <div style={{ overflowY: "auto", overflowX: "hidden" }}>
+            <div
+              className="custom-scroll"
+              style={{ overflowY: "auto", overflowX: "hidden" }}
+            >
               <table className="item_table">
                 <thead>
                   <tr className="d-flex">
@@ -322,6 +330,7 @@ class TablePane extends Component {
                 <tbody>
                   {folder.folders.map((f) => (
                     <FolderItem
+                      key1={`folder${folder.id}`}
                       item={f}
                       onClick={(folder) => {
                         this.openFolder(folder);
@@ -333,6 +342,7 @@ class TablePane extends Component {
                       (isLoginItem(f) && (
                         <LoginItem
                           item={f}
+                          key1={`item${f._id}`}
                           showModal={(item) =>
                             this.showItemModal("LoginModal", item)
                           }
@@ -341,6 +351,7 @@ class TablePane extends Component {
                       (isNoteItem(f) && (
                         <NoteItem
                           item={f}
+                          key={`item${f._id}`}
                           showModal={(item) =>
                             this.showItemModal("NoteModal", item)
                           }
@@ -349,6 +360,7 @@ class TablePane extends Component {
                       (isFileItem(f) && (
                         <FileItem
                           item={f}
+                          key={`item${f._id}`}
                           showModal={(item) =>
                             this.showItemModal("FileModal", item)
                           }
@@ -357,6 +369,7 @@ class TablePane extends Component {
                       (isBankCardItem(f) && (
                         <BankCardItem
                           item={f}
+                          key={`item${f._id}`}
                           showModal={(item) =>
                             this.showItemModal("BankCardModal", item)
                           }

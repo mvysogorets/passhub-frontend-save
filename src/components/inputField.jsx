@@ -13,20 +13,20 @@ class InputField extends Component {
         }}
         onClick={this.props.onClick}
       >
-        {(this.props.value.length ||
-          this.props.children ||
-          !this.props.edit) && (
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <div style={{ fontSize: "14px" }}>
-              <span style={{ color: "#1b1b26", opacity: "0.7" }}>
-                <label htmlFor={this.props.id} style={{ margin: 0 }}>
-                  {this.props.value.length ? this.props.label : ""}
-                </label>
-              </span>
+        {(this.props.value.length || this.props.children || !this.props.edit) &&
+          this.props.label &&
+          this.props.label.length > 0 && (
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{ fontSize: "14px" }}>
+                <span style={{ color: "#1b1b26", opacity: "0.7" }}>
+                  <label htmlFor={this.props.id} style={{ margin: 0 }}>
+                    {this.props.value.length ? this.props.label : ""}
+                  </label>
+                </span>
+              </div>
+              <div>{this.props.children}</div>
             </div>
-            <div>{this.props.children}</div>
-          </div>
-        )}
+          )}
 
         <div>
           <input

@@ -26,4 +26,14 @@ function copyToClipboard(text) {
   document.body.removeChild(textArea);
 }
 
-export default copyToClipboard;
+
+function startCopiedTimer() {
+  setTimeout(() => {
+    document
+      .querySelectorAll(".copied")
+      .forEach((e) => (e.style.display = "none"));
+  }, 1000);
+}
+
+
+export { copyToClipboard, startCopiedTimer};
