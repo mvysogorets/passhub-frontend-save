@@ -1,6 +1,6 @@
 const mockData = {
   goPremium: false,
-  takeSurvey: false,
+  takeSurvey: true,
   plan: "FREE",
   safes: [
     {
@@ -33,6 +33,22 @@ const mockData = {
               path: ["Mock Safe", "Mock Folder"],
               lastModified: "2021-08-27T02:01:20+00:00",
             },
+            {
+              SafeID: 1,
+              folder: "f1",
+              _id:"f1i2",
+              cleartext: [
+                "Note",
+                "alice",
+                "",
+                "",
+                "Work mail\r\n kj skajhdah skdal fklasjh ljkah lkjdsh kljdh afljksdh fkljas hfjkdsh afjkah ldh",
+              ],
+              note:1,
+              path: ["Mock Safe", "Mock Folder"],
+              lastModified: "2021-08-27T02:01:20+00:00",
+            },
+
           ],
         },
       ],

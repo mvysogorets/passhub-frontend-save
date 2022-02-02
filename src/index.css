@@ -217,14 +217,15 @@ h1 {
 .itemModalEditButton {
   display: inline-block;
   margin-left: 10px;
-  /*  border: 1px solid #00bc62; */
-  border: 1px solid rgba(0, 188, 98, 0.3);
+  border: 1px solid #00bc62;
+  /* border: 1px solid rgba(0, 188, 98, 0.3); */
   color: #009a50;
   border-radius: 12px;
   font-size: 16px;
   line-height: 24px;
   padding: 7px 18px 1px 20px;
   cursor: pointer;
+  height: 38px;
 }
 
 .itemModalPath {
@@ -259,6 +260,11 @@ h1 {
   justify-content: space-evenly;
   align-items: baseline;
 }
+
+.edit.itemModalTools {
+  justify-content: end;
+}
+
 @media (min-width: 576px) {
   .itemModalTools {
     display: block;
@@ -379,6 +385,15 @@ input.ModalTitle:focus {
 
 .itemModalField .copied div {
   margin: 0 auto;
+}
+
+.itemModalField .url-span {
+  color: #1b1b26;
+  cursor: pointer;
+}
+
+.itemModalField .url-span:hover {
+  text-decoration: underline;
 }
 
 .totp_circle {

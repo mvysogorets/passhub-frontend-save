@@ -17,6 +17,7 @@ class SurveyModal extends Component {
     strength: "",
     weakness: "",
     other: "",
+    email: "",
     errorMsg: "",
     addDesktop: false,
     addMobile: false,
@@ -41,6 +42,10 @@ class SurveyModal extends Component {
     this.setState({ other: e.target.value, errorMsg: "" });
   };
 
+  onEmailChange = (e) => {
+    this.setState({ email: e.target.value, errorMsg: "" });
+  };
+
   handleAddDesktop = (e) => {
     this.setState({ addDesktop: e.target.checked });
   };
@@ -61,6 +66,7 @@ class SurveyModal extends Component {
         best: this.state.strength.trim(),
         improve: this.state.weakness.trim(),
         other_pm: this.state.other.trim(),
+        email: this.state.email.trim(),
 
         add_desktop: this.state.addDesktop,
         add_mobile: this.state.addMobile,
@@ -162,7 +168,9 @@ class SurveyModal extends Component {
             edit
           ></InputField>
 
-          <p>What are the features you want to see in PassHub?</p>
+          <p style={{ marginBottom: 0 }}>
+            What are the features you want to see in PassHub?
+          </p>
 
           <div>
             <Form.Group
@@ -189,6 +197,13 @@ class SurveyModal extends Component {
               />
             </Form.Group>
           </div>
+          <p>Your contact email (opitional)</p>
+          <InputField
+            value={this.state.email}
+            id="survey-email"
+            onChange={this.onEmailChange}
+            edit
+          ></InputField>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={this.props.onClose}>

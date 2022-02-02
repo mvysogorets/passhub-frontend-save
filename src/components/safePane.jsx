@@ -13,6 +13,7 @@ import MobileSafeNode from "./mobileSafeNode";
 
 import * as passhubCrypto from "../lib/crypto";
 import { popCopyBuffer } from "../lib/copyBuffer";
+import { getFolderById } from "../lib/utils";
 
 class SafePane extends Component {
   state = {
@@ -86,11 +87,11 @@ class SafePane extends Component {
     }
   };
 
-  moveItemFinalize(recordID, dst_safe, dst_folder, item, operation) {
+  moveItemFinalize(recordID, src_safe, dst_safe, dst_folder, item, operation) {
     axios
       .post("move.php", {
         id: recordID,
-        src_safe: 0, //state.currentSafe.id,
+        src_safe, //state.currentSafe.id,
         dst_safe,
         dst_folder,
         item,
@@ -119,6 +120,10 @@ class SafePane extends Component {
       return true;
     }
     const { item, operation } = clip;
+
+    let pItem;
+
+    const dstBinaryKey = node.safe ? node.safe.bstringKey : node.bstringKey;
 
     let dst_safe = node.id;
     let dstFolder = 0;
@@ -160,55 +165,55 @@ class SafePane extends Component {
           });
           return;
         }
-        if (result.status === "Ok") {
-          if ("file" in result.item) {
-            const eItem = JSON.stringify(
-              passhubCrypto.moveFile(result.item, src_safe, dst_safe)
-            );
-            console.log(eItem);
-            return this.moveItemFinalize(
-              clip.item._id,
-              dst_safe,
-              dstFolder,
-              eItem,
-              clip.operation
-            );
-          } else {
-            let pItem;
-            return passhubCrypto
-              .decryptAesKey(result.src_key)
-              .then((srcAesKey) => {
-                return passhubCrypto.decodeItem(result.item, srcAesKey);
-              })
-              .then((ppItem) => {
-                pItem = ppItem;
-                return passhubCrypto.decryptAesKey(result.dst_key);
-              })
-              .then((dstAesKey) => {
-                return passhubCrypto.encryptItem(pItem, dstAesKey, {
-                  note: result.item.note,
-                });
-              })
-              .then((eItem) =>
-                this.moveItemFinalize(
-                  item._id,
-                  dst_safe,
-                  dstFolder,
-                  eItem,
-                  operation
-                )
-              );
-          }
-        }
         if (result.status === "login") {
           window.location.href = "index.php";
           return false;
+        }
+        if (result.status === "Ok") {
+          if ("file" in item) {
+            const srcSafe = getFolderById(this.props.safes, item.SafeID);
+
+            let eItem = passhubCrypto.moveFile(
+              item,
+              srcSafe.bstringKey,
+              dstBinaryKey
+            );
+            return this.moveItemFinalize(
+              item._id,
+              src_safe,
+              dst_safe,
+              dstFolder,
+              eItem,
+              operation
+            );
+          }
+          let options = {};
+          if (item.note) {
+            options["note"] = item.note;
+          } else if (item.version === 5) {
+            options["version"] = item.version;
+          }
+          let eItem = passhubCrypto.encryptItem(
+            item.cleartext,
+            dstBinaryKey,
+            options
+          );
+
+          return this.moveItemFinalize(
+            item._id,
+            src_safe,
+            dst_safe,
+            dstFolder,
+            eItem,
+            operation
+          );
         }
         alert(result.status);
         return false;
       })
       .catch((err) => {
-        /// --->>> TODO
+        console.log("move error");
+        console.log(err);
       });
   };
 

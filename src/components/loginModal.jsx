@@ -517,15 +517,7 @@ class LoginModal extends Component {
                 value={this.state.url}
               ></input>
             ) : (
-              <a
-                href={this.state.url}
-                noreferrer
-                noopener
-                target="_blank"
-                style={{ color: "#1b1b26" }}
-              >
-                {this.state.url}
-              </a>
+              <span className="url-span">{this.state.url}</span>
             )}
           </div>
         </div>

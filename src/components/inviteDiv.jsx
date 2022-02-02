@@ -59,7 +59,7 @@ class InviteDiv extends Component {
       <div
         style={{
           background: "#eee",
-          padding: "0.7em",
+          padding: "16px",
           display: "flex",
           justifyContent: "space-between",
         }}
@@ -75,6 +75,7 @@ class InviteDiv extends Component {
               outline: "none",
             }}
             type="email"
+            spellcheck="false"
             placeholder="Email"
             onFocus={this.inputOnFocus}
             onChange={this.inputOnChange}
@@ -94,7 +95,7 @@ class InviteDiv extends Component {
           </svg>
           <Button
             className="btn btn-sm btn-primary"
-            style={{ verticalAlign: "top", marginLeft: "1em" }}
+            style={{ verticalAlign: "top", marginLeft: "2em" }}
             onClick={this.submitEmail}
           >
             Ok

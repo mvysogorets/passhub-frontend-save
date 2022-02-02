@@ -1,8 +1,8 @@
 {
-  "name": "phub-br",
+  "name": "passhub-frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "./phub-br/",
+  "homepage": "./frontend/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^11.2.7",
@@ -20,6 +20,7 @@
     "react-dom": "^17.0.2",
     "react-idle-timer": "^4.6.4",
     "react-scripts": "4.0.3",
+    "react-textarea-autosize": "^8.3.3",
     "web-vitals": "^1.1.2",
     "wwpass-frontend": "^3.1.1"
   },

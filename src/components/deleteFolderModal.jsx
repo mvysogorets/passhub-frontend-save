@@ -30,11 +30,36 @@ class DeleteFolderModal extends Component {
     this.props.onClose(false);
   };
 
+  onUnsubscribe = () => {
+    axios
+      .post("safe_acl.php", {
+        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+        vault: this.props.folder.id,
+        operation: "unsubscribe",
+      })
+      .then((reply) => {
+        const result = reply.data;
+        this.props.onClose(true);
+        return;
+      })
+      .catch((err) => {
+        this.setState({
+          errorMsg: "Server error. Please try again later",
+        });
+      });
+  };
+
   onSubmit = () => {
     if (this.state.phase === "safeDeleted") {
       this.onClose(true);
       return;
     }
+
+    if (this.state.phase === "unsubscribe") {
+      this.onUnsubscribe();
+      return;
+    }
+
     const operation =
       this.state.phase === "notEmptyFolderWarning"
         ? "delete_not_empty"

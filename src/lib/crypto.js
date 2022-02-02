@@ -375,7 +375,7 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
     return { filename, buf };
   };
   
-  function moveFile(item, srcSafe, dstSafe) {
+  function moveFile1(item, srcSafe, dstSafe) {
 
     const keyDecipher = forge.cipher.createDecipher('AES-ECB', srcSafe.bstringKey);
     keyDecipher.start({ iv: atob(item.file.iv) }); // any iv goes: AES-ECB
@@ -397,7 +397,30 @@ function getPrivateKeyOld(ePrivateKey, ticket) {
     return eItem;
   }
   
+  function moveFile(item, srcBinaryKey, dstBinaryKey) {
+
+    const keyDecipher = forge.cipher.createDecipher('AES-ECB', srcBinaryKey);
+    keyDecipher.start({ iv: atob(item.file.iv) }); // any iv goes: AES-ECB
+    keyDecipher.update(forge.util.createBuffer(atob(item.file.key)));
+    keyDecipher.finish();
+    const fileAesKey = keyDecipher.output.data;
   
+    const keyCipher = forge.cipher.createCipher('AES-ECB', dstBinaryKey);
+    const keyIV = forge.random.getBytesSync(16);
+    keyCipher.start({ iv: keyIV });
+    keyCipher.update(forge.util.createBuffer(fileAesKey));
+    keyCipher.finish();
+  
+    const pItem = decodeItemGCM(item, srcBinaryKey);
+    const eItem = JSON.parse(encryptItem(pItem, dstBinaryKey, {}));
+    
+    eItem.file = Object.assign({}, {...item.file});
+    eItem.file.key = btoa(keyCipher.output.data);
+    return JSON.stringify(eItem);
+  }
+
+  
+
 export {
   getPrivateKey,
   decryptAesKey,

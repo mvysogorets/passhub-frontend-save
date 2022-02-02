@@ -9,6 +9,7 @@ import ItemViewIcon from "./itemViewIcon";
 import ModalCross from "./modalCross";
 
 import { putCopyBuffer } from "../lib/copyBuffer";
+import TextareaAutosize from "react-textarea-autosize";
 
 class ItemModal extends Component {
   state = {
@@ -30,9 +31,15 @@ class ItemModal extends Component {
 
   onNoteChange = (e) => {
     this.setState({ note: e.target.value });
+    /* text area
     e.target.style.height = "auto";
     console.log(e.target.scrollHeight);
     e.target.style.height = e.target.scrollHeight + "px";
+    */
+  };
+
+  onNoteInput = (e) => {
+    this.setState({ note: e.target.innerHTML });
   };
 
   onShow = () => {
@@ -169,9 +176,9 @@ class ItemModal extends Component {
           {folderName}
         </div>
 
-        <div class="itemModalNav">
+        <div className="itemModalNav">
           <div className="itemModalPath d-none d-sm-block">{pathString}</div>
-          {!this.state.edit && (
+          {!this.state.edit ? (
             <div className="itemModalTools">
               {/*
                 <ItemViewIcon iconId="#f-history" opacity="1" title="History" />
@@ -181,11 +188,13 @@ class ItemModal extends Component {
                 title="Move"
                 onClick={this.handleMove}
               />
-              <ItemViewIcon
-                iconId="#f-copy"
-                title="Copy"
-                onClick={this.handleCopy}
-              />
+              {!("file" in this.props.args.item) && (
+                <ItemViewIcon
+                  iconId="#f-copy"
+                  title="Copy"
+                  onClick={this.handleCopy}
+                />
+              )}
               <ItemViewIcon
                 iconId="#f-trash"
                 title="Delete"
@@ -205,6 +214,12 @@ class ItemModal extends Component {
                   <use href="#f-edit"></use>
                 </svg>
                 <span style={{ verticalAlign: "top" }}>Edit</span>
+              </div>
+            </div>
+          ) : (
+            <div className="itemModalTools edit">
+              <div class="itemModalEditButton" onClick={this.onSubmit}>
+                <span style={{ verticalAlign: "top" }}>Save</span>
               </div>
             </div>
           )}
@@ -258,21 +273,11 @@ class ItemModal extends Component {
             <ItemModalFieldNav name="Note" for="notes" />
             <div className="xxx">
               {this.state.edit ? (
-                <textarea
+                <TextareaAutosize
                   id="notes"
-                  className="notes"
-                  readOnly={!this.state.edit}
-                  spellCheck={false}
                   value={this.state.note}
-                  style={{
-                    width: "100%",
-                    maxHeight: this.props.isNote ? "430px" : "180px",
-                  }}
                   onChange={this.onNoteChange}
-                  placeholder="Type notes here"
-                  rows="2"
-                  ref={this.textAreaRef}
-                ></textarea>
+                />
               ) : (
                 <div className="note-view">{this.state.note}</div>
               )}
@@ -299,3 +304,43 @@ class ItemModal extends Component {
 }
 
 export default ItemModal;
+
+/*
+                <textarea
+                  id="notes"
+                  className="notes"
+                  readOnly={!this.state.edit}
+                  spellCheck={false}
+                  value={this.state.note}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: this.props.isNote ? "430px" : "180px",
+                  }}
+                  onChange={this.onNoteChange}
+                  placeholder="Type notes here"
+                  ref={this.textAreaRef}
+                ></textarea>
+
+                <div
+                  contentEditable="true"
+                  onChange={this.onNoteChange}
+                  onInput={this.onNoteInput}
+                  style={{
+                    outline: "none",
+                    overflow: "auto",
+                    maxHeight: this.props.isNote ? "430px" : "180px",
+                  }}
+                >
+                  {this.state.note}
+                </div>
+
+                <ContentEditable
+                  html={this.state.note}
+                  onChange={this.onNoteChange}
+                  style={{ outline: "none" }}
+                />
+
+
+
+                */
