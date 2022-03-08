@@ -25,7 +25,7 @@ class DeleteAccountModal extends Component {
           }}
         >
           <svg style={{ width: 80, height: 80, fill: "red" }}>
-            <use href="#a-error"></use>
+            <use href="#a-danger"></use>
           </svg>
           <div style={{ margin: "24px 0 32px 0", fontSize: "32px" }}>
             Before shutting down your account

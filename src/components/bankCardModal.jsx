@@ -6,7 +6,7 @@ import axios from "axios";
 
 import * as passhubCrypto from "../lib/crypto";
 import { copyToClipboard, startCopiedTimer } from "../lib/copyToClipboard";
-
+import { getApiUrl, getVerifier } from "../lib/utils";
 import ItemModalFieldNav from "./itemModalFieldNav";
 import Eye from "./eye";
 
@@ -157,7 +157,7 @@ class BankCardModal extends Component {
     }
     const eData = passhubCrypto.encryptItem(pData, aesKey, { version: 5 });
     const data = {
-      verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      verifier: getVerifier(),
       vault: SafeID,
       folder: folderID,
       encrypted_data: eData,
@@ -166,7 +166,7 @@ class BankCardModal extends Component {
       data.entryID = this.props.args.item._id;
     }
     axios
-      .post("items.php", data)
+      .post(`${getApiUrl()}items.php`, data)
       .then((reply) => {
         const result = reply.data;
         if (result.status === "Ok") {
@@ -278,6 +278,7 @@ class BankCardModal extends Component {
         show={this.props.show}
         args={this.props.args}
         onClose={this.props.onClose}
+        onCloseSetFolder={this.props.onCloseSetFolder}
         onEdit={this.onEdit}
         onSubmit={this.onSubmit}
         errorMsg={this.state.errorMsg}
@@ -335,7 +336,7 @@ class BankCardModal extends Component {
               width: "100%",
             }}
           >
-            <div class="date-selector">
+            <div className="date-selector">
               <ItemModalFieldNav name="Expiration date" />
               {this.state.edit ? (
                 <ButtonGroup>
@@ -470,29 +471,3 @@ class BankCardModal extends Component {
 }
 
 export default BankCardModal;
-
-/*
-
-    
-    if (!monthNumbers.includes(this.state.ccExpMonth)) {
-      this.setState({ errorMsg: "Expiration date not set" });
-      return;
-    }
-    if (!twentyYears.includes(parseInt(this.state.ccExpYear))) {
-      this.setState({ errorMsg: "Expiration date not set" });
-      return;
-    }
-    
-    if (!isValidCardNumber(this.state.ccNumber)) {
-      this.setState({ errorMsg: "Invalid card number" });
-      return;
-    }
-
-
-
-          <Eye
-            onClick={this.toggleCardNumber}
-            hide={this.state.hideCardNumber}
-          />
-          
-*/

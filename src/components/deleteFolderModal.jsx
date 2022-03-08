@@ -1,4 +1,6 @@
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
+
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -32,8 +34,8 @@ class DeleteFolderModal extends Component {
 
   onUnsubscribe = () => {
     axios
-      .post("safe_acl.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}safe_acl.php`, {
+        verifier: getVerifier(),
         vault: this.props.folder.id,
         operation: "unsubscribe",
       })
@@ -65,7 +67,7 @@ class DeleteFolderModal extends Component {
         ? "delete_not_empty"
         : "delete";
 
-    const verifier = document.getElementById("csrf").getAttribute("data-csrf");
+    const verifier = getVerifier();
 
     let uri = "delete_safe.php";
     let args = {
@@ -86,7 +88,7 @@ class DeleteFolderModal extends Component {
     }
 
     axios
-      .post(uri, args)
+      .post(`${getApiUrl()}${uri}`, args)
       .then((reply) => {
         const result = reply.data;
         if (result.status === "Ok") {

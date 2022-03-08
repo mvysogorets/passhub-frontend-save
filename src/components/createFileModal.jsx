@@ -9,6 +9,12 @@ import ItemModalFieldNav from "./itemModalFieldNav";
 
 import progress from "../lib/progress";
 import * as passhubCrypto from "../lib/crypto";
+import {
+  getApiUrl,
+  getVerifier,
+  getUserData,
+  humanReadableFileSize,
+} from "../lib/utils";
 
 class CreateFileModal extends React.Component {
   state = { errorMsg: "", theFile: "", note: "" };
@@ -24,6 +30,15 @@ class CreateFileModal extends React.Component {
       theFile: e.target.files[0],
       errorMsg: "",
     });
+
+    if (e.target.files[0].size > getUserData().MAX_FILE_SIZE) {
+      this.setState({
+        errorMsg: `File too large: ${humanReadableFileSize(
+          e.target.files[0].size
+        )} MB, max ${humanReadableFileSize(getUserData().MAX_FILE_SIZE)}`,
+      });
+      return;
+    }
     const { type, size, lastModifiedDate } = e.target.files[0];
     console.log(type, size, lastModifiedDate);
   };
@@ -33,6 +48,14 @@ class CreateFileModal extends React.Component {
   onSubmit = () => {
     if (!this.props.args.item && !this.state.theFile) {
       this.setState({ errorMsg: "No file defined" });
+      return;
+    }
+    if (this.state.theFile.size > getUserData().MAX_FILE_SIZE) {
+      this.setState({
+        errorMsg: `File too large: ${humanReadableFileSize(
+          this.state.theFile.size
+        )} MB, max ${humanReadableFileSize(getUserData().MAX_FILE_SIZE)}`,
+      });
       return;
     }
     const title = this.state.theFile.name;
@@ -57,10 +80,10 @@ class CreateFileModal extends React.Component {
     );
 
     if (this.props.args.item) {
-      progress.lock(0);
+      progress.lock(0, "rename");
       axios
-        .post("file_ops.php", {
-          verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+        .post(`${getApiUrl()}file_ops.php`, {
+          verifier: getVerifier(),
           operation: "rename",
           SafeID,
           itemId: this.props.args.item._id,
@@ -93,7 +116,7 @@ class CreateFileModal extends React.Component {
 
     const reader = new FileReader();
 
-    // progress.lock(0, 'Encrypting.');
+    progress.lock(0, "Encrypting file.");
     reader.readAsArrayBuffer(this.state.theFile);
 
     reader.onerror = (err) => {
@@ -118,26 +141,23 @@ class CreateFileModal extends React.Component {
         reader.result,
         aesKey
       );
-      //        progress.unlock();
-      //        progress.lock(0, "Uploading. ");
+      progress.unlock();
+      progress.lock(0, "Uploading. ");
 
       const data = new FormData();
       data.append("vault", SafeID);
       data.append("folder", folderID);
-      data.append(
-        "verifier",
-        document.getElementById("csrf").getAttribute("data-csrf")
-      );
+      data.append("verifier", getVerifier());
 
       data.append("meta", eData);
       data.append("file", fileInfo);
       const ab = passhubCrypto.str2uint8(cFileContent);
       const bl = new Blob([ab]);
       data.append("blob", bl);
-      progress.lock();
+      //       progress.lock();
 
       axios
-        .post("create_file.php", data, {
+        .post(`${getApiUrl()}create_file.php`, data, {
           headers: {
             "content-type": "multipart/form-data",
           },
@@ -200,7 +220,9 @@ class CreateFileModal extends React.Component {
         </div>
         <Modal.Body className="edit">
           {this.state.errorMsg && (
-            <div style={{ color: "red" }}>{this.state.errorMsg}</div>
+            <div style={{ color: "red", marginBottom: 16 }}>
+              {this.state.errorMsg}
+            </div>
           )}
           <div className="import-modal-file-field">
             <div

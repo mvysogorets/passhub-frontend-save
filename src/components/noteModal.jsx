@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import axios from "axios";
 
 import * as passhubCrypto from "../lib/crypto";
+import { getApiUrl, getVerifier } from "../lib/utils";
+
 import ItemModal from "./itemModal";
 
 class NoteModal extends Component {
@@ -34,7 +36,7 @@ class NoteModal extends Component {
 
     const eData = passhubCrypto.encryptItem(pData, aesKey, options);
     const data = {
-      verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      verifier: getVerifier(),
       vault: SafeID,
       folder: folderID,
       encrypted_data: eData,
@@ -44,7 +46,7 @@ class NoteModal extends Component {
     }
 
     axios
-      .post("items.php", data)
+      .post(`${getApiUrl()}items.php`, data)
       .then((reply) => {
         const result = reply.data;
         if (result.status === "Ok") {
@@ -83,6 +85,7 @@ class NoteModal extends Component {
         show={this.props.show}
         args={this.props.args}
         onClose={this.props.onClose}
+        onCloseSetFolder={this.props.onCloseSetFolder}
         onSubmit={this.onSubmit}
         errorMsg={this.state.errorMsg}
         isNote

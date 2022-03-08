@@ -5,6 +5,7 @@ import ModalCross from "./modalCross";
 import InputField from "./inputField";
 
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
 
 import * as passhubCrypto from "../lib/crypto";
 
@@ -26,8 +27,8 @@ class FolderNameModal extends Component {
     const safe = passhubCrypto.createSafe(safeName);
     console.log(safe);
     axios
-      .post("create_safe.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}create_safe.php`, {
+        verifier: getVerifier(),
         safe,
       })
       .then((response) => {
@@ -56,9 +57,9 @@ class FolderNameModal extends Component {
       this.props.args.folder.bstringKey
     );
     axios
-      .post("update_vault.php", {
+      .post(`${getApiUrl()}update_vault.php`, {
         vault: this.props.args.folder.id,
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+        verifier: getVerifier(),
         eName,
         version: 3,
       })
@@ -87,9 +88,9 @@ class FolderNameModal extends Component {
     passhubCrypto.decryptAesKey(eAesKey).then((aesKey) => {
       const eFolderName = passhubCrypto.encryptFolderName(folderName, aesKey);
       axios
-        .post("folder_ops.php", {
+        .post(`${getApiUrl()}folder_ops.php`, {
           operation: "create",
-          verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+          verifier: getVerifier(),
           SafeID,
           folderID,
           name: eFolderName,
@@ -120,9 +121,9 @@ class FolderNameModal extends Component {
       .then((aesKey) => {
         const eFolderName = passhubCrypto.encryptFolderName(newName, aesKey);
         axios
-          .post("folder_ops.php", {
+          .post(`${getApiUrl()}folder_ops.php`, {
             operation: "rename",
-            verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+            verifier: getVerifier(),
             SafeID: this.props.args.folder.safe.id,
             folderID: this.props.args.folder.id,
             name: eFolderName,

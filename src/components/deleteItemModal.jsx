@@ -1,4 +1,6 @@
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
+
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -20,9 +22,9 @@ class DeleteItemModal extends Component {
       : this.props.folder.id;
 
     axios
-      .post("delete.php", {
+      .post(`${getApiUrl()}delete.php`, {
         vault: this.props.args.safe.id,
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+        verifier: getVerifier(),
         id: this.props.args.item._id,
       })
       .then((reply) => {
@@ -75,7 +77,7 @@ class DeleteItemModal extends Component {
         animation={false}
         centered
       >
-        <div class="itemModalNav">
+        <div className="itemModalNav">
           <div className="itemModalPath">{path}</div>
           <div>
             <span

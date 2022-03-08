@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
 
 import ModalCross from "./modalCross";
 class DelUserModal extends Component {
@@ -16,8 +17,8 @@ class DelUserModal extends Component {
   submit = () => {
     const self = this;
     axios
-      .post("../iam.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}iam.php`, {
+        verifier: getVerifier(),
         operation: "delete",
         email: self.props.data.email,
         id: self.props.data.id,

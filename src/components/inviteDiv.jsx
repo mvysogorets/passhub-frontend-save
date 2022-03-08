@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
 import Button from "react-bootstrap/Button";
 
 class InviteDiv extends Component {
@@ -31,8 +32,8 @@ class InviteDiv extends Component {
     const self = this;
     const email = self.state.email;
     axios
-      .post("../iam.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}iam.php`, {
+        verifier: getVerifier(),
         operation: "newuser",
         email,
       })

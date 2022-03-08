@@ -18,10 +18,15 @@ class NoteItem extends Component {
           onClick={this.showModal}
           style={{ cursor: "pointer" }}
         >
-          <svg width="24" height="24" className="itemIcon">
-            <use href="#i-note"></use>
-          </svg>
-          {item.cleartext[0]}
+          <div>
+            <svg width="24" height="24" className="itemIcon">
+              <use href="#i-note"></use>
+            </svg>
+            {item.cleartext[0]}
+          </div>
+          {this.props.searchMode && (
+            <div className="search-path">{item.path.join(" > ")}</div>
+          )}
         </td>
         <td className="column-modified d-none d-xl-table-cell col-xl-3">
           {lastModified(item)}

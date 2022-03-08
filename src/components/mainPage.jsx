@@ -2,7 +2,13 @@ import React, { Component } from "react";
 import axios from "axios";
 import IdleTimer from "react-idle-timer";
 import * as passhubCrypto from "../lib/crypto";
-import { keepTicketAlive, getFolderById } from "../lib/utils";
+import {
+  keepTicketAlive,
+  getFolderById,
+  getApiUrl,
+  getVerifier,
+  setUserData,
+} from "../lib/utils";
 import * as extensionInterface from "../lib/extensionInterface";
 
 import SafePane from "./safePane";
@@ -156,6 +162,9 @@ class MainPage extends Component {
   setActiveFolder = (folder) => {
     this.props.onSearchClear();
 
+    if (typeof folder !== "object") {
+      folder = getFolderById(this.state.safes, folder);
+    }
     if (folder.SafeID) {
       // isFolder
       const openNodesCopy = new Set(this.state.openNodes);
@@ -200,8 +209,9 @@ class MainPage extends Component {
     const self = this;
     progress.lock();
     axios
-      .post("../get_user_datar.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}get_user_datar.php`, {
+        verifier: getVerifier(),
+        // verifier: document.getElementById("csrf").getAttribute("data-csrf"),
       })
       .then((response) => {
         const result = response.data;
@@ -214,7 +224,6 @@ class MainPage extends Component {
             );
             normalizeSafes(safes);
             let activeFolder = getFolderById(data.safes, activeFolderID);
-            console.log("activeFolder ", activeFolder);
             if (activeFolder === null) {
               console.log("old activesafe not found");
               activeFolder = getFolderById(data.safes, data.currentSafe);
@@ -262,8 +271,8 @@ class MainPage extends Component {
 
     progress.lock();
     axios
-      .post("../get_user_datar.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}get_user_datar.php`, {
+        verifier: getVerifier(),
       })
       .then((result) => {
         if (result.data.status === "Ok") {
@@ -282,6 +291,7 @@ class MainPage extends Component {
                   console.log("active folder not found" + data.currentSafe);
                   data.activeFolder = data.safes[0];
                 }
+                setUserData(data);
                 progress.unlock();
                 self.setState(data);
                 if ("goPremium" in data && data.goPremium == true) {
@@ -312,8 +322,19 @@ class MainPage extends Component {
       });
   };
 
+  pageDataLoaded = false;
+
   componentDidMount() {
-    this.getPageData();
+    if (this.props.show) {
+      this.getPageData();
+    }
+  }
+
+  componentDidUpdate() {
+    if (!this.pageDataLoaded && this.props.show) {
+      this.pageDataLoaded = true;
+      this.getPageData();
+    }
   }
 
   componentWillUnmount() {
@@ -354,14 +375,24 @@ class MainPage extends Component {
         for (let i = 0; i < this.state.safes[s].rawItems.length; i += 1) {
           let item = this.state.safes[s].rawItems[i];
           let found = false;
-          if (item.cleartext[0].toLowerCase().indexOf(lcWhat) >= 0) {
-            found = true;
-          } else if (item.cleartext[1].toLowerCase().indexOf(lcWhat) >= 0) {
-            found = true;
-          } else if (item.cleartext[3].toLowerCase().indexOf(lcWhat) >= 0) {
-            found = true;
-          } else if (item.cleartext[4].toLowerCase().indexOf(lcWhat) >= 0) {
-            found = true;
+
+          if (item.cleartext.length == 8) {
+            // card
+            if (item.cleartext[1].toLowerCase().indexOf(lcWhat) >= 0) {
+              found = true;
+            } else if (item.cleartext[2].toLowerCase().indexOf(lcWhat) >= 0) {
+              found = true;
+            }
+          } else {
+            if (item.cleartext[0].toLowerCase().indexOf(lcWhat) >= 0) {
+              found = true;
+            } else if (item.cleartext[1].toLowerCase().indexOf(lcWhat) >= 0) {
+              found = true;
+            } else if (item.cleartext[3].toLowerCase().indexOf(lcWhat) >= 0) {
+              found = true;
+            } else if (item.cleartext[4].toLowerCase().indexOf(lcWhat) >= 0) {
+              found = true;
+            }
           }
           if (found) {
             result.push(item);

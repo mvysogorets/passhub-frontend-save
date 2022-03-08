@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import ModalCross from "./modalCross";
 
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
 
 import InputField from "./inputField";
 import TextAreaField from "./textAreaField";
@@ -61,8 +62,8 @@ class SurveyModal extends Component {
   onSubmit = () => {
     progress.lock();
     axios
-      .post("survey.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}survey.php`, {
+        verifier: getVerifier(),
         best: this.state.strength.trim(),
         improve: this.state.weakness.trim(),
         other_pm: this.state.other.trim(),

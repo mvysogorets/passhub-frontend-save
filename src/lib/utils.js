@@ -168,12 +168,6 @@ const isMobile = () => {
   return mobileDevice;
 }
 
-function urlBase() {
-  let url_base = window.location.href;
-  url_base = url_base.substring(0, url_base.lastIndexOf("/")) + '/';
-  return url_base;
-}
-
 function lastModified(item) {
 
   if ((typeof item != "undefined") && ('lastModified' in item)) {
@@ -195,6 +189,48 @@ function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+let apiUrl='./';
+
+function getApiUrl() {
+  return apiUrl;
+}
+
+function setApiUrl(newBase) {
+  apiUrl = newBase;
+}
+
+function getHostname() {
+  let serverUrl = apiUrl;
+  if(apiUrl === './') {
+    serverUrl = window.location.href;
+  }
+  let serverUrlObject = new URL(serverUrl);
+  return serverUrlObject.hostname;
+}
+
+let csrfToken = '';
+
+function setCsrfToken(token) {
+  csrfToken = token;
+}
+
+function getVerifier() {
+  if(csrfToken.length > 0) {
+    return csrfToken;
+  }
+  return document.getElementById("csrf").getAttribute("data-csrf");
+}
+
+let account = {}
+
+function setUserData(a) {
+  account =a;
+}
+
+function getUserData() {
+  return account;
+}
+
 export {
   serverLog,
   isStrongPassword,
@@ -204,7 +240,13 @@ export {
   getFolderById,
   humanReadableFileSize,
   isMobile,
-  urlBase,
   lastModified,
   capitalizeFirstLetter,
+  getApiUrl,
+  setApiUrl,
+  getHostname,
+  setCsrfToken,
+  getVerifier,
+  setUserData,
+  getUserData
 };

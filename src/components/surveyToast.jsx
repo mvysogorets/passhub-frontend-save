@@ -46,36 +46,3 @@ class SurveyToast extends Component {
 }
 
 export default SurveyToast;
-
-/*
-          <div
-            style={{
-              fontFamily: "OpenSansBold",
-              fontStyle: "normal",
-              fontWeight: "bold",
-              fontSize: "19px",
-              lineHeight: "24px",
-              color: "#FFFFFF",
-              marginBottom: "24px",
-            }}
-          >
-           
-          </div>
-
-
-
-
-<div class="toast toast_improve hide" role="status" aria-live="polite" aria-atomic="true"
-  data-autohide="false" data-animation="true">
-    <div class="toast-header" style="background:lemonchiffon">
-      <strong class="mr-auto toast_header_text">Help us improve PassHub.net</strong>
-      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="toast-body" style="padding: 10px;">
-      <span id = 'take_survey' style="text-decoration: underline; font-weight: 200;margin:0 15px; cursor:pointer;">Take&nbsp;short&nbsp;survey</span>
-      <span data-dismiss="toast" style="text-decoration: underline; font-weight: 200;margin:0 15px; cursor:pointer;">Remind&nbsp;me&nbsp;later</span>
-    </div>
-</div>
-*/

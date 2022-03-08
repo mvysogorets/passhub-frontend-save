@@ -23,7 +23,9 @@ class Header extends Component {
             <div>
               <span
                 onClick={this.props.gotoMain}
-                style={{ cursor: this.props.mainPage ? "default" : "pointer" }}
+                style={{
+                  cursor: this.props.page === "Main" ? "default" : "pointer",
+                }}
               >
                 <img
                   src="public/img/new_ph_logo.svg"
@@ -39,12 +41,12 @@ class Header extends Component {
               onSearchChange={this.props.onSearchChange}
               searchString={this.props.searchString}
               onMenuCommand={this.props.onAccountMenuCommand}
-              mainPage={this.props.mainPage}
+              page={this.props.page}
               gotoIam={this.props.gotoIam}
             />
           </Col>
         </Row>
-        {this.props.mainPage && (
+        {this.props.page === "Main" && (
           <Row className="d-sm-none">
             <div
               style={{

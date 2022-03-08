@@ -1,4 +1,6 @@
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
+
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -39,8 +41,8 @@ class ImportModal extends Component {
       return;
     }
     axios
-      .post("impex.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}impex.php`, {
+        verifier: getVerifier(),
         import: safeArray,
       })
       .then((reply) => {

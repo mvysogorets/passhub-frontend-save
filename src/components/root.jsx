@@ -6,6 +6,7 @@ import Row from "react-bootstrap/Row";
 
 import Header from "./header";
 import UserManagementPage from "./userManagementPage";
+import LoginPage from "./loginPage";
 import MainPage from "./mainPage";
 import ViewFile from "./viewFile";
 import CopyMoveToast from "./copyMoveToast";
@@ -24,7 +25,9 @@ import {
 class Root extends Component {
   state = {
     searchString: "",
-    page: "Main",
+    page: window.location.protocol.toLowerCase().startsWith("http")
+      ? "Main"
+      : "Login",
     filename: "",
     blob: null,
     showToast: "",
@@ -118,7 +121,7 @@ class Root extends Component {
         <Header
           onSearchChange={this.onSearchStringChange}
           searchString={this.state.searchString}
-          mainPage={this.state.page === "Main"}
+          page={this.state.page}
           onAccountMenuCommand={this.onAccountMenuCommand}
           accountData={this.state.AccountData}
           onClose={this.gotoMain}
@@ -160,6 +163,10 @@ class Root extends Component {
           <UserManagementPage
             show={this.state.page === "Iam"}
             gotoMain={this.gotoMain}
+          />
+          <LoginPage
+            show={this.state.page === "Login"}
+            whenDone={() => this.setState({ page: "Main" })}
           />
         </Row>
         <Row className="d-none d-sm-block">

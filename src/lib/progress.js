@@ -2,6 +2,9 @@
 let progressTimeout;
 
 function lock(seconds, message) {
+  if(progressTimeout) {
+    clearTimeout(progressTimeout);
+  }
   let timeout = 10; // defaults to 10 seconds
   if (undefined !== seconds) {
     timeout = seconds;
@@ -9,7 +12,8 @@ function lock(seconds, message) {
   if (undefined === message) {
     message = '';
   }
-  document.querySelector('.progress-lock__message > span').InnerText = `${message} Please wait…`;
+  console.log("progress -" + message + " timeout " + timeout);
+  document.querySelector('.progress-lock__message > span').innerText = `${message} Please wait…`;
   document.querySelector('#progress-lock').style.display='block';
   if (timeout) {
     progressTimeout = window.setTimeout(() => {

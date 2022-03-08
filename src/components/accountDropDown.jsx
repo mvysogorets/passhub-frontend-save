@@ -53,11 +53,16 @@ class AccountDropDown extends Component {
     this.props.onMenuCommand("upgrade");
   };
   componentDidMount = () => {
-    this.props.getAccountData();
+    //this.props.getAccountData();
     //console.log("account dropdown  mounted");
   };
 
+  accountLoaded = false;
   componentDidUpdate = () => {
+    if (!this.accountLoaded && this.props.show) {
+      this.accountLoaded = true;
+      this.props.getAccountData();
+    }
     //console.log("account dropdown updated");
   };
 

@@ -5,7 +5,7 @@ import axios from "axios";
 import * as base32 from "hi-base32";
 
 import * as passhubCrypto from "../lib/crypto";
-import { isStrongPassword } from "../lib/utils";
+import { isStrongPassword, getApiUrl, getVerifier } from "../lib/utils";
 import { openInExtension } from "../lib/extensionInterface";
 import getTOTP from "../lib/totp";
 import { copyToClipboard } from "../lib/copyToClipboard";
@@ -49,7 +49,7 @@ function totpTimerRemoveListener(f) {
   totpTimerListeners = totpTimerListeners.filter((e) => e !== f);
 }
 
-class LoginModal extends Component {
+class PasswordModal extends Component {
   state = {
     edit: false,
     showPassword: false,
@@ -136,7 +136,7 @@ class LoginModal extends Component {
 */
     const eData = passhubCrypto.encryptItem(pData, aesKey, options);
     const data = {
-      verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      verifier: getVerifier(),
       vault: SafeID,
       folder: folderID,
       encrypted_data: eData,
@@ -145,7 +145,7 @@ class LoginModal extends Component {
       data.entryID = this.props.args.item._id;
     }
     axios
-      .post("items.php", data)
+      .post(`${getApiUrl()}items.php`, data)
       .then((reply) => {
         const result = reply.data;
         if (result.status === "Ok") {
@@ -358,6 +358,7 @@ class LoginModal extends Component {
         show={this.props.show}
         args={this.props.args}
         onClose={this.props.onClose}
+        onCloseSetFolder={this.props.onCloseSetFolder}
         onEdit={this.onEdit}
         onSubmit={this.onSubmit}
         errorMsg={this.state.errorMsg}
@@ -537,4 +538,4 @@ class LoginModal extends Component {
   }
 }
 
-export default LoginModal;
+export default PasswordModal;

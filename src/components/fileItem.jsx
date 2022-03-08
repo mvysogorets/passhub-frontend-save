@@ -26,10 +26,15 @@ class FileItem extends Component {
           onClick={this.showModal}
           style={{ cursor: "pointer" }}
         >
-          <svg width="24" height="24" className="itemIcon">
-            <use href="#i-file"></use>
-          </svg>
-          {item.cleartext[0]}
+          <div>
+            <svg width="24" height="24" className="itemIcon">
+              <use href="#i-file"></use>
+            </svg>
+            {item.cleartext[0]}
+          </div>
+          {this.props.searchMode && (
+            <div className="search-path">{item.path.join(" > ")}</div>
+          )}
         </td>
         <td className="rightAlign d-none d-lg-table-cell col-lg-4 col-xl-3">
           {humanReadableFileSize(item.file.size)}

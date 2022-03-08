@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -119,8 +120,8 @@ class ShareModal extends Component {
     const vault = folder.safe ? folder.safe.id : folder.id;
 
     axios
-      .post("safe_acl.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}safe_acl.php`, {
+        verifier: getVerifier(),
         vault,
         operation: "email_final",
         name: username,
@@ -170,8 +171,8 @@ class ShareModal extends Component {
       : [folder.id, folder.key];
 
     axios
-      .post("safe_acl.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}safe_acl.php`, {
+        verifier: getVerifier(),
         vault: SafeID,
         operation: "email",
         origin: window.location.origin,
@@ -206,8 +207,8 @@ class ShareModal extends Component {
 
   removeUser = (name) => {
     axios
-      .post("safe_acl.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}safe_acl.php`, {
+        verifier: getVerifier(),
         vault: this.props.args.folder.id,
         operation: "delete",
         name,
@@ -236,8 +237,8 @@ class ShareModal extends Component {
     }
 
     axios
-      .post("safe_acl.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}safe_acl.php`, {
+        verifier: getVerifier(),
         vault: this.props.args.folder.id,
         operation: "role",
         name,
@@ -267,8 +268,8 @@ class ShareModal extends Component {
       : [folder.id, folder.key];
 
     axios
-      .post("safe_acl.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}safe_acl.php`, {
+        verifier: getVerifier(),
         vault: SafeID,
         operation: "unsubscribe",
       })
@@ -314,8 +315,8 @@ class ShareModal extends Component {
     const vault = folder.safe ? folder.safe.id : folder.id;
 
     axios
-      .post("safe_acl.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}safe_acl.php`, {
+        verifier: getVerifier(),
         vault: this.props.args.folder.id,
       })
       .then((reply) => {
@@ -428,7 +429,7 @@ class ShareModal extends Component {
             <div style={{ marginBottom: "12px" }}>
               User invited:{" "}
               <span
-                class="roleChanger"
+                className="roleChanger"
                 onClick={(e) => {
                   contextMenu.show({ id: "invited-user-menu", event: e });
                 }}

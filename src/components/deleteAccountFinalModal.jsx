@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
+
 import ModalCross from "./modalCross";
 
 class DeleteAccountFinalModal extends Component {
@@ -10,8 +12,8 @@ class DeleteAccountFinalModal extends Component {
 
   doDeleteAccount = () => {
     axios
-      .post("r-close_account.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}r-close_account.php`, {
+        verifier: getVerifier(),
         operation: "delete",
       })
       .then((reply) => {

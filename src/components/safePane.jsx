@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
 import React, { Component } from "react";
 import Col from "react-bootstrap/Col";
 
@@ -89,7 +90,8 @@ class SafePane extends Component {
 
   moveItemFinalize(recordID, src_safe, dst_safe, dst_folder, item, operation) {
     axios
-      .post("move.php", {
+      .post(`${getApiUrl()}move.php`, {
+        verifier: getVerifier(),
         id: recordID,
         src_safe, //state.currentSafe.id,
         dst_safe,
@@ -135,7 +137,8 @@ class SafePane extends Component {
     /// --->> if src == dst, do nothing
 
     axios
-      .post("move.php", {
+      .post(`${getApiUrl()}move.php`, {
+        verifier: getVerifier(),
         id: item._id,
         src_safe,
         dst_safe,

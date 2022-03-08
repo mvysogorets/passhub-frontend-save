@@ -6,12 +6,12 @@ import Button from "react-bootstrap/Button";
 import { Menu, Item } from "react-contexify";
 
 import FolderItem from "./folderItem";
-import LoginItem from "./loginItem";
+import PasswordItem from "./passwordItem";
 import NoteItem from "./noteItem";
 import BankCardItem from "./bankCardItem";
 import FileItem from "./fileItem";
 
-import LoginModal from "./loginModal";
+import PasswordModal from "./passwordModal";
 
 import NoteModal from "./noteModal";
 import FileModal from "./fileModal";
@@ -25,7 +25,7 @@ import { getFolderById } from "../lib/utils";
 
 const ADD_BUTTON_MENU_ID = "add-menu-id";
 
-function isLoginItem(item) {
+function isPasswordItem(item) {
   return !item.note && !item.file && item.version !== 5;
 }
 
@@ -59,7 +59,7 @@ class TablePane extends Component {
   handleAddClick = (cmd) => {
     console.log(cmd);
     if (cmd === "Password") {
-      this.showItemModal("LoginModal");
+      this.showItemModal("PasswordModal");
     }
     if (cmd === "File") {
       this.showCreateFileModal();
@@ -177,10 +177,35 @@ class TablePane extends Component {
     });
   };
 
-  onItemModalClose = (refresh = false) => {
+  onItemModalClose1 = (refresh = false) => {
     this.setState({ showModal: "" });
     if (refresh === true) {
       this.props.refreshUserData();
+    }
+  };
+
+  onItemModalClose = (refersh = false) => {
+    this.setState({ showModal: "" });
+    if (refersh === true) {
+      if (this.props.searchMode) {
+        const folderID =
+          this.state.itemModalArgs.item.folder !== 0
+            ? this.state.itemModalArgs.item.folder
+            : this.state.itemModalArgs.item.SafeID;
+        this.props.setActiveFolder(folderID);
+      }
+      this.props.refreshUserData();
+    }
+  };
+
+  onItemModalCloseSetFolder = () => {
+    this.setState({ showModal: "" });
+    if (this.props.searchMode) {
+      const folderID =
+        this.state.itemModalArgs.item.folder !== 0
+          ? this.state.itemModalArgs.item.folder
+          : this.state.itemModalArgs.item.SafeID;
+      this.props.setActiveFolder(folderID);
     }
   };
 
@@ -339,12 +364,13 @@ class TablePane extends Component {
                   ))}
                   {folder.items.map(
                     (f) =>
-                      (isLoginItem(f) && (
-                        <LoginItem
+                      (isPasswordItem(f) && (
+                        <PasswordItem
                           item={f}
                           key1={`item${f._id}`}
+                          searchMode={this.props.searchMode}
                           showModal={(item) =>
-                            this.showItemModal("LoginModal", item)
+                            this.showItemModal("PasswordModal", item)
                           }
                         />
                       )) ||
@@ -352,6 +378,7 @@ class TablePane extends Component {
                         <NoteItem
                           item={f}
                           key={`item${f._id}`}
+                          searchMode={this.props.searchMode}
                           showModal={(item) =>
                             this.showItemModal("NoteModal", item)
                           }
@@ -361,6 +388,7 @@ class TablePane extends Component {
                         <FileItem
                           item={f}
                           key={`item${f._id}`}
+                          searchMode={this.props.searchMode}
                           showModal={(item) =>
                             this.showItemModal("FileModal", item)
                           }
@@ -370,6 +398,7 @@ class TablePane extends Component {
                         <BankCardItem
                           item={f}
                           key={`item${f._id}`}
+                          searchMode={this.props.searchMode}
                           showModal={(item) =>
                             this.showItemModal("BankCardModal", item)
                           }
@@ -417,17 +446,24 @@ class TablePane extends Component {
             handleAddClick={this.handleAddClick}
           ></AddDropUp>
 
-          <LoginModal
-            show={this.state.showModal === "LoginModal"}
+          <PasswordModal
+            show={this.state.showModal === "PasswordModal"}
             args={this.state.itemModalArgs}
             openDeleteItemModal={this.openDeleteItemModal}
-            onClose={(refresh = false) => {
+            onClose={this.onItemModalClose}
+            onCloseSetFolder={this.onItemModalCloseSetFolder}
+            onCloseX={(refresh = false) => {
               this.setState({ showModal: "" });
               if (refresh === true) {
+                const folderID =
+                  this.state.itemModalArgs.item.folder !== 0
+                    ? this.state.itemModalArgs.item.folder
+                    : this.state.itemModalArgs.item.safeID;
+                this.props.setActiveFolder(folderID);
                 this.props.refreshUserData();
               }
             }}
-          ></LoginModal>
+          ></PasswordModal>
           {/* <LoginPane args={this.state.itemModalArgs} /> */}
 
           <FileModal
@@ -435,6 +471,7 @@ class TablePane extends Component {
             args={this.state.itemModalArgs}
             openDeleteItemModal={this.openDeleteItemModal}
             onClose={this.onItemModalClose}
+            onCloseSetFolder={this.onItemModalCloseSetFolder}
             inMemoryView={(blob, filename) => {
               this.setState({ showModal: "" });
               this.props.inMemoryView(blob, filename);
@@ -453,6 +490,7 @@ class TablePane extends Component {
             args={this.state.itemModalArgs}
             openDeleteItemModal={this.openDeleteItemModal}
             onClose={this.onItemModalClose}
+            onCloseSetFolder={this.onItemModalCloseSetFolder}
           ></NoteModal>
 
           <BankCardModal
@@ -460,6 +498,7 @@ class TablePane extends Component {
             args={this.state.itemModalArgs}
             openDeleteItemModal={this.openDeleteItemModal}
             onClose={this.onItemModalClose}
+            onCloseSetFolder={this.onItemModalCloseSetFolder}
           ></BankCardModal>
 
           <DeleteItemModal

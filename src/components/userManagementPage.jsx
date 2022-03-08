@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
 
 import Card from "react-bootstrap/Card";
 
@@ -52,8 +53,8 @@ class UserManagementPage extends Component {
   userStatusCB = (data) => {
     //console.log(data);
     axios
-      .post("iam.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}iam.php`, {
+        verifier: getVerifier(),
         operation: data.operation,
         id: data.id,
         email: data.email,
@@ -79,8 +80,8 @@ class UserManagementPage extends Component {
       return;
     }
     axios
-      .post("../iam.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}iam.php`, {
+        verifier: getVerifier(),
         operation: "users",
       })
       .then((result) => {

@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import ModalCross from "./modalCross";
 
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
 
 import InputField from "./inputField";
 import TextAreaField from "./textAreaField";
@@ -34,8 +35,8 @@ class ContactUsModal extends Component {
     }
     progress.lock();
     axios
-      .post("contact_us.php", {
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+      .post(`${getApiUrl()}contact_us.php`, {
+        verifier: getVerifier(),
         name: this.state.name,
         email: this.state.email,
         message: this.state.message,

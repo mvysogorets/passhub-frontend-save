@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { getApiUrl, getVerifier } from "../lib/utils";
 import AccountDropDown from "./accountDropDown";
 import ContactUsModal from "./contactUsModal";
 import MessageModal from "./messageModal";
@@ -33,15 +34,14 @@ class NavSpan extends Component {
     this.props.onSearchChange(e.target.value);
   };
 
-  right = 0;
   getAccountData = (newData) => {
     const self = this;
     const axiosData = newData
       ? newData
       : {
-          verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+          verifier: getVerifier(),
         };
-    axios.post("account.php", axiosData).then((reply) => {
+    axios.post(`${getApiUrl()}account.php`, axiosData).then((reply) => {
       const result = reply.data;
       if (result.status === "Ok") {
         self.setState({ accountData: result });
@@ -53,6 +53,8 @@ class NavSpan extends Component {
       }
     });
   };
+
+  right = 0;
 
   showAccountDropDown = (e) => {
     e.stopPropagation();
@@ -81,7 +83,7 @@ class NavSpan extends Component {
       return;
     }
     if (cmd === "Help") {
-      window.open("doc", "_blank", []);
+      window.open("https://passhub.net/doc", "_blank", []);
       return;
     }
     if (cmd === "Iam") {
@@ -94,7 +96,7 @@ class NavSpan extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.props.mainPage && (
+        {this.props.page === "Main" && (
           <div
             className="d-none d-sm-block"
             style={{
@@ -136,110 +138,115 @@ class NavSpan extends Component {
             </span>
           </div>
         )}
-        <div style={{ display: "flex" }}>
-          <div
-            onClick={this.showAccountDropDown}
-            style={{
-              width: "40px",
-              height: "40px",
-              padding: "7px 0 0 0",
-              borderRadius: "12px",
-              background: "rgba(255, 255, 255, 0.6)",
-              backdropFilter: "blur(40px)",
-              overflow: "hidden",
-              cursor: "pointer",
-              flex: "none",
-            }}
-          >
-            <svg width="40" height="34" style={{ opacity: 0.8 }}>
-              <use href="#f-account"></use>
-            </svg>
-          </div>
-          <span
-            className="d-none d-sm-inline"
-            onClick={this.showAccountDropDown}
-            style={{ padding: "8px 0 0 0", cursor: "pointer" }}
-          >
-            <svg width="24" height="24" fill="white">
-              <use href="#angle"></use>
-            </svg>
-          </span>
-        </div>
+        {this.props.page !== "Login" && (
+          <React.Fragment>
+            <div style={{ display: "flex" }}>
+              <div
+                onClick={this.showAccountDropDown}
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  padding: "7px 0 0 0",
+                  borderRadius: "12px",
+                  background: "rgba(255, 255, 255, 0.6)",
+                  backdropFilter: "blur(40px)",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  flex: "none",
+                }}
+              >
+                <svg width="40" height="34" style={{ opacity: 0.8 }}>
+                  <use href="#f-account"></use>
+                </svg>
+              </div>
+              <span
+                className="d-none d-sm-inline"
+                onClick={this.showAccountDropDown}
+                style={{ padding: "8px 0 0 0", cursor: "pointer" }}
+              >
+                <svg width="24" height="24" fill="white">
+                  <use href="#angle"></use>
+                </svg>
+              </span>
+            </div>
 
-        <AccountDropDown
-          show={this.state.showModal == "AccountDropDown"}
-          right={this.right}
-          onClose={() => this.setState({ showModal: "" })}
-          onMenuCommand={this.handleMenuCommand}
-          getAccountData={this.getAccountData}
-          accountData={this.state.accountData}
-        />
-        <AccountModal
-          show={this.state.showModal === "Account settings"}
-          accountData={this.state.accountData}
-          getAccountData={this.getAccountData}
-          onClose={(dummy, next) => {
-            this.setState({ showModal: next ? next : "" });
-          }}
-        ></AccountModal>
-        <DeleteAccountModal
-          show={this.state.showModal === "delete account"}
-          onClose={(dummy, next) => {
-            this.setState({ showModal: next ? next : "" });
-          }}
-        ></DeleteAccountModal>
-        <DeleteAccountFinalModal
-          show={this.state.showModal === "delete account final"}
-          onClose={(dummy, next) => {
-            this.setState({ showModal: next ? next : "" });
-          }}
-        ></DeleteAccountFinalModal>
-        <ContactUsModal
-          show={this.state.showModal === "Contact us"}
-          onClose={(dummy, next) => {
-            this.setState({ showModal: next ? next : "" });
-          }}
-        ></ContactUsModal>
-        <MessageModal
-          show={this.state.showModal === "success"}
-          onClose={() => {
-            this.setState({ showModal: "" });
-          }}
-        >
-          Your message has been sent
-        </MessageModal>
-        <MessageModal
-          show={this.state.showModal === "account deleted"}
-          onClose={() => {
-            this.setState({ showModal: "" });
-            window.location.href = "logout.php";
-          }}
-        >
-          Your account has been deleted
-        </MessageModal>
-        <UpgradeModal
-          show={this.state.showModal === "upgrade"}
-          onClose={() => {
-            this.setState({ showModal: "" });
-          }}
-        ></UpgradeModal>
-        <EmailModal
-          show={this.state.showModal === "email"}
-          accountData={this.state.accountData}
-          onClose={(dummy, next, email) => {
-            this.setState({
-              showModal: next ? "verifyEmail" : "",
-              emailToVerify: email,
-            });
-          }}
-        ></EmailModal>
-        <VerifyEmailModal
-          show={this.state.showModal === "verifyEmail"}
-          emailToVerify={this.state.emailToVerify}
-          onClose={(dummy, next) => {
-            this.setState({ showModal: next ? "Contact us" : "" });
-          }}
-        ></VerifyEmailModal>
+            <AccountDropDown
+              show={this.state.showModal == "AccountDropDown"}
+              right={this.right}
+              onClose={() => this.setState({ showModal: "" })}
+              onMenuCommand={this.handleMenuCommand}
+              getAccountData={this.getAccountData}
+              accountData={this.state.accountData}
+            />
+
+            <AccountModal
+              show={this.state.showModal === "Account settings"}
+              accountData={this.state.accountData}
+              getAccountData={this.getAccountData}
+              onClose={(dummy, next) => {
+                this.setState({ showModal: next ? next : "" });
+              }}
+            ></AccountModal>
+            <DeleteAccountModal
+              show={this.state.showModal === "delete account"}
+              onClose={(dummy, next) => {
+                this.setState({ showModal: next ? next : "" });
+              }}
+            ></DeleteAccountModal>
+            <DeleteAccountFinalModal
+              show={this.state.showModal === "delete account final"}
+              onClose={(dummy, next) => {
+                this.setState({ showModal: next ? next : "" });
+              }}
+            ></DeleteAccountFinalModal>
+            <ContactUsModal
+              show={this.state.showModal === "Contact us"}
+              onClose={(dummy, next) => {
+                this.setState({ showModal: next ? next : "" });
+              }}
+            ></ContactUsModal>
+            <MessageModal
+              show={this.state.showModal === "success"}
+              onClose={() => {
+                this.setState({ showModal: "" });
+              }}
+            >
+              Your message has been sent
+            </MessageModal>
+            <MessageModal
+              show={this.state.showModal === "account deleted"}
+              onClose={() => {
+                this.setState({ showModal: "" });
+                window.location.href = "logout.php";
+              }}
+            >
+              Your account has been deleted
+            </MessageModal>
+            <UpgradeModal
+              show={this.state.showModal === "upgrade"}
+              onClose={() => {
+                this.setState({ showModal: "" });
+              }}
+            ></UpgradeModal>
+            <EmailModal
+              show={this.state.showModal === "email"}
+              accountData={this.state.accountData}
+              onClose={(dummy, next, email) => {
+                this.setState({
+                  showModal: next ? "verifyEmail" : "",
+                  emailToVerify: email,
+                });
+              }}
+            ></EmailModal>
+            <VerifyEmailModal
+              show={this.state.showModal === "verifyEmail"}
+              emailToVerify={this.state.emailToVerify}
+              onClose={(dummy, next) => {
+                this.setState({ showModal: next ? "Contact us" : "" });
+              }}
+            ></VerifyEmailModal>
+          </React.Fragment>
+        )}
       </React.Fragment>
     );
   }

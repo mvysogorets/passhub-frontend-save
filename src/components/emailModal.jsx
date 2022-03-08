@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { getApiUrl, getVerifier, getHostname } from "../lib/utils";
 
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -7,7 +8,6 @@ import ModalCross from "./modalCross";
 
 import InputField from "./inputField";
 
-import { urlBase } from "../lib/utils";
 import progress from "../lib/progress";
 
 class EmailModal extends Component {
@@ -22,9 +22,10 @@ class EmailModal extends Component {
     }
     progress.lock();
     axios
-      .post("r-change_mail.php", {
+      .post(`${getApiUrl()}r-change_mail.php`, {
+        verifier: getVerifier(),
         email,
-        base_url: urlBase(),
+        host: getHostname(),
       })
       .then((reply) => {
         progress.unlock();

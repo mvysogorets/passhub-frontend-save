@@ -40,21 +40,21 @@ class UpgradeModal extends Component {
         <Modal.Body className="edit" style={{ marginBottom: "24px" }}>
           <div style={{ marginBottom: "32px" }}>
             <p>
-              Your <b>FREE</b> account is limited to 200 records and 100 MB
-              storage.
+              Your <b>FREE</b> account is limited to 200 records, 100 MB
+              storage, and 10 MB file size
             </p>
             <p>
               Get <span style={{ fontWeight: "normal" }}>unlimited</span>{" "}
               records and <span style={{ fontWeight: "normal" }}>1GB</span> of
-              storage space with <b>PREMIUM</b> plan for only $4 per month ($48
-              per year).
+              storage space and 50 MB files with <b>PREMIUM</b> plan for only $4
+              per month ($48 per year).
             </p>
           </div>
           {this.state.errorMsg.length > 0 && (
             <p style={{ color: "red" }}>{this.state.errorMsg}</p>
           )}
 
-          <div class="payment_request" id="payment"></div>
+          <div className="payment_request" id="payment"></div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={this.props.onClose}>

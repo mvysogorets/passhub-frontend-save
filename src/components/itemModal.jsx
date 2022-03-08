@@ -177,7 +177,12 @@ class ItemModal extends Component {
         </div>
 
         <div className="itemModalNav">
-          <div className="itemModalPath d-none d-sm-block">{pathString}</div>
+          <div
+            className="itemModalPath d-none d-sm-block set-active-folder"
+            onClick={this.props.onCloseSetFolder}
+          >
+            {pathString}
+          </div>
           {!this.state.edit ? (
             <div className="itemModalTools">
               {/*
@@ -200,7 +205,7 @@ class ItemModal extends Component {
                 title="Delete"
                 onClick={this.props.args.openDeleteItemModal}
               />
-              <div class="itemModalEditButton" onClick={this.onEdit}>
+              <div className="itemModalEditButton" onClick={this.onEdit}>
                 <svg
                   width="24"
                   height="24"
@@ -218,7 +223,7 @@ class ItemModal extends Component {
             </div>
           ) : (
             <div className="itemModalTools edit">
-              <div class="itemModalEditButton" onClick={this.onSubmit}>
+              <div className="itemModalEditButton" onClick={this.onSubmit}>
                 <span style={{ verticalAlign: "top" }}>Save</span>
               </div>
             </div>

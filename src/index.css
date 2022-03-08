@@ -161,7 +161,11 @@ h1 {
 
 .item_table tbody tr {
   border-bottom: 1px solid #e6e6f0;
-  height: 48px;
+  /* height: 48px; */
+}
+
+.search-mode td {
+  height: 60px;
 }
 
 @media (min-width: 576px) {
@@ -232,11 +236,21 @@ h1 {
   font-size: 14px;
   line-height: 22px;
   color: #1b1b26;
-  opacity: 0.5;
   padding-top: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  cursor: default;
+}
+
+.itemModalPath.set-active-folder {
+  cursor: pointer;
+  color: #009a50;
+}
+
+.itemModalPath.set-active-folder:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .modalTitle {
@@ -262,7 +276,7 @@ h1 {
 }
 
 .edit.itemModalTools {
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 @media (min-width: 576px) {
@@ -1384,6 +1398,14 @@ textarea:focus {
   border-radius: 20px;
   border: 6px solid rgba(27, 27, 38, 0.7);
   /*  width: 6px; */
+}
+
+.search-path {
+  font-size: 12px;
+  opacity: 0.7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 7px 0;
 }
 
 /*

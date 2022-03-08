@@ -4,7 +4,12 @@ import axios from "axios";
 import { saveAs } from "file-saver";
 
 import * as passhubCrypto from "../lib/crypto";
-import * as utils from "../lib/utils";
+import {
+  getApiUrl,
+  getVerifier,
+  isMobile,
+  humanReadableFileSize,
+} from "../lib/utils";
 
 import DownloadAndViewButtons from "./downloadAndViewButtons";
 
@@ -48,7 +53,7 @@ function isFileViewable(filename) {
   if (dot > 0) {
     const ext = filename.substring(dot + 1).toLowerCase();
     if (ext == "pdf") {
-      if (utils.isMobile()) {
+      if (isMobile()) {
         return false;
       }
 
@@ -131,10 +136,10 @@ class FileModal extends Component {
 
     progress.lock(0);
     axios
-      .post("file_ops.php", {
+      .post(`${getApiUrl()}file_ops.php`, {
         operation: "download",
         SafeID,
-        verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+        verifier: getVerifier(),
         itemId: this.props.args.item._id,
       })
       .then((reply) => {
@@ -239,8 +244,8 @@ class FileModal extends Component {
     if (this.props.args.item) {
       progress.lock(0);
       axios
-        .post("file_ops.php", {
-          verifier: document.getElementById("csrf").getAttribute("data-csrf"),
+        .post(`${getApiUrl()}file_ops.php`, {
+          verifier: getVerifier(),
           operation: "rename",
           SafeID,
           itemId: this.props.args.item._id,
@@ -304,10 +309,7 @@ class FileModal extends Component {
       const data = new FormData();
       data.append("vault", SafeID);
       data.append("folder", folderID);
-      data.append(
-        "verifier",
-        document.getElementById("csrf").getAttribute("data-csrf")
-      );
+      data.append("verifier", getVerifier());
 
       data.append("meta", eData);
       data.append("file", fileInfo);
@@ -317,7 +319,7 @@ class FileModal extends Component {
       progress.lock();
 
       axios
-        .post("create_file.php", data, {
+        .post(`${getApiUrl()}create_file.php`, data, {
           headers: {
             "content-type": "multipart/form-data",
           },
@@ -381,6 +383,7 @@ class FileModal extends Component {
           args={this.props.args}
           onEdit={this.onEdit}
           onClose={this.props.onClose}
+          onCloseSetFolder={this.props.onCloseSetFolder}
           ref={this.wrapperComponent}
           onSubmit={this.onSubmit}
           errorMsg={this.state.errorMsg}
@@ -437,7 +440,7 @@ class FileModal extends Component {
               </svg>
               <div style={{ marginBottom: "24px" }}>
                 <span style={{ color: "rgba(27, 27, 38, 0.5)" }}>
-                  {utils.humanReadableFileSize(this.props.args.item.file.size)}
+                  {humanReadableFileSize(this.props.args.item.file.size)}
                 </span>
               </div>
               {!this.state.edit && (
