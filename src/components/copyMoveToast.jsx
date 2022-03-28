@@ -1,7 +1,9 @@
 import Toast from "react-bootstrap/Toast";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
 import React, { Component } from "react";
 import { capitalizeFirstLetter } from "../lib/utils";
+import { copyBufferTimeout } from "../lib/copyBuffer";
 
 class CopyMoveToast extends Component {
   render() {
@@ -25,9 +27,23 @@ class CopyMoveToast extends Component {
           </div>
         </div>
         <Toast.Body>
-          <div>
-            Select target safe/folder to copy the item to.<br></br> Choose
-            "Paste" in its menu.
+          <div style={{ display: "flex" }}>
+            <div style={{ marginRight: 12 }}>
+              <CountdownCircleTimer
+                isPlaying
+                duration={copyBufferTimeout - 1}
+                colors={"#ffffff"}
+                trailColor={"rgb(0,188,98"}
+                size={48}
+                strokeWidth={4}
+              >
+                {({ remainingTime }) => remainingTime}
+              </CountdownCircleTimer>
+            </div>
+            <div>
+              Select target safe/folder to copy the item to.<br></br> Choose
+              "Paste" in its menu.
+            </div>
           </div>
         </Toast.Body>
       </Toast>
@@ -44,5 +60,9 @@ export default CopyMoveToast;
 <div className="toast-header-ph">
             {this.props.operation} item to another safe
           </div>
+              colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+              colorsTime={[copyBufferTimeout - 1, 5]}
 
-*/
+
+
+          */

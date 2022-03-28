@@ -1,5 +1,6 @@
 let theItem = null;
 let timer = null;
+const copyBufferTimeout = 40;
 
 let copyBufferListeners = [];
 
@@ -26,7 +27,7 @@ function putCopyBuffer(item) {
   if(timer) {
     clearTimeout(timer);
   }
-  timer = setTimeout(popCopyBuffer, 30*1000)
+  timer = setTimeout(popCopyBuffer, copyBufferTimeout*1000)
   copyBufferListeners.forEach(f => f());
 }
 
@@ -46,6 +47,7 @@ export {
   putCopyBuffer,
   copyBufferAddListener,
   copyBufferRemoveListener,
+  copyBufferTimeout
 };
 
 
