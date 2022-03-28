@@ -94,6 +94,9 @@ class NavSpan extends Component {
   };
 
   render() {
+    const inputBackground = this.props.searchString.trim().length
+      ? "white"
+      : "rgba(255, 255, 255, 0.6)";
     return (
       <React.Fragment>
         {this.props.page === "Main" && (
@@ -114,7 +117,7 @@ class NavSpan extends Component {
               value={this.props.searchString}
               style={{
                 width: "100%",
-                background: "rgba(255, 255, 255, 0.6)",
+                background: inputBackground,
                 backdropFilter: "blur(40px)",
               }}
             />
