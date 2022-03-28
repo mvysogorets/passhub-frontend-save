@@ -170,8 +170,14 @@ const isMobile = () => {
 
 function lastModified(item) {
 
-  if ((typeof item != "undefined") && ('lastModified' in item)) {
-    const date = new Date(item.lastModified);
+  let date;
+  if ((typeof item != "undefined") && ('contentModificationDate' in item)) {
+    date = new Date(item.contentModificationDate);
+  } else if ((typeof item != "undefined") && ('lastModified' in item)) {
+    date = new Date(item.lastModified);
+  }
+
+  if(date) {
     return date.toLocaleString([], {
       year: "numeric",
       month: "2-digit",

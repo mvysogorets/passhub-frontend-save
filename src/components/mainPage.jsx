@@ -51,6 +51,9 @@ function decryptSafes(eSafes) {
   return Promise.all(promises);
 }
 function normalizeFolder(folder, items, folders) {
+  folder.contentModificationDate = folder.lastModified
+    ? folder.lastModified
+    : "-";
   folder.name = folder.cleartext[0];
   folder.id = folder._id;
   folder.path = [...folder.path, folder.cleartext[0]];
@@ -60,6 +63,12 @@ function normalizeFolder(folder, items, folders) {
     if (item.folder === folder.id) {
       folder.items.push(item);
       item.path = folder.path;
+      if (
+        item.lastModified &&
+        item.lastModified > folder.contentModificationDate
+      ) {
+        folder.contentModificationDate = item.lastModified;
+      }
     }
   }
   folder.items.sort((a, b) =>
@@ -73,6 +82,12 @@ function normalizeFolder(folder, items, folders) {
       f.path = folder.path;
       f.safe = folder.safe;
       normalizeFolder(f, items, folders);
+      if (
+        f.contentModificationDate &&
+        f.contentModificationDate > folder.contentModificationDate
+      ) {
+        folder.contentModificationDate = f.contentModificationDate;
+      }
     }
   }
   folder.folders.sort((a, b) =>
