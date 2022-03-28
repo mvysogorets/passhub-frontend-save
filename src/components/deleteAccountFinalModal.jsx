@@ -12,7 +12,7 @@ class DeleteAccountFinalModal extends Component {
 
   doDeleteAccount = () => {
     axios
-      .post(`${getApiUrl()}r-close_account.php`, {
+      .post(`${getApiUrl()}close_account.php`, {
         verifier: getVerifier(),
         operation: "delete",
       })

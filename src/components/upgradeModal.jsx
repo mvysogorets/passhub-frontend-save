@@ -45,9 +45,9 @@ class UpgradeModal extends Component {
             </p>
             <p>
               Get <span style={{ fontWeight: "normal" }}>unlimited</span>{" "}
-              records and <span style={{ fontWeight: "normal" }}>1GB</span> of
-              storage space and 50 MB files with <b>PREMIUM</b> plan for only $4
-              per month ($48 per year).
+              records, <span style={{ fontWeight: "normal" }}>1GB</span> of
+              storage space, and 50 MB files with <b>PREMIUM</b> plan for only
+              $4 per month ($48 per year).
             </p>
           </div>
           {this.state.errorMsg.length > 0 && (

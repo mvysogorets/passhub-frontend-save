@@ -77,8 +77,8 @@ const mockData = {
           folder: 0,
           _id:"2i2",
           cleartext: [
-            "Gmail",
-            "alice",
+            "long username",
+            "alicealicealicealicealicealicealicealicealicealicealicealicealicealicealicealicealice",
             "kjhgqw",
             "https://gmail.com",
             "Work mail",
@@ -91,9 +91,9 @@ const mockData = {
           folder: 0,
           _id:"2i3",
           cleartext: [
-            "Gmail",
+            "long password",
             "alice",
-            "kjhgqw",
+            "kjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwk",
             "https://gmail.com",
             "Work mail",
           ],
@@ -106,10 +106,10 @@ const mockData = {
           _id:"2i4",
 
           cleartext: [
-            "Gmail",
+            "long url",
             "alice",
             "kjhgqw",
-            "https://gmail.com",
+            "https://longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonggmail.com",
             "Work mail",
           ],
           path: ["Private", ],

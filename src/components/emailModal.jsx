@@ -22,7 +22,7 @@ class EmailModal extends Component {
     }
     progress.lock();
     axios
-      .post(`${getApiUrl()}r-change_mail.php`, {
+      .post(`${getApiUrl()}change_mail.php`, {
         verifier: getVerifier(),
         email,
         host: getHostname(),

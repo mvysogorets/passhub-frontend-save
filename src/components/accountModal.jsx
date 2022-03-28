@@ -126,6 +126,7 @@ class AccountModal extends Component {
                 marginBottom: 62,
                 position: "relative",
                 background: "#E6F8EF",
+                cursor: "pointer",
               }}
               onClick={this.onMailClick}
             >
