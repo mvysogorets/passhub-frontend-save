@@ -13,6 +13,7 @@ import { copyToClipboard } from "../lib/copyToClipboard";
 import ItemModalFieldNav from "./itemModalFieldNav";
 
 import ItemModal from "./itemModal";
+import Eye from "./eye";
 import GeneratePasswordModal from "./generatePasswordModal";
 
 function drawTotpCircle() {
@@ -396,16 +397,23 @@ class PasswordModal extends Component {
 
         <div
           className={`itemModalField lower ${passwordBackground}`}
-          style={{ position: "relative", display: "flex" }}
-          onClick={() => {
-            if (!this.state.edit) {
-              this.copyToClipboard(this.state.password);
-              document.querySelector("#password_copied").style.display = "flex";
-              startCopiedTimer();
-            }
+          style={{
+            position: "relative",
+            display: "flex",
+            marginBottom: this.state.edit ? 0 : 32,
           }}
         >
-          <div style={{ flexGrow: 1 }}>
+          <div
+            style={{ flexGrow: 1 }}
+            onClick={() => {
+              if (!this.state.edit) {
+                this.copyToClipboard(this.state.password);
+                document.querySelector("#password_copied").style.display =
+                  "flex";
+                startCopiedTimer();
+              }
+            }}
+          >
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div style={{ fontSize: "14px" }}>
                 <span style={{ color: "#1b1b26", opacity: "0.7" }}>
@@ -436,6 +444,7 @@ class PasswordModal extends Component {
               <div style={{ margin: "0 auto" }}>Copied &#10003;</div>
             </div>
           </div>
+          <Eye onClick={this.showPassword} hide={!this.state.showPassword} />
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -477,6 +486,7 @@ class PasswordModal extends Component {
               padding: "8px 0 15px",
               fontSize: "14px",
               cursor: "pointer",
+              display: "none",
             }}
           >
             <svg width="21" height="21" fill="none">
@@ -493,34 +503,74 @@ class PasswordModal extends Component {
             </span>
           </div>
         </div>
+
         <div
           className="itemModalField"
-          style={{ marginBottom: 32 }}
-          onClick={
-            !this.state.edit &&
-            this.props.args.item &&
-            this.props.args.item.cleartext[3].length > 0
-              ? () => openInExtension(this.props.args.item)
-              : () => {}
-          }
+          style={{ display: "flex", position: "relative", marginBottom: 32 }}
         >
-          <ItemModalFieldNav
-            gotowebsite={!this.state.edit && this.state.url.length > 0}
-            name="Website Address"
-            for="websiteaddress"
-          />
-          <div>
+          <div
+            style={{ flexGrow: 1, overflow: "hidden" }}
+            onClick={
+              !this.state.edit &&
+              this.props.args.item &&
+              this.props.args.item.cleartext[3].length > 0
+                ? () => openInExtension(this.props.args.item)
+                : () => {}
+            }
+          >
+            <ItemModalFieldNav
+              gotowebsite={!this.state.edit && this.state.url.length > 0}
+              name="Website Address"
+              for="websiteaddress"
+            />
             {this.state.edit ? (
-              <input
-                id="websiteaddress"
-                onChange={this.onUrlChange}
-                spellCheck={false}
-                value={this.state.url}
-              ></input>
+              <div>
+                <input
+                  id="websiteaddress"
+                  onChange={this.onUrlChange}
+                  spellCheck={false}
+                  value={this.state.url}
+                ></input>
+              </div>
             ) : (
-              <span className="url-span">{this.state.url}</span>
+              <div
+                className="url-span"
+                style={{ overflow: "hidden", textOverflow: "ellipsis" }}
+              >
+                {this.state.url}
+              </div>
             )}
+            <div className="copied green70" id="url_copied">
+              <div style={{ margin: "0 auto" }}>Copied &#10003;</div>
+            </div>
           </div>
+
+          {!this.state.edit && (
+            <div
+              style={{
+                display: "flex",
+                cursor: "pointer",
+                justifyContent: "center",
+                padding: "0 6px",
+              }}
+              title="Copy URL"
+              onClick={() => {
+                this.copyToClipboard(this.state.url);
+                document.querySelector("#url_copied").style.display = "flex";
+                startCopiedTimer();
+              }}
+            >
+              <svg
+                width="36"
+                height="36"
+                fill="none"
+                stroke="#1b1b26"
+                title="Copy"
+              >
+                <use href="#f-copy"></use>
+              </svg>
+            </div>
+          )}
         </div>
         {totp}
 
