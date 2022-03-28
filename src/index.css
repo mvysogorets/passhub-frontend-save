@@ -161,7 +161,7 @@ h1 {
 
 .item_table tbody tr {
   border-bottom: 1px solid #e6e6f0;
-  /* height: 48px; */
+  min-height: 48px;
 }
 
 .search-mode td {
