@@ -198,7 +198,7 @@ class SurveyModal extends Component {
               />
             </Form.Group>
           </div>
-          <p>Your contact email (opitional)</p>
+          <p>Your contact email (optional)</p>
           <InputField
             value={this.state.email}
             id="survey-email"
