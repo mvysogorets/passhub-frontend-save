@@ -3,6 +3,8 @@ import { setApiUrl, getApiUrl, setCsrfToken } from "../lib/utils";
 import * as WWPass from "wwpass-frontend";
 import axios from "axios";
 
+import "../login.css";
+
 /* moz-extension://352b66fa-a868-4b29-8100-9dc6c1716b61/frontend/index.html */
 console.log(window.location.href);
 
@@ -42,6 +44,60 @@ class LoginPage extends Component {
     setApiUrl("https://trial.passhub.net/");
 
     return (
+      <div id="login-root">
+        <div class="rectangle640">
+          <div style={{ width: 256 }}>
+            <div class="rectangle1237">To sign-in, scan the QR code</div>
+            <div class="rectangle1237a">
+              <div style={{ marginTop: 0 }}>
+                with <b>WWPass™ Key App</b>
+              </div>
+            </div>
+            <div id="qrcode"></div>
+            <div class="rectangle1237b">
+              <div style={{ marginBottom: 0 }}>
+                or connect <b>WWPass Key</b>
+              </div>
+            </div>
+            <div class="rectangle1237c">
+              <svg style={{ width: 30, height: 18, marginRight: 11 }}>
+                <use href="#loaf-ico"></use>
+              </svg>
+              Login with WWPass Key
+            </div>
+          </div>
+          <div class="passhub-logo">PassHub</div>
+          <div class="help-contact">
+            <div style={{ margin: "0 88px 0 60px", display: "flex" }}>
+              <svg style={{ width: 20, height: 20, marginRight: 11 }}>
+                <use href="#help-ico"></use>
+              </svg>
+              Help
+            </div>
+
+            <div style={{ display: "flex" }}>
+              <svg
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  marginRight: "11px",
+                  marginTop: "4px",
+                }}
+              >
+                <use href="#contact-ico"></use>
+              </svg>
+              Contact us
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default LoginPage;
+
+/*
       <div
         style={{
           display: "flex",
@@ -53,8 +109,6 @@ class LoginPage extends Component {
         <div>login</div>
         <div id="qrcode" style={{ width: 256 }}></div>
       </div>
-    );
-  }
-}
 
-export default LoginPage;
+
+*/

@@ -116,6 +116,12 @@ class Root extends Component {
   };
 */
   render() {
+    if (this.state.page === "Login") {
+      return (
+        <LoginPage show whenDone={() => this.setState({ page: "Main" })} />
+      );
+    }
+
     return (
       <Container className="d-flex" style={{ flexDirection: "column" }}>
         <Header
@@ -163,10 +169,6 @@ class Root extends Component {
           <UserManagementPage
             show={this.state.page === "Iam"}
             gotoMain={this.gotoMain}
-          />
-          <LoginPage
-            show={this.state.page === "Login"}
-            whenDone={() => this.setState({ page: "Main" })}
           />
         </Row>
         <Row className="d-none d-sm-block">
