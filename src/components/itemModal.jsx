@@ -11,6 +11,8 @@ import ModalCross from "./modalCross";
 import { putCopyBuffer } from "../lib/copyBuffer";
 import TextareaAutosize from "react-textarea-autosize";
 
+import { limits } from "../lib/utils";
+
 class ItemModal extends Component {
   state = {
     edit: true,
@@ -27,10 +29,35 @@ class ItemModal extends Component {
     this.textAreaRef = React.createRef();
   }
 
-  onTitleChange = (e) => this.setState({ title: e.target.value, errorMsg: "" });
+  onTitleChange = (e) => {
+    let errorMsg = "";
+    const maxLength = limits.MAX_TITLE_LENGTH;
+    let newValue = e.target.value;
+
+    if (newValue.length > maxLength) {
+      newValue = newValue.substring(0, maxLength);
+      errorMsg = `Title max length is ${maxLength} chars, truncated`;
+    }
+    this.setState({
+      title: newValue,
+      errorMsg,
+    });
+  };
 
   onNoteChange = (e) => {
-    this.setState({ note: e.target.value });
+    let errorMsg = "";
+    const maxLength = limits.MAX_NOTE_LENGTH;
+    let newValue = e.target.value;
+
+    if (newValue.length > maxLength) {
+      newValue = newValue.substring(0, maxLength);
+      errorMsg = `Notes max length is ${maxLength} chars, truncated`;
+    }
+    this.setState({
+      note: newValue,
+      errorMsg,
+    });
+
     /* text area
     e.target.style.height = "auto";
     console.log(e.target.scrollHeight);
@@ -270,7 +297,9 @@ class ItemModal extends Component {
 
         <Modal.Body className={modalClass}>
           {this.state.errorMsg && (
-            <div style={{ color: "red" }}>{this.state.errorMsg}</div>
+            <div style={{ color: "red", marginBottom: 16 }}>
+              {this.state.errorMsg}
+            </div>
           )}
           {this.props.children}
 
@@ -282,6 +311,7 @@ class ItemModal extends Component {
                   id="notes"
                   value={this.state.note}
                   onChange={this.onNoteChange}
+                  placeholder="Type notes here"
                 />
               ) : (
                 <div className="note-view">{this.state.note}</div>

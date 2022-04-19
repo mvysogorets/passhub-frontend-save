@@ -5,7 +5,7 @@ import axios from "axios";
 import * as base32 from "hi-base32";
 
 import * as passhubCrypto from "../lib/crypto";
-import { isStrongPassword, getApiUrl, getVerifier } from "../lib/utils";
+import { isStrongPassword, getApiUrl, getVerifier, limits } from "../lib/utils";
 import { openInExtension } from "../lib/extensionInterface";
 import getTOTP from "../lib/totp";
 import { copyToClipboard } from "../lib/copyToClipboard";
@@ -61,6 +61,8 @@ class PasswordModal extends Component {
     totpSecret: "",
     showModal: "",
     errorMsg: "",
+    unamePwdWarning: "",
+    urlWarning: "",
   };
 
   timerEvent = () => {
@@ -87,13 +89,54 @@ class PasswordModal extends Component {
     // this.props.args.showItemPane(this.props.args);
   };
 
-  onUsernameChange = (e) => this.setState({ username: e.target.value });
+  onUsernameChange = (e) => {
+    let unamePwdWarning = "";
+    const maxLength = limits.MAX_USERNAME_LENGTH;
+    let newValue = e.target.value;
 
-  onPasswordChange = (e) => this.setState({ password: e.target.value });
+    if (newValue.length > maxLength) {
+      newValue = newValue.substring(0, maxLength);
+      unamePwdWarning = `Username max length is ${maxLength} chars, truncated`;
+    }
+    this.setState({
+      username: newValue,
+      unamePwdWarning,
+    });
+  };
+
+  onPasswordChange = (e) => {
+    let unamePwdWarning = "";
+    const maxLength = limits.MAX_PASSWORD_LENGTH;
+    let newValue = e.target.value;
+
+    if (newValue.length > maxLength) {
+      newValue = newValue.substring(0, maxLength);
+      unamePwdWarning = `Password length is ${maxLength} chars, truncated`;
+    }
+    this.setState({
+      password: newValue,
+      unamePwdWarning,
+    });
+  };
+
   onTotpSecretChange = (e) =>
     this.setState({ totpSecret: e.target.value.toUpperCase() });
 
-  onUrlChange = (e) => this.setState({ url: e.target.value });
+  onUrlChange = (e) => {
+    let urlWarning = "";
+    const maxLength = limits.MAX_URL_LENGTH;
+    let newValue = e.target.value;
+
+    if (newValue.length > maxLength) {
+      newValue = newValue.substring(0, maxLength);
+      urlWarning = `URL length is ${maxLength} chars, truncated`;
+    }
+    this.setState({
+      url: newValue,
+      urlWarning,
+    });
+    // this.setState({ url: e.target.value });
+  };
 
   onClose = () => {
     this.props.onClose();
@@ -223,6 +266,8 @@ class PasswordModal extends Component {
     if (!this.isShown) {
       this.isShown = true;
       this.state.errorMsg = "";
+      this.state.unamePwdWarning = "";
+      this.state.urlWarning = "";
 
       this.state.showPassword = false;
       if (this.props.args.item) {
@@ -447,6 +492,11 @@ class PasswordModal extends Component {
           <Eye onClick={this.showPassword} hide={!this.state.showPassword} />
         </div>
 
+        {this.state.unamePwdWarning &&
+          this.state.unamePwdWarning.length > 0 && (
+            <div style={{ color: "red" }}>{this.state.unamePwdWarning}</div>
+          )}
+
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           {this.state.edit ? (
             <div
@@ -540,6 +590,7 @@ class PasswordModal extends Component {
                 {this.state.url}
               </div>
             )}
+
             <div className="copied green70" id="url_copied">
               <div style={{ margin: "0 auto" }}>Copied &#10003;</div>
             </div>
@@ -572,6 +623,10 @@ class PasswordModal extends Component {
             </div>
           )}
         </div>
+        {this.state.urlWarning && this.state.urlWarning.length > 0 && (
+          <div style={{ color: "red" }}>{this.state.urlWarning}</div>
+        )}
+
         {totp}
 
         <GeneratePasswordModal
