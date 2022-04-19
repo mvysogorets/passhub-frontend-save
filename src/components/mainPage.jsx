@@ -341,6 +341,7 @@ class MainPage extends Component {
 
   componentDidMount() {
     if (this.props.show) {
+      this.pageDataLoaded = true;
       this.getPageData();
     }
   }
