@@ -32,6 +32,7 @@ class InputField extends Component {
           <input
             id={this.props.id}
             onChange={this.props.onChange}
+            onKeyUp={this.props.onKeyUp}
             readOnly={!this.props.edit}
             spellCheck={false}
             value={this.props.value}

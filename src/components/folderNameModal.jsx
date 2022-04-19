@@ -190,6 +190,12 @@ class FolderNameModal extends Component {
 
   handleChange = (e) => this.setState({ name: e.target.value, errorMsg: "" });
 
+  keyUp = (e) => {
+    if (e.key === "Enter") {
+      this.onSubmit();
+    }
+  };
+
   render() {
     if (!this.props.show) {
       this.isShown = false;
@@ -262,6 +268,7 @@ class FolderNameModal extends Component {
             value={this.state.name}
             edit
             onChange={this.handleChange}
+            onKeyUp={this.keyUp}
           ></InputField>
           {this.state.errorMsg.length > 0 && (
             <div style={{ color: "red" }}>{this.state.errorMsg}</div>
