@@ -24,7 +24,10 @@ class ShareModal extends Component {
   isAdmin = false;
   refreshOnClose = false;
 
-  onEmailChange = (e) => this.setState({ email: e.target.value, errorMsg: "" });
+  onEmailChange = (e) => {
+    let email = e.target.value;
+    this.setState({ email, errorMsg: "" });
+  };
 
   onClose = (refresh = false) => {
     this.props.onClose(refresh || this.refreshOnClose);
@@ -160,8 +163,8 @@ class ShareModal extends Component {
   };
 
   onSubmit = () => {
-    let name = this.state.email.trim();
-    if (name.length < 1) {
+    let peer = this.state.email.trim();
+    if (peer.length < 1) {
       this.setState({ errorMsg: "Recipient email should not be empty" });
       return;
     }
@@ -176,7 +179,7 @@ class ShareModal extends Component {
         vault: SafeID,
         operation: "email",
         origin: window.location.origin,
-        name: this.state.email,
+        name: peer,
       })
       .then((reply) => {
         const result = reply.data;
@@ -191,7 +194,7 @@ class ShareModal extends Component {
               result.public_key,
               aesKey
             );
-            this.shareByMailFinal(this.state.email, hexPeerEncryptedAesKey);
+            this.shareByMailFinal(peer, hexPeerEncryptedAesKey);
           });
           return;
         }
@@ -390,7 +393,7 @@ class ShareModal extends Component {
               readOnly={false}
               spellCheck={false}
               value={this.state.email}
-              type="email"
+              type="text"
             ></input>
           </div>
         </div>
