@@ -22,11 +22,18 @@ body {
 }
   */
 
+#login-background {
+  height: 100%;
+  background-image: url("login_background.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
 #login-root {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(27, 27, 38, 0.6);
 }
 
 .rectangle640 {
@@ -119,9 +126,15 @@ body {
 
 .help-contact {
   position: absolute;
-  bottom: 0;
-  height: 81px;
+  bottom: 61px;
   width: 100%;
   display: flex;
   color: #1b1b26;
+}
+
+.help-contact-white {
+  display: flex;
+  justify-content: space-between;
+  color:white;
+  width: 210px;
 }
