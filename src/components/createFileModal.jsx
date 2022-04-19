@@ -35,7 +35,7 @@ class CreateFileModal extends React.Component {
       this.setState({
         errorMsg: `File too large: ${humanReadableFileSize(
           e.target.files[0].size
-        )} MB, max ${humanReadableFileSize(getUserData().MAX_FILE_SIZE)}`,
+        )}, max ${humanReadableFileSize(getUserData().MAX_FILE_SIZE)}`,
       });
       return;
     }
@@ -54,7 +54,7 @@ class CreateFileModal extends React.Component {
       this.setState({
         errorMsg: `File too large: ${humanReadableFileSize(
           this.state.theFile.size
-        )} MB, max ${humanReadableFileSize(getUserData().MAX_FILE_SIZE)}`,
+        )}, max ${humanReadableFileSize(getUserData().MAX_FILE_SIZE)}`,
       });
       return;
     }
