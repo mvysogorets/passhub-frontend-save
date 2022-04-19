@@ -5,7 +5,7 @@ import { getApiUrl, getVerifier } from "../lib/utils";
 import Card from "react-bootstrap/Card";
 
 import InviteDiv from "./inviteDiv";
-import UserTable from "./userTable";
+import UserTable from "./userTableF";
 import DelUserModal from "./delUserModal";
 
 function cmp(o1, o2) {

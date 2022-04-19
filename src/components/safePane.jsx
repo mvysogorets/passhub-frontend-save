@@ -9,7 +9,7 @@ import ExportFolderModal from "./exportFolderModal";
 import MessageModal from "./messageModal";
 import ShareModal from "./shareModal";
 
-import FolderTreeNode from "./folderTreeNode";
+import FolderTreeNode from "./folderTreeNodeF";
 import MobileSafeNode from "./mobileSafeNode";
 
 import * as passhubCrypto from "../lib/crypto";

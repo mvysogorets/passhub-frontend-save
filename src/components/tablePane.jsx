@@ -5,11 +5,11 @@ import Button from "react-bootstrap/Button";
 
 import { Menu, Item } from "react-contexify";
 
-import FolderItem from "./folderItem";
-import PasswordItem from "./passwordItem";
-import NoteItem from "./noteItem";
-import BankCardItem from "./bankCardItem";
-import FileItem from "./fileItem";
+import FolderItem from "./folderItemF";
+import PasswordItem from "./passwordItemF";
+import NoteItem from "./noteItemF";
+import BankCardItem from "./bankCardItemF";
+import FileItem from "./fileItemF";
 
 import PasswordModal from "./passwordModal";
 
@@ -189,7 +189,7 @@ class TablePane extends Component {
     if (refersh === true) {
       if (this.props.searchMode) {
         const folderID =
-          this.state.itemModalArgs.item.folder !== 0
+          this.state.itemModalArgs.item.folder != 0 // not !== intentionally, better have it "0"
             ? this.state.itemModalArgs.item.folder
             : this.state.itemModalArgs.item.SafeID;
         this.props.setActiveFolder(folderID);
@@ -202,7 +202,7 @@ class TablePane extends Component {
     this.setState({ showModal: "" });
     if (this.props.searchMode) {
       const folderID =
-        this.state.itemModalArgs.item.folder !== 0
+        this.state.itemModalArgs.item.folder != 0 // intentionally: better have it "0"
           ? this.state.itemModalArgs.item.folder
           : this.state.itemModalArgs.item.SafeID;
       this.props.setActiveFolder(folderID);
@@ -456,7 +456,7 @@ class TablePane extends Component {
               this.setState({ showModal: "" });
               if (refresh === true) {
                 const folderID =
-                  this.state.itemModalArgs.item.folder !== 0
+                  this.state.itemModalArgs.item.folder != 0 // intentionally: better have it "0"
                     ? this.state.itemModalArgs.item.folder
                     : this.state.itemModalArgs.item.safeID;
                 this.props.setActiveFolder(folderID);
