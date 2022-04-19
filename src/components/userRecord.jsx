@@ -90,7 +90,7 @@ class UserRecord extends Component {
         <td
           style={{ cursor: "pointer" }}
           onClick={() => {
-            this.props.showDelDialog({ email: user.email, id: user.id });
+            this.props.showDelDialog({ email: user.email, id: user._id });
           }}
         >
           <svg
