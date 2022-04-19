@@ -83,7 +83,7 @@ class NavSpan extends Component {
       return;
     }
     if (cmd === "Help") {
-      window.open("https://passhub.net/doc", "_blank", []);
+      window.open("https://passhub.net/doc", "passhub_doc", []);
       return;
     }
     if (cmd === "Iam") {
