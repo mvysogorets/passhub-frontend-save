@@ -66,7 +66,6 @@ function FolderTreeNode(props) {
           e.stopPropagation();
           props.onOpen(props.node);
         }}
-        activeFolder={props.activeFolder}
       >
         <use href="#angle"></use>
       </svg>

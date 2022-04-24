@@ -69,7 +69,6 @@ class FolderTreeNode extends Component {
             e.stopPropagation();
             this.props.onOpen(this.props.node);
           }}
-          activeFolder={this.props.activeFolder}
         >
           <use href="#angle"></use>
         </svg>

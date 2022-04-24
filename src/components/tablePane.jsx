@@ -355,7 +355,7 @@ class TablePane extends Component {
                 <tbody>
                   {folder.folders.map((f) => (
                     <FolderItem
-                      key1={`folder${folder.id}`}
+                      key={`folder${folder.id}`}
                       item={f}
                       onClick={(folder) => {
                         this.openFolder(folder);
@@ -367,7 +367,7 @@ class TablePane extends Component {
                       (isPasswordItem(f) && (
                         <PasswordItem
                           item={f}
-                          key1={`item${f._id}`}
+                          key={`item${f._id}`}
                           searchMode={this.props.searchMode}
                           showModal={(item) =>
                             this.showItemModal("PasswordModal", item)
