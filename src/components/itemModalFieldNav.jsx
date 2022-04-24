@@ -26,7 +26,7 @@ class ItemModalFieldNav extends Component {
     return (
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div className="label">
-          <label for={this.props.for}>{this.props.name}</label>
+          <label htmlFor={this.props.htmlFor}>{this.props.name}</label>
         </div>
         {clickAction}
       </div>

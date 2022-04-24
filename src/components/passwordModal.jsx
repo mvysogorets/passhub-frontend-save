@@ -423,7 +423,7 @@ class PasswordModal extends Component {
           <ItemModalFieldNav
             copy={!this.state.edit}
             name="Username"
-            for="username"
+            htmlFor="username"
           />
           <div>
             <input
@@ -571,7 +571,7 @@ class PasswordModal extends Component {
             <ItemModalFieldNav
               gotowebsite={!this.state.edit && this.state.url.length > 0}
               name="Website Address"
-              for="websiteaddress"
+              htmlFor="websiteaddress"
             />
             {this.state.edit ? (
               <div>

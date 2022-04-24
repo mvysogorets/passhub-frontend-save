@@ -307,7 +307,7 @@ class BankCardModal extends Component {
             <ItemModalFieldNav
               copy={!this.state.edit}
               name="Card number"
-              for="cc-number"
+              htmlFor="cc-number"
             />
             <div>
               <input
@@ -414,7 +414,7 @@ class BankCardModal extends Component {
             >
               <ItemModalFieldNav
                 name="Security code"
-                for="cc-csc"
+                htmlFor="cc-csc"
                 copy={!this.state.edit}
               />
               <div style={{ display: "flex" }}>
@@ -450,7 +450,7 @@ class BankCardModal extends Component {
           <ItemModalFieldNav
             copy={!this.state.edit}
             name="Name on card"
-            for="cc-name"
+            htmlFor="cc-name"
           />
           <div>
             <input
