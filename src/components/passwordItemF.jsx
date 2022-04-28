@@ -29,6 +29,17 @@ function PasswordItem(props) {
     link_text = link_text.substring(7);
   }
 
+  function dragStart(ev) {
+    console.log(ev);
+    // Change the source element's background color to signify drag has started
+    //ev.currentTarget.style.border = "dashed";
+    // Add the id of the drag source element to the drag data payload so
+    // it is available when the drop event is fired
+    ev.dataTransfer.setData("application/json", JSON.stringify(props.item));
+    // Tell the browser both copy and move are possible
+    ev.effectAllowed = "copyMove";
+  }
+
   let trClass = props.searchMode ? "search-mode d-flex" : "d-flex";
 
   return (
@@ -38,8 +49,18 @@ function PasswordItem(props) {
         onClick={showModal}
         style={{ cursor: "pointer" }}
       >
-        <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-          <svg width="24" height="24" className="itemIcon">
+        <div
+          draggable
+          id={`drag${item._id}`}
+          onDragStart={dragStart}
+          style={{ overflow: "hidden", textOverflow: "ellipsis" }}
+        >
+          <svg
+            width="24"
+            height="24"
+            className="itemIcon"
+            style={{ cursor: "move" }}
+          >
             <use href="#i-key"></use>
           </svg>
           {item.cleartext[0]}

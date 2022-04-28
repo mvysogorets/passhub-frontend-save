@@ -6,7 +6,31 @@ function FolderItem(props) {
     props.onClick(props.item);
   };
 
-  const item = props.item;
+  function onDrop(ev) {
+    ev.currentTarget.style.background = "none";
+    ev.currentTarget.style.border = "none";
+    try {
+      const itemDropped = JSON.parse(
+        ev.dataTransfer.getData("application/json")
+      );
+      props.dropItem(props.item, itemDropped);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  function onDragOver(ev) {
+    ev.currentTarget.style.background =
+      "linear-gradient(90deg, rgba(0,0,0,0.05),  rgba(0,0,0,0))";
+    //ev.currentTarget.style.border = "1px solid lightgreen";
+    ev.preventDefault();
+  }
+
+  function onDragLeave(ev) {
+    ev.currentTarget.style.background = "none";
+    ev.currentTarget.style.border = "none";
+    ev.preventDefault();
+  }
 
   const angleIcon = (
     <svg
@@ -31,14 +55,16 @@ function FolderItem(props) {
         onClick={onClick}
         style={{ cursor: "pointer" }}
       >
-        <svg width="24" height="24" className="itemIcon">
-          <use href="#i-folder"></use>
-        </svg>
-        {item.cleartext[0]}
-        {angleIcon}
+        <div onDrop={onDrop} onDragOver={onDragOver} onDragLeave={onDragLeave}>
+          <svg width="24" height="24" className="itemIcon">
+            <use href="#i-folder"></use>
+          </svg>
+          {props.item.cleartext[0]}
+          {angleIcon}
+        </div>
       </td>
       <td className="column-modified d-none d-xl-table-cell col-xl-3">
-        {lastModified(item)}
+        {lastModified(props.item)}
       </td>
     </tr>
   );

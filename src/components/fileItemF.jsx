@@ -7,16 +7,33 @@ function FileItem(props) {
   };
 
   const item = props.item;
+
+  function dragStart(ev) {
+    // Change the source element's background color to signify drag has started
+    // ev.currentTarget.style.border = "dashed";
+    ev.dataTransfer.setData("application/json", JSON.stringify(item));
+    // Tell the browser both copy and move are possible
+    ev.effectAllowed = "copyMove";
+  }
+
   return (
     <tr className="d-flex" style={{ alignItems: "center" }}>
       <td
+        draggable
+        id={`drag${item._id}`}
+        onDragStart={dragStart}
         colSpan="2"
         className="col-md-12 col-lg-8 col-xl-6"
         onClick={showModal}
         style={{ cursor: "pointer" }}
       >
         <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-          <svg width="24" height="24" className="itemIcon">
+          <svg
+            width="24"
+            height="24"
+            className="itemIcon"
+            style={{ cursor: "move" }}
+          >
             <use href="#i-file"></use>
           </svg>
           {item.cleartext[0]}

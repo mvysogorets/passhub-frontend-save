@@ -14,11 +14,15 @@ import * as extensionInterface from "../lib/extensionInterface";
 import SafePane from "./safePane";
 import TablePane from "./tablePane";
 import ImportModal from "./importModal";
+import MessageModal from "./messageModal";
 import IdleModal from "./idleModal";
 
 import mockData from "../lib/mockdata";
 
 import progress from "../lib/progress";
+
+import { popCopyBuffer } from "../lib/copyBuffer";
+import * as dropAndPaste from "../lib/dropAndPaste";
 
 function decryptSafeData(safe, aesKey) {
   for (let i = 0; i < safe.items.length; i += 1) {
@@ -133,6 +137,7 @@ class MainPage extends Component {
     activeFolder: null,
     idleTimeoutAlert: false,
     showModal: "",
+    messageModalArgs: "",
   };
 
   handleOpenFolder = (folder) => {
@@ -465,6 +470,77 @@ class MainPage extends Component {
     return result;
   };
 
+  doMove = (node, pItem, operation) => {
+    dropAndPaste
+      .doMove(this.state.safes, node, pItem, operation)
+      .then((status) => {
+        console.log(status);
+        if (status === "Ok") {
+          this.refreshUserData();
+          return;
+        }
+        if (status === "no src write") {
+          this.setState({
+            showModal: "ImportModal",
+            messageModalArgs: {
+              message:
+                'Sorry, "Move" operation is forbidden. You have only read access to the source safe.',
+            },
+          });
+
+          return;
+        }
+        if (status === "no dst write") {
+          this.setState({
+            showModal: "NoRightsModal",
+            messageModalArgs: {
+              message:
+                'Sorry, "Paste" is forbidden. You have only read access to the destination safe.',
+            },
+          });
+          return;
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+        if (err.message === "no src write") {
+          this.setState({
+            showModal: "NoRightsModal",
+            messageModalArgs: {
+              message:
+                'Sorry, "Move" operation is forbidden. You have only read access to the source safe.',
+            },
+          });
+
+          return;
+        }
+        if (err.message === "no dst write") {
+          this.setState({
+            showModal: "NoRightsModal",
+            messageModalArgs: {
+              message:
+                'Sorry, "Paste" is forbidden. You have only read access to the destination safe.',
+            },
+          });
+          return;
+        }
+      });
+  };
+
+  dropItem = (node, pItem) => {
+    this.doMove(node, pItem, "move");
+  };
+
+  pasteItem = (node) => {
+    const clip = popCopyBuffer();
+    if (clip == null) {
+      return true;
+    }
+    const { item, operation } = clip;
+
+    this.doMove(node, item, operation);
+  };
+
   render() {
     if (!this.props.show) {
       return null;
@@ -496,6 +572,8 @@ class MainPage extends Component {
           handleOpenFolder={this.handleOpenFolder}
           openNodes={this.state.openNodes}
           email={this.state.email}
+          dropItem={this.dropItem}
+          pasteItem={this.pasteItem}
         />
         <TablePane
           folder={
@@ -512,6 +590,7 @@ class MainPage extends Component {
           onFolderMenuCmd={this.handleFolderMenuCmd}
           onSearchClear={this.props.onSearchClear}
           showItemPane={this.props.showItemPane}
+          dropItem={this.dropItem}
         />
 
         {"idleTimeout" in this.state && (
@@ -538,6 +617,16 @@ class MainPage extends Component {
             }
           }}
         ></ImportModal>
+        <MessageModal
+          show={this.state.showModal == "NoRightsModal"}
+          norights
+          onClose={() => {
+            this.setState({ showModal: "" });
+          }}
+        >
+          {this.state.messageModalArgs && this.state.messageModalArgs.message}
+        </MessageModal>
+
         <IdleModal
           show={this.state.idleTimeoutAlert}
           onClose={this.onIdleModalClose}

@@ -21,6 +21,30 @@ function FolderTreeNode(props) {
       : "folder";
   };
 
+  function onDrop(ev) {
+    ev.currentTarget.style.background = "none";
+    try {
+      const item = JSON.parse(ev.dataTransfer.getData("application/json"));
+      props.dropItem(props.node, item);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  function onDragOver(ev) {
+    // ev.currentTarget.style.background = "lightblue";
+    ev.currentTarget.style.background =
+      "linear-gradient(90deg, rgba(255,255,255,0.4),  rgba(255,255,255,0))";
+    ev.preventDefault();
+    // console.log(ev);
+  }
+
+  function onDragLeave(ev) {
+    ev.currentTarget.style.background = "none";
+    ev.currentTarget.style.border = "none";
+    ev.preventDefault();
+  }
+
   const handleMenuCmd = (node, cmd) => {
     props.onMenuCmd(props.node, cmd);
   };
@@ -42,6 +66,7 @@ function FolderTreeNode(props) {
     const folders = props.open
       ? props.node.folders.map((s) => (
           <FolderTreeNode
+            dropItem={props.dropItem}
             onSelect={props.onSelect}
             key={s.id}
             node={s}
@@ -75,6 +100,9 @@ function FolderTreeNode(props) {
       <div>
         <div
           className={getClass()}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
           onClick={() => props.onSelect(props.node)}
           style={{
             position: "relative",
@@ -107,6 +135,9 @@ function FolderTreeNode(props) {
   return (
     <div
       className={getClass()}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
       onClick={() => props.onSelect(props.node)}
       style={{
         position: "relative",

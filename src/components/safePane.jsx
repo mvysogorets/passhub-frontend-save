@@ -1,27 +1,19 @@
-import axios from "axios";
-import { getApiUrl, getVerifier } from "../lib/utils";
 import React, { Component } from "react";
 import Col from "react-bootstrap/Col";
 
 import FolderNameModal from "./folderNameModal";
 import DeleteFolderModal from "./deleteFolderModal";
 import ExportFolderModal from "./exportFolderModal";
-import MessageModal from "./messageModal";
 import ShareModal from "./shareModal";
 
 import FolderTreeNode from "./folderTreeNodeF";
 import MobileSafeNode from "./mobileSafeNode";
-
-import * as passhubCrypto from "../lib/crypto";
-import { popCopyBuffer } from "../lib/copyBuffer";
-import { getFolderById } from "../lib/utils";
 
 class SafePane extends Component {
   state = {
     showModal: "",
     folderNameModalArgs: {},
     shareModalArgs: null,
-    messageModalArgs: null,
   };
 
   modalKey = 1;
@@ -64,7 +56,8 @@ class SafePane extends Component {
     }
 
     if (cmd === "Paste") {
-      this.pasteItem(node);
+      //       this.pasteItem(node);
+      this.props.pasteItem(node);
     }
 
     if (cmd === "export") {
@@ -86,138 +79,6 @@ class SafePane extends Component {
         shareModalArgs: { folder: node, email: this.props.email },
       });
     }
-  };
-
-  moveItemFinalize(recordID, src_safe, dst_safe, dst_folder, item, operation) {
-    axios
-      .post(`${getApiUrl()}move.php`, {
-        verifier: getVerifier(),
-        id: recordID,
-        src_safe, //state.currentSafe.id,
-        dst_safe,
-        dst_folder,
-        item,
-        operation,
-      })
-      .then((response) => {
-        const result = response.data;
-        if (result.status === "Ok") {
-          this.props.refreshUserData();
-          return;
-        }
-        if (result.status === "login") {
-          window.location.href = "expired.php";
-          return;
-        }
-        alert(result.status);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  pasteItem = (node) => {
-    const clip = popCopyBuffer();
-    if (clip == null) {
-      return true;
-    }
-    const { item, operation } = clip;
-
-    let pItem;
-
-    const dstBinaryKey = node.safe ? node.safe.bstringKey : node.bstringKey;
-
-    let dst_safe = node.id;
-    let dstFolder = 0;
-    if (node.safe) {
-      dst_safe = node.safe.id;
-      dstFolder = node.id;
-    }
-    let src_safe = item.SafeID;
-    /// --->> if src == dst, do nothing
-
-    axios
-      .post(`${getApiUrl()}move.php`, {
-        verifier: getVerifier(),
-        id: item._id,
-        src_safe,
-        dst_safe,
-        operation,
-        checkRights: true,
-      })
-      .then((response) => {
-        const result = response.data;
-        if (result.status === "no src write") {
-          this.setState({
-            showModal: "NoRightsModal",
-            messageModalArgs: {
-              message:
-                'Sorry, "Move" operation is forbidden. You have only read access to the source safe.',
-            },
-          });
-
-          return;
-        }
-        if (result.status === "no dst write") {
-          this.setState({
-            showModal: "NoRightsModal",
-            messageModalArgs: {
-              message:
-                'Sorry, "Paste" is forbidden. You have only read access to the destination safe.',
-            },
-          });
-          return;
-        }
-        if (result.status === "login") {
-          window.location.href = "index.php";
-          return false;
-        }
-        if (result.status === "Ok") {
-          if ("file" in item) {
-            const srcSafe = getFolderById(this.props.safes, item.SafeID);
-
-            let eItem = passhubCrypto.moveFile(
-              item,
-              srcSafe.bstringKey,
-              dstBinaryKey
-            );
-            return this.moveItemFinalize(
-              item._id,
-              src_safe,
-              dst_safe,
-              dstFolder,
-              eItem,
-              operation
-            );
-          }
-          let options = {};
-          if (item.note) {
-            options["note"] = item.note;
-          } else if (item.version === 5) {
-            options["version"] = item.version;
-          }
-          let eItem = passhubCrypto.encryptItem(
-            item.cleartext,
-            dstBinaryKey,
-            options
-          );
-
-          return this.moveItemFinalize(
-            item._id,
-            src_safe,
-            dst_safe,
-            dstFolder,
-            eItem,
-            operation
-          );
-        }
-        alert(result.status);
-        return false;
-      })
-      .catch((err) => {
-        console.log("move error");
-        console.log(err);
-      });
   };
 
   render() {
@@ -275,6 +136,7 @@ class SafePane extends Component {
                 key={s.id}
                 onSelect={this.handleSelect}
                 onOpen={this.props.handleOpenFolder}
+                dropItem={this.props.dropItem}
                 node={s}
                 open={this.props.openNodes.has(s.id) && this.props.openNodes}
                 activeFolder={this.props.activeFolder}
@@ -334,34 +196,9 @@ class SafePane extends Component {
             }
           }}
         ></ShareModal>
-
-        <MessageModal
-          show={this.state.showModal == "NoRightsModal"}
-          args={this.state.shareModalArgs}
-          norights
-          onClose={() => {
-            this.setState({ showModal: "" });
-          }}
-        >
-          {this.state.messageModalArgs && this.state.messageModalArgs.message}
-        </MessageModal>
       </Col>
     );
   }
 }
 
 export default SafePane;
-
-/*
-        <ImportModal
-          show={this.state.showModal == "ImportModal"}
-          safes={this.props.safes}
-          onClose={(refresh = false) => {
-            this.setState({ showModal: "" });
-            if (refresh === true) {
-              this.props.refreshUserData();
-            }
-          }}
-        ></ImportModal>
-
-*/
