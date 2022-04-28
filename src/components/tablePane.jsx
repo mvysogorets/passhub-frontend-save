@@ -355,8 +355,9 @@ class TablePane extends Component {
                 <tbody>
                   {folder.folders.map((f) => (
                     <FolderItem
-                      key={`folder${folder.id}`}
+                      key={`folder${f._id}`}
                       item={f}
+                      dropItem={this.props.dropItem}
                       onClick={(folder) => {
                         this.openFolder(folder);
                       }}
