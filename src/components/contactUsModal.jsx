@@ -9,6 +9,8 @@ import { getApiUrl, getVerifier } from "../lib/utils";
 import InputField from "./inputField";
 import TextAreaField from "./textAreaField";
 
+import TextareaAutosize from "react-textarea-autosize";
+
 import progress from "../lib/progress";
 
 class ContactUsModal extends Component {
@@ -117,13 +119,15 @@ class ContactUsModal extends Component {
             onChange={this.onEmailChange}
             edit
           ></InputField>
-          <TextAreaField
-            value={this.state.message}
-            id="contact-us-message"
-            label="Message"
-            onChange={this.onMessageChange}
-            edit
-          ></TextAreaField>
+
+          <div className="itemNoteModalField">
+            <TextareaAutosize
+              id="contact-us-message"
+              value={this.state.message}
+              onChange={this.onMessageChange}
+              placeholder="Type message here"
+            />
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={this.props.onClose}>
@@ -139,3 +143,15 @@ class ContactUsModal extends Component {
 }
 
 export default ContactUsModal;
+
+/*
+
+          <TextAreaField
+            value={this.state.message}
+            id="contact-us-message"
+            label="Message"
+            onChange={this.onMessageChange}
+            edit
+          ></TextAreaField>
+
+*/
