@@ -304,7 +304,7 @@ class ItemModal extends Component {
           {this.props.children}
 
           <div className="itemNoteModalField">
-            <ItemModalFieldNav name="Note" for="notes" />
+            <ItemModalFieldNav name="Note" htmlFor="notes" />
             <div className="xxx">
               {this.state.edit ? (
                 <TextareaAutosize

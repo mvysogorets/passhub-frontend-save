@@ -53,9 +53,11 @@ const mockData = {
         },
       ],
     },
+
+    //-------------------------------
     {
       name: "Private",
-      id: 2,
+      id: "sp52",
       path: ["Private"],
       items: [
         {
@@ -201,6 +203,9 @@ const mockData = {
           lastModified: "2021-08-27T02:01:20+00:00",
         },
       ],
+     // folders: []
+  ///////////////////////////////
+  
       folders: [
         {
           SafeID: 2,
@@ -212,6 +217,7 @@ const mockData = {
           folders: [],
           items: [],
         },
+        /*
         {
           SafeID: 2,
           id: "f22",
@@ -222,6 +228,8 @@ const mockData = {
           folders: [],
           items: [],
         },
+        */
+
         {
           SafeID: 2,
           id: "f23",
@@ -233,7 +241,14 @@ const mockData = {
           items: [],
         },
       ],
+
     },
+    //------------------------------------------
+    
+
+
+
+
     { name: "Work", id: 3, path: ["Work"], items: [], folders: [] },
     { name: "x1", id: 4, path: ["x1"], items: [], folders: [] },
     { name: "x2", id: 5, path: ["x2"], items: [], folders: [] },

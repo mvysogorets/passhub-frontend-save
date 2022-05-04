@@ -481,7 +481,8 @@ input.ModalTitle:focus {
 .edit .itemNoteModalField {
   background: white;
   border-radius: 16px;
-  border: 1px solid #e7e7ee;
+  border: 1px solid #b7b7be;
+  /* border: 1px solid #e7e7ee; */
 }
 
 .itemNoteModalField .label {

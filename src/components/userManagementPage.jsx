@@ -109,7 +109,9 @@ class UserManagementPage extends Component {
 
   componentDidMount() {
     // console.log("userManagementPage did mount");
-    this.getPageData();
+    if (this.props.show) {
+      this.getPageData();
+    }
   }
 
   render() {
