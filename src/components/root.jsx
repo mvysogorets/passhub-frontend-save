@@ -22,12 +22,17 @@ import {
   peekCopyBuffer,
 } from "../lib/copyBuffer";
 
+import { setApiUrl, getApiUrl, setCsrfToken } from "../lib/utils";
+
 class Root extends Component {
   state = {
     searchString: "",
+    /*
     page: window.location.protocol.toLowerCase().startsWith("http")
       ? "Main"
       : "Login",
+    */
+    page: "Main",
     filename: "",
     blob: null,
     showToast: "",
@@ -41,7 +46,17 @@ class Root extends Component {
 
   constructor(props) {
     super(props);
+
+    if (!window.location.protocol.toLowerCase().startsWith("http")) {
+      setCsrfToken(window.localStorage.getItem("csrf"));
+    }
+
+    //    progress.lock();
+
     this.mainPageRef = React.createRef();
+    if (!window.location.protocol.toLowerCase().startsWith("http")) {
+      setApiUrl("https://trial.passhub.net/");
+    }
   }
 
   componentDidMount = () => {
