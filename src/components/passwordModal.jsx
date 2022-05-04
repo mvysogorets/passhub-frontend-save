@@ -63,6 +63,7 @@ class PasswordModal extends Component {
     errorMsg: "",
     unamePwdWarning: "",
     urlWarning: "",
+    totpWarning: "",
   };
 
   timerEvent = () => {
@@ -119,8 +120,18 @@ class PasswordModal extends Component {
     });
   };
 
-  onTotpSecretChange = (e) =>
-    this.setState({ totpSecret: e.target.value.toUpperCase() });
+  onTotpSecretChange = (e) => {
+    let totpWarning = "";
+    const maxLength = limits.MAX_TOTP_LENGTH;
+    let newValue = e.target.value;
+
+    if (newValue.length > maxLength) {
+      newValue = newValue.substring(0, maxLength);
+      // totpWarning = `OTP length is ${maxLength} chars, truncated`;   // I'll do it later...
+    }
+
+    this.setState({ totpSecret: newValue.toUpperCase(), totpWarning });
+  };
 
   onUrlChange = (e) => {
     let urlWarning = "";
@@ -268,6 +279,7 @@ class PasswordModal extends Component {
       this.state.errorMsg = "";
       this.state.unamePwdWarning = "";
       this.state.urlWarning = "";
+      this.state.totplWarning = "";
 
       this.state.showPassword = false;
       if (this.props.args.item) {
@@ -357,32 +369,38 @@ class PasswordModal extends Component {
         this.state.forceTotp
       ) {
         totp = (
-          <div
-            className="itemModalField"
-            style={{ marginBottom: 32 }}
-            onClick={() => {
-              if (!this.state.edit) {
-                this.copyToClipboard(
-                  document.querySelector(".totp_digits").innerText
-                );
-              }
-            }}
-          >
-            {this.state.totpSecret.length > 0 ? (
-              <ItemModalFieldNav
-                copy={!this.state.edit}
-                name="Google authenticator secret"
-              />
-            ) : (
-              ""
-            )}
-            <input
-              onChange={this.onTotpSecretChange}
-              spellCheck={false}
-              value={this.state.totpSecret}
-              placeholder="Google authenticator secret"
-            ></input>
-          </div>
+          <React.Fragment>
+            <div
+              className="itemModalField"
+              style={{ marginBottom: 32 }}
+              onClick={() => {
+                if (!this.state.edit) {
+                  this.copyToClipboard(
+                    document.querySelector(".totp_digits").innerText
+                  );
+                }
+              }}
+            >
+              {this.state.totpSecret.length > 0 ? (
+                <ItemModalFieldNav
+                  copy={!this.state.edit}
+                  name="Google authenticator secret"
+                />
+              ) : (
+                ""
+              )}
+              <input
+                onChange={this.onTotpSecretChange}
+                spellCheck={false}
+                value={this.state.totpSecret}
+                placeholder="Google authenticator secret"
+              ></input>
+            </div>
+            {this.state.unamePwdWarning &&
+              this.state.unamePwdWarning.length > 0 && (
+                <div style={{ color: "red" }}>{this.state.unamePwdWarning}</div>
+              )}
+          </React.Fragment>
         );
       } else {
         totp = (
@@ -461,10 +479,12 @@ class PasswordModal extends Component {
           >
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div style={{ fontSize: "14px" }}>
-                <span style={{ color: "#1b1b26", opacity: "0.7" }}>
-                  Password
-                </span>
-                {this.state.password.length ? passwordStrength : ""}
+                <label htmlFor="password">
+                  <span style={{ color: "#1b1b26", opacity: "0.7" }}>
+                    Password
+                  </span>
+                  {this.state.password.length ? passwordStrength : ""}
+                </label>
               </div>
               {!this.state.edit && (
                 <div>
@@ -478,6 +498,7 @@ class PasswordModal extends Component {
             <div>
               <input
                 className="lp"
+                id="password"
                 type={passwordType}
                 onChange={this.onPasswordChange}
                 readOnly={!this.state.edit}
