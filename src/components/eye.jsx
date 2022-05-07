@@ -9,7 +9,6 @@ class Eye extends React.Component {
           fill="none"
           style={{ width: 32, height: 32, marginBottom: -5, cursor: "pointer" }}
           onClick={this.props.onClick}
-          hide={this.props.hide}
         >
           {this.props.hide ? (
             <use href="#eye"></use>
@@ -24,3 +23,8 @@ class Eye extends React.Component {
 }
 
 export default Eye;
+
+/* 
+          hide={this.props.hide}
+
+          */
