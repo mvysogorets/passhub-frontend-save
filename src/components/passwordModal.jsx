@@ -5,7 +5,13 @@ import axios from "axios";
 import * as base32 from "hi-base32";
 
 import * as passhubCrypto from "../lib/crypto";
-import { isStrongPassword, getApiUrl, getVerifier, limits } from "../lib/utils";
+import {
+  isStrongPassword,
+  getApiUrl,
+  getVerifier,
+  limits,
+  atRecordsLimits,
+} from "../lib/utils";
 import { openInExtension } from "../lib/extensionInterface";
 import getTOTP from "../lib/totp";
 import { copyToClipboard } from "../lib/copyToClipboard";
@@ -13,6 +19,7 @@ import { copyToClipboard } from "../lib/copyToClipboard";
 import ItemModalFieldNav from "./itemModalFieldNav";
 
 import ItemModal from "./itemModal";
+import PlanLimitsReachedModal from "./planLimitsReachedModal";
 import Eye from "./eye";
 import GeneratePasswordModal from "./generatePasswordModal";
 
@@ -272,6 +279,17 @@ class PasswordModal extends Component {
     if (!this.props.show) {
       this.isShown = false;
       return null;
+    }
+
+    if (typeof this.props.args.item == "undefined") {
+      if (atRecordsLimits()) {
+        return (
+          <PlanLimitsReachedModal
+            show={this.props.show}
+            onClose={this.props.onClose}
+          ></PlanLimitsReachedModal>
+        );
+      }
     }
 
     if (!this.isShown) {
@@ -617,7 +635,7 @@ class PasswordModal extends Component {
             </div>
           </div>
 
-          {!this.state.edit && (
+          {!this.state.edit && this.state.url.length > 0 && (
             <div
               style={{
                 display: "flex",

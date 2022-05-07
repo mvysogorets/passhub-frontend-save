@@ -6,11 +6,12 @@ import axios from "axios";
 
 import * as passhubCrypto from "../lib/crypto";
 import { copyToClipboard, startCopiedTimer } from "../lib/copyToClipboard";
-import { getApiUrl, getVerifier } from "../lib/utils";
+import { getApiUrl, getVerifier, atRecordsLimits } from "../lib/utils";
 import ItemModalFieldNav from "./itemModalFieldNav";
 import Eye from "./eye";
 
 import ItemModal from "./itemModal";
+import PlanLimitsReachedModal from "./planLimitsReachedModal";
 import { ButtonGroup } from "react-bootstrap";
 import { findRenderedDOMComponentWithClass } from "react-dom/cjs/react-dom-test-utils.production.min";
 
@@ -238,6 +239,17 @@ class BankCardModal extends Component {
     if (!this.props.show) {
       this.isShown = false;
       return null;
+    }
+
+    if (typeof this.props.args.item == "undefined") {
+      if (atRecordsLimits()) {
+        return (
+          <PlanLimitsReachedModal
+            show={this.props.show}
+            onClose={this.props.onClose}
+          ></PlanLimitsReachedModal>
+        );
+      }
     }
 
     if (!this.isShown) {

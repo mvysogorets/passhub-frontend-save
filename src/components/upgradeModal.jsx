@@ -22,6 +22,7 @@ class UpgradeModal extends Component {
       }
     } else {
       this.isShown = false;
+      return null;
     }
 
     return (

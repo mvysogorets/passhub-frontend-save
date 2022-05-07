@@ -3,9 +3,10 @@ import React, { Component } from "react";
 import axios from "axios";
 
 import * as passhubCrypto from "../lib/crypto";
-import { getApiUrl, getVerifier } from "../lib/utils";
+import { getApiUrl, getVerifier, atRecordsLimits } from "../lib/utils";
 
 import ItemModal from "./itemModal";
+import PlanLimitsReachedModal from "./planLimitsReachedModal";
 
 class NoteModal extends Component {
   state = {
@@ -73,6 +74,17 @@ class NoteModal extends Component {
     if (!this.props.show) {
       this.isShown = false;
       return null;
+    }
+
+    if (typeof this.props.args.item == "undefined") {
+      if (atRecordsLimits()) {
+        return (
+          <PlanLimitsReachedModal
+            show={this.props.show}
+            onClose={this.props.onClose}
+          ></PlanLimitsReachedModal>
+        );
+      }
     }
 
     if (!this.isShown) {

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import DragIcon from "./dragIcon";
 
 import { openInExtension } from "../lib/extensionInterface";
 import { lastModified } from "../lib/utils";
@@ -56,10 +57,8 @@ class PasswordItem extends Component {
           onClick={this.showModal}
           style={{ cursor: "pointer" }}
         >
-          <div>
-            <svg width="24" height="24" className="itemIcon">
-              <use href="#i-key"></use>
-            </svg>
+          <div draggable id={`drag${item._id}`}>
+            <DragIcon icon="#i-key"></DragIcon>
             {item.cleartext[0]}
           </div>
           {this.props.searchMode && (

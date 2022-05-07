@@ -237,6 +237,22 @@ function getUserData() {
   return account;
 }
 
+function totalRecords() {
+  let result = 0;
+  for (let s of account.safes) {
+    result += s.rawItems.length; // safe.items already normalized 
+  }
+  return result;
+}
+
+function atRecordsLimits() {
+  if(isNaN(account.MAX_RECORDS)) {
+    return false;
+  }
+
+  return  totalRecords() >= account.MAX_RECORDS;
+}
+
 const limits = { MAX_TITLE_LENGTH: 50, MAX_NOTE_LENGTH: 10000, MAX_USERNAME_LENGTH: 100,  MAX_PASSWORD_LENGTH: 100, MAX_URL_LENGTH: 2048, MAX_TOTP_LENGTH:2048};
 
 export {
@@ -258,4 +274,6 @@ export {
   setUserData,
   getUserData,
   limits,
+  atRecordsLimits,
+  totalRecords,
 };
