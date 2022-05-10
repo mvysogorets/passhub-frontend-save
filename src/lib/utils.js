@@ -249,9 +249,30 @@ function atRecordsLimits() {
   if(isNaN(account.MAX_RECORDS)) {
     return false;
   }
-
   return  totalRecords() >= account.MAX_RECORDS;
 }
+
+function totalStorage() {
+  let result = 0;
+  for (let s of account.safes) {
+    for (let item of s.rawItems) {
+      if("file" in item) {
+        result += item.file.size;
+      }
+    }
+  }
+  return result;
+}
+
+function atStorageLimits() {
+  if(isNaN(account.MAX_STORAGE)) {
+    return false;
+  }
+  const s = totalStorage();
+  return  s >= account.MAX_STORAGE
+  //return  totalStorage() >= account.MAX_STORAGE;
+}
+
 
 const limits = { MAX_TITLE_LENGTH: 50, MAX_NOTE_LENGTH: 10000, MAX_USERNAME_LENGTH: 100,  MAX_PASSWORD_LENGTH: 100, MAX_URL_LENGTH: 2048, MAX_TOTP_LENGTH:2048};
 
@@ -275,5 +296,7 @@ export {
   getUserData,
   limits,
   atRecordsLimits,
+  atStorageLimits,
   totalRecords,
+  totalStorage,
 };

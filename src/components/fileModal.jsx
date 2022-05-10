@@ -7,11 +7,15 @@ import * as passhubCrypto from "../lib/crypto";
 import {
   getApiUrl,
   getVerifier,
+  atRecordsLimits,
+  atStorageLimits,
   isMobile,
   humanReadableFileSize,
 } from "../lib/utils";
 
 import DownloadAndViewButtons from "./downloadAndViewButtons";
+import PlanLimitsReachedModal from "./planLimitsReachedModal";
+import PlanStorageLimitsReachedModal from "./planStorageLimitsReachedModal";
 
 import ItemModal from "./itemModal";
 import ViewFile from "./viewFile";
@@ -358,6 +362,26 @@ class FileModal extends Component {
     if (!this.props.show) {
       this.isShown = false;
       return null;
+    }
+
+    if (typeof this.props.args.item == "undefined") {
+      if (atRecordsLimits()) {
+        return (
+          <PlanLimitsReachedModal
+            show={this.props.show}
+            onClose={this.props.onClose}
+          ></PlanLimitsReachedModal>
+        );
+      }
+
+      if (atStorageLimits()) {
+        return (
+          <PlanStorageLimitsReachedModal
+            show={this.props.show}
+            onClose={this.props.onClose}
+          ></PlanStorageLimitsReachedModal>
+        );
+      }
     }
 
     if (!this.isShown) {

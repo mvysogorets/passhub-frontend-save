@@ -7,12 +7,17 @@ import axios from "axios";
 import ModalCross from "./modalCross";
 import ItemModalFieldNav from "./itemModalFieldNav";
 
+import PlanLimitsReachedModal from "./planLimitsReachedModal";
+import PlanStorageLimitsReachedModal from "./planStorageLimitsReachedModal";
+
 import progress from "../lib/progress";
 import * as passhubCrypto from "../lib/crypto";
 import {
   getApiUrl,
   getVerifier,
   getUserData,
+  atRecordsLimits,
+  atStorageLimits,
   humanReadableFileSize,
 } from "../lib/utils";
 
@@ -197,6 +202,25 @@ class CreateFileModal extends React.Component {
       return null;
     }
     this.isShown = true;
+
+    if (atRecordsLimits()) {
+      return (
+        <PlanLimitsReachedModal
+          show={this.props.show}
+          onClose={this.props.onClose}
+        ></PlanLimitsReachedModal>
+      );
+    }
+
+    if (atStorageLimits()) {
+      return (
+        <PlanStorageLimitsReachedModal
+          show={this.props.show}
+          onClose={this.props.onClose}
+        ></PlanStorageLimitsReachedModal>
+      );
+    }
+
     return (
       <Modal
         show={this.props.show}
