@@ -237,12 +237,12 @@ class MainPage extends Component {
         const result = response.data;
         if (result.status === "Ok") {
           const data = result.data;
-          const safes = data.safes;
-          return decryptSafes(safes).then(() => {
-            safes.sort((a, b) =>
+          // const safes = data.safes;
+          return decryptSafes(data.safes).then(() => {
+            data.safes.sort((a, b) =>
               a.name.toLowerCase().localeCompare(b.name.toLowerCase())
             );
-            normalizeSafes(safes);
+            normalizeSafes(data.safes);
             let activeFolder = getFolderById(data.safes, activeFolderID);
             if (activeFolder === null) {
               console.log("old activesafe not found");
@@ -250,14 +250,13 @@ class MainPage extends Component {
             }
             if (activeFolder === null) {
               console.log("recommended activesafe not found");
-              activeFolder = safes[0];
+              activeFolder = data.safes[0];
             }
+            setUserData(data);
             console.log("setting new state with updated data");
             progress.unlock();
 
-            this.setState({
-              safes,
-            });
+            this.setState(data);
             this.setActiveFolder(activeFolder);
           });
           return;
