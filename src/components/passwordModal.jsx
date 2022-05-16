@@ -458,6 +458,7 @@ class PasswordModal extends Component {
         >
           <ItemModalFieldNav
             copy={!this.state.edit}
+            margin27
             name="Username"
             htmlFor="username"
           />
@@ -641,7 +642,8 @@ class PasswordModal extends Component {
                 display: "flex",
                 cursor: "pointer",
                 justifyContent: "center",
-                padding: "0 6px",
+                marginLeft: "12px",
+                paddingLeft: "12px",
               }}
               title="Copy URL"
               onClick={() => {
@@ -651,8 +653,8 @@ class PasswordModal extends Component {
               }}
             >
               <svg
-                width="36"
-                height="36"
+                width="24"
+                height="24"
                 fill="none"
                 stroke="#1b1b26"
                 title="Copy"

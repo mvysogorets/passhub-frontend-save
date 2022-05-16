@@ -1225,13 +1225,18 @@ textarea:focus {
 }
 
 .gotowebsite {
+  /*
   width: 40px;
   height: 32px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"  width="40" height="32" viewBox="0 0 40 32" fill="none" ><rect opacity="0.15" x="0.5" y="0.5" width="39" height="31" rx="11.5" stroke="%231B1B26"/><g opacity="0.5"><path d="M16.1519 20.0911L25.118 11.125" stroke="%231B1B26" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M25.118 20.2689V11.125H15.9741" stroke="%231B1B26" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>');
+  */
+  width: 30px;
+  height: 24px;
+  /*margin-right:24px; */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="24" viewBox="0 0 40 32" fill="none" ><rect opacity="0.5" x="0.5" y="0.5" width="39" height="31" rx="11.5" stroke="%231B1B26"/><g opacity="0.7"><path d="M16.1519 20.0911L25.118 11.125" stroke="%231B1B26" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M25.118 20.2689V11.125H15.9741" stroke="%231B1B26" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>');
 }
 
 .itemModalField:hover .gotowebsite {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"  width="40" height="32" viewBox="0 0 40 32" fill="none" ><rect width="40" height="32" rx="12" fill="%2300BC62"/><path d="M16.1519 20.0911L25.118 11.125" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M25.118 20.2689V11.125H15.9741" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"  width="30" height="24" viewBox="0 0 40 32" fill="none" ><rect width="40" height="32" rx="12" fill="%2300BC62"/><path d="M16.1519 20.0911L25.118 11.125" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M25.118 20.2689V11.125H15.9741" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 }
 
 .date-selector .dropdown-menu {

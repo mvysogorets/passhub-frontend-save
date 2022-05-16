@@ -4,10 +4,13 @@ class Eye extends React.Component {
   state;
   render() {
     return (
-      <div style={{ marginLeft: "8px" }}>
+      <div
+        onClick={this.props.onClick}
+        style={{ marginLeft: "15px", paddingLeft: "12px", cursor: "pointer" }}
+      >
         <svg
           fill="none"
-          style={{ width: 32, height: 32, marginBottom: -5, cursor: "pointer" }}
+          style={{ width: 24, height: 24 }}
           onClick={this.props.onClick}
         >
           {this.props.hide ? (

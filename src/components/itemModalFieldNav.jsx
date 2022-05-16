@@ -5,10 +5,14 @@ class ItemModalFieldNav extends Component {
 
   render() {
     let clickAction = null;
+    const style27 = this.props.margin27 ? { marginRight: "27px" } : {};
+
     if (this.props.copy) {
       clickAction = (
         <div>
-          <span className="iconTitle">Copy</span>
+          <span className="iconTitle" style={style27}>
+            Copy
+          </span>
           <svg width="24" height="24" fill="none" stroke="#1b1b26" title="Copy">
             <use href="#f-copy"></use>
           </svg>
