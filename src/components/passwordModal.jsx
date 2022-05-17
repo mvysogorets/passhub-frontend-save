@@ -368,6 +368,7 @@ class PasswordModal extends Component {
             }}
           >
             <ItemModalFieldNav
+              margin27
               copy={!this.state.edit}
               name="Google authenticator"
             />
