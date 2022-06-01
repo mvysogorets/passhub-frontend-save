@@ -24,6 +24,8 @@ import progress from "../lib/progress";
 import { popCopyBuffer } from "../lib/copyBuffer";
 import * as dropAndPaste from "../lib/dropAndPaste";
 
+let webSocket;
+
 function decryptSafeData(safe, aesKey) {
   for (let i = 0; i < safe.items.length; i += 1) {
     safe.items[i].cleartext = passhubCrypto.decodeItem(safe.items[i], aesKey);
@@ -272,6 +274,25 @@ class MainPage extends Component {
       });
   };
 
+  createWebSocket = () => {
+    let wsURL = new URL(window.location.href);
+    wsURL = "wss://" + wsURL.hostname + "/wsapp/";
+    console.log(wsURL);
+
+    webSocket = new WebSocket(wsURL);
+    console.log(webSocket);
+
+    // Connection opened
+    webSocket.addEventListener("open", function (event) {
+      webSocket.send("Hello Server!");
+    });
+
+    // Listen for messages
+    webSocket.addEventListener("message", function (event) {
+      console.log("Message from server ", event.data);
+    });
+  };
+
   getPageData = () => {
     const self = this;
 
@@ -311,6 +332,7 @@ class MainPage extends Component {
                   data.activeFolder = data.safes[0];
                 }
                 setUserData(data);
+                this.createWebSocket();
                 progress.unlock();
                 self.setState(data);
                 if ("goPremium" in data && data.goPremium == true) {
