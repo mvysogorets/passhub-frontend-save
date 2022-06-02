@@ -62,7 +62,8 @@ class TablePane extends Component {
       this.showItemModal("PasswordModal");
     }
     if (cmd === "File") {
-      this.showCreateFileModal();
+      // this.showCreateFileModal();
+      this.showItemModal("CreateFileModal");
     }
     if (cmd === "Note") {
       this.showItemModal("NoteModal");
@@ -133,7 +134,29 @@ class TablePane extends Component {
       itemModalArgs,
     });
   };
+
   /*
+  showCreateFileModal = (item) => {
+    let safe = this.props.folder.safe
+      ? this.props.folder.safe
+      : this.props.folder;
+    if (this.props.searchMode && item) {
+      safe = getFolderById(this.props.safes, item.SafeID);
+    }
+    const itemModalArgs = {
+      item,
+      safe,
+      folder: this.props.folder,
+      openDeleteItemModal: this.openDeleteItemModal,
+    };
+
+    this.setState({
+      showModal: "CreateFileModal",
+      itemModalArgs,
+    });
+  };
+
+  
   showNoteModal = (item) => {
     const itemModalArgs = {
       item,
@@ -149,7 +172,6 @@ class TablePane extends Component {
       itemModalArgs,
     });
   };
-*/
   showFileModal = (item) => {
     const itemModalArgs = {
       item,
@@ -167,15 +189,7 @@ class TablePane extends Component {
       itemModalArgs,
     });
   };
-
-  showCreateFileModal = (item) => {
-    this.setState({
-      showModal: "CreateFileModal",
-      itemModalArgs: {
-        folder: this.props.folder,
-      },
-    });
-  };
+*/
 
   onItemModalClose1 = (refresh = false) => {
     this.setState({ showModal: "" });
@@ -184,9 +198,9 @@ class TablePane extends Component {
     }
   };
 
-  onItemModalClose = (refersh = false) => {
+  onItemModalClose = (refresh = false) => {
     this.setState({ showModal: "" });
-    if (refersh === true) {
+    if (refresh === true) {
       if (this.props.searchMode) {
         const folderID =
           this.state.itemModalArgs.item.folder != 0 // not !== intentionally, better have it "0"
@@ -194,7 +208,9 @@ class TablePane extends Component {
             : this.state.itemModalArgs.item.SafeID;
         this.props.setActiveFolder(folderID);
       }
-      this.props.refreshUserData();
+      this.props.refreshUserData({
+        safes: [this.state.itemModalArgs.safe.id],
+      });
     }
   };
 
@@ -453,19 +469,7 @@ class TablePane extends Component {
             openDeleteItemModal={this.openDeleteItemModal}
             onClose={this.onItemModalClose}
             onCloseSetFolder={this.onItemModalCloseSetFolder}
-            onCloseX={(refresh = false) => {
-              this.setState({ showModal: "" });
-              if (refresh === true) {
-                const folderID =
-                  this.state.itemModalArgs.item.folder != 0 // intentionally: better have it "0"
-                    ? this.state.itemModalArgs.item.folder
-                    : this.state.itemModalArgs.item.safeID;
-                this.props.setActiveFolder(folderID);
-                this.props.refreshUserData();
-              }
-            }}
           ></PasswordModal>
-          {/* <LoginPane args={this.state.itemModalArgs} /> */}
 
           <FileModal
             show={this.state.showModal === "FileModal"}

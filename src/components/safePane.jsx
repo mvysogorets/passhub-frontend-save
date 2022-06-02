@@ -164,7 +164,7 @@ class SafePane extends Component {
           onClose={(refresh = false, newFolderID) => {
             this.setState({ showModal: "" });
             if (refresh === true) {
-              this.props.refreshUserData(newFolderID);
+              this.props.refreshUserData({ newFolderID });
             }
           }}
         ></FolderNameModal>

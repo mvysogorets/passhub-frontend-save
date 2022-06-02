@@ -219,7 +219,14 @@ class MainPage extends Component {
     }
   };
 
-  refreshUserData = (newFolderID) => {
+  refreshUserData = ({ safes = [], newFolderID } = {}) => {
+    console.log(safes);
+    console.log(newFolderID);
+    if (safes.length > 0 && webSocket) {
+      console.log(JSON.stringify(safes));
+      webSocket.send(JSON.stringify(safes));
+      // webSocket.send(JSON.encode(safes));
+    }
     let activeFolderID = this.state.activeFolder.id
       ? this.state.activeFolder.id
       : null;
@@ -287,10 +294,22 @@ class MainPage extends Component {
       webSocket.send("Hello Server!");
     });
 
+    webSocket.addEventListener("close", function (event) {
+      console.log("Bye Server!");
+      console.log(webSocket);
+    });
+
     // Listen for messages
     webSocket.addEventListener("message", function (event) {
       console.log("Message from server ", event.data);
     });
+    /*
+    setInterval(() => {
+      if (webSocket) {
+        webSocket.send("ping");
+      }
+    }, 15000);
+    */
   };
 
   getPageData = () => {
@@ -658,92 +677,3 @@ class MainPage extends Component {
 }
 
 export default MainPage;
-
-/*
-const mockData1 = {
-  goPremium: false,
-  takeSurvey: false,
-  plan: "FREE",
-  safes: [
-    {
-      name: "Mock Safe",
-      id: 1,
-      path: ["Mock Safe"],
-      items: [],
-      folders: [
-        {
-          SafeID: 1,
-          id: "f1",
-          path: ["Mock Safe", "Mock Folder"],
-          name: "Mock Folder",
-          cleartext: ["Mock Folder"],
-          parent: 0,
-          folders: [],
-          lastModified: "2021-08-27T02:01:20+00:00",
-          items: [
-            {
-              SafeID: 1,
-              folder: "f1",
-              cleartext: [
-                "Gmail",
-                "alice",
-                "kjhgqw",
-                "https://gmail.com",
-                "Work mail",
-              ],
-              path: ["Mock Safe", "Mock Folder"],
-              lastModified: "2021-08-27T02:01:20+00:00",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Private",
-      id: 2,
-      path: ["Private"],
-      items: [],
-      folders: [
-        {
-          SafeID: 2,
-          id: "f21",
-          path: ["Private", "SubFolder"],
-          name: "SubFolder",
-          cleartext: ["SubFolder"],
-          parent: 0,
-          folders: [],
-          items: [],
-        },
-      ],
-    },
-    { name: "Work", id: 3, path: ["Work"], items: [], folders: [] },
-    {
-      name: "Cards",
-      id: 4,
-      path: ["Cards"],
-      items: [
-        {
-          SafeID: 11,
-          folder: 0,
-          cleartext: [
-            "card",
-            "Card1",
-            "first card",
-            "3700 000000 00000",
-            "Mike",
-            "03",
-            "2024",
-            "777",
-          ],
-          version: 5,
-          path: ["Cards"],
-          lastModified: "2021-08-27T02:01:20+00:00",
-        },
-      ],
-      folders: [],
-    },
-  ],
-};
-
-
-*/
