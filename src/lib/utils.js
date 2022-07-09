@@ -196,6 +196,8 @@ function capitalizeFirstLetter(str) {
 }
 
 let apiUrl='./';
+let wsUrl='';
+
 
 function getApiUrl() {
   return apiUrl;
@@ -204,6 +206,15 @@ function getApiUrl() {
 function setApiUrl(newBase) {
   apiUrl = newBase;
 }
+
+function setWsUrl(url) {
+  wsUrl = url;
+}
+
+function getWsUrl() {
+  return wsUrl;
+}
+
 
 function getHostname() {
   let serverUrl = apiUrl;
@@ -289,6 +300,8 @@ export {
   capitalizeFirstLetter,
   getApiUrl,
   setApiUrl,
+  getWsUrl,
+  setWsUrl,
   getHostname,
   setCsrfToken,
   getVerifier,
