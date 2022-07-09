@@ -26,10 +26,15 @@ class LoginPage extends Component {
 
   componentDidMount = () => {
     if (!window.location.protocol.toLowerCase().startsWith("http")) {
+      /* const port = browser.runtime.connect();
+      console.log("port");
+      console.log(port);
+      */
+
       console.log(`- ${getApiUrl()}getticket.php -`);
       WWPass.authInit({
         qrcode: "#qrcode",
-        // passkey: document.querySelector('#button--login'),
+        // passkey: document.querySelector("#button--login"),
         ticketURL: `${getApiUrl()}getticket.php`,
         callbackURL: this.loginCallback,
       });
@@ -40,53 +45,98 @@ class LoginPage extends Component {
     if (!this.props.show) {
       return null;
     }
-
-    setApiUrl("https://trial.passhub.net/");
-
+    /*
+    setApiUrl("https://ext.trial.passhub.net/");
+    setWsUrl("wss://ext.trial.passhub.net/wsapp");
+*/
     return (
-      <div id="login-root">
-        <div class="rectangle640">
-          <div style={{ width: 256 }}>
-            <div class="rectangle1237">To sign-in, scan the QR code</div>
-            <div class="rectangle1237a">
-              <div style={{ marginTop: 0 }}>
-                with <b>WWPass™ Key App</b>
+      <div id="login-background">
+        <div id="login-root">
+          <div class="rectangle640">
+            <div style={{ width: 256 }}>
+              <div class="rectangle1237">To sign-in, scan the QR code</div>
+              <div class="rectangle1237a">
+                <div style={{ marginTop: 0 }}>
+                  with <b>WWPass™ Key App</b>
+                </div>
               </div>
-            </div>
-            <div id="qrcode"></div>
-            <div class="rectangle1237b">
-              <div style={{ marginBottom: 0 }}>
-                or connect <b>WWPass Key</b>
+              <div id="qrcode"></div>
+              <div class="rectangle1237b">
+                <div style={{ marginBottom: 0, color: "white" }}>
+                  or connect <b>WWPass Key</b>
+                </div>
               </div>
-            </div>
-            <div class="rectangle1237c">
-              <svg style={{ width: 30, height: 18, marginRight: 11 }}>
-                <use href="#loaf-ico"></use>
-              </svg>
-              Login with WWPass Key
-            </div>
-          </div>
-          <div class="passhub-logo">PassHub</div>
-          <div class="help-contact">
-            <div style={{ margin: "0 88px 0 60px", display: "flex" }}>
-              <svg style={{ width: 20, height: 20, marginRight: 11 }}>
-                <use href="#help-ico"></use>
-              </svg>
-              Help
-            </div>
+              <div class="rectangle1237c">
+                <div class="help-contact-white">
+                  <div
+                    style={{
+                      // margin: "0 88px 0 60px",
+                      display: "flex",
+                      cursor: "pointer",
+                    }}
+                    onClick={() =>
+                      window.open("https://passhub.net/doc", "passhub_doc", [])
+                    }
+                  >
+                    <svg style={{ width: 20, height: 20, marginRight: 11 }}>
+                      <use href="#help-white-ico"></use>
+                    </svg>
+                    Help
+                  </div>
 
-            <div style={{ display: "flex" }}>
-              <svg
+                  <div style={{ display: "flex", cursor: "pointer" }}>
+                    <svg
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        marginRight: "11px",
+                        marginTop: "4px",
+                      }}
+                    >
+                      <use href="#contact-white-ico"></use>
+                    </svg>
+                    Contact us
+                  </div>
+                </div>
+                <div style={{ display: "none" }}>
+                  <svg style={{ width: 30, height: 18, marginRight: 11 }}>
+                    <use href="#loaf-ico"></use>
+                  </svg>
+                  Login with WWPass Key
+                </div>
+              </div>
+            </div>
+            <div class="passhub-logo">PassHub</div>
+            <div class="help-contact">
+              <div
                 style={{
-                  width: "20px",
-                  height: "20px",
-                  marginRight: "11px",
-                  marginTop: "4px",
+                  margin: "0 88px 0 60px",
+                  display: "flex",
+                  cursor: "pointer",
                 }}
+                onClick={() =>
+                  window.open("https://passhub.net/doc", "passhub_doc", [])
+                }
               >
-                <use href="#contact-ico"></use>
-              </svg>
-              Contact us
+                <svg style={{ width: 20, height: 20, marginRight: 11 }}>
+                  <use href="#help-ico"></use>
+                </svg>
+                Help
+              </div>
+
+              <div style={{ display: "flex", cursor: "pointer" }}>
+                <svg
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    marginRight: "11px",
+                    marginTop: "4px",
+                  }}
+                >
+                  <use href="#contact-ico"></use>
+                </svg>
+                Contact us
+              </div>
             </div>
           </div>
         </div>
@@ -96,19 +146,3 @@ class LoginPage extends Component {
 }
 
 export default LoginPage;
-
-/*
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div>login</div>
-        <div id="qrcode" style={{ width: 256 }}></div>
-      </div>
-
-
-*/
