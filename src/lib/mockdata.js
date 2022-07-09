@@ -81,8 +81,8 @@ const mockData = {
           cleartext: [
             "long username",
             "alicealicealicealicealicealicealicealicealicealicealicealicealicealicealicealicealice",
-            "kjhgqw",
-            "https://gmail.com",
+            "",
+            "",
             "Work mail",
           ],
           path: ["Private", ],
@@ -94,7 +94,7 @@ const mockData = {
           _id:"2i3",
           cleartext: [
             "long password",
-            "alice",
+            "",
             "kjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwkjhgqwk",
             "https://gmail.com",
             "Work mail",
