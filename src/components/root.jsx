@@ -22,16 +22,11 @@ import {
   peekCopyBuffer,
 } from "../lib/copyBuffer";
 
-import { setApiUrl, getApiUrl, setCsrfToken } from "../lib/utils";
+import { setApiUrl, setWsUrl, setCsrfToken } from "../lib/utils";
 
 class Root extends Component {
   state = {
     searchString: "",
-    /*
-    page: window.location.protocol.toLowerCase().startsWith("http")
-      ? "Main"
-      : "Login",
-    */
     page: "Main",
     filename: "",
     blob: null,
@@ -48,6 +43,7 @@ class Root extends Component {
     super(props);
 
     if (!window.location.protocol.toLowerCase().startsWith("http")) {
+      // extension
       setCsrfToken(window.localStorage.getItem("csrf"));
     }
 
@@ -55,7 +51,12 @@ class Root extends Component {
 
     this.mainPageRef = React.createRef();
     if (!window.location.protocol.toLowerCase().startsWith("http")) {
-      setApiUrl("https://trial.passhub.net/");
+      setApiUrl("https://ext.trial.passhub.net/");
+      setWsUrl("wss://ext.trial.passhub.net/wsapp/");
+    } else {
+      setApiUrl("/");
+      let wsURL = new URL(window.location.href);
+      setWsUrl("wss://" + wsURL.hostname + "/wsapp/");
     }
   }
 
@@ -124,12 +125,6 @@ class Root extends Component {
     console.log("inMemory view", filename);
   };
 
-  /*
-  showItemPane = (args) => {
-    this.setState({ page: "loginPane", itemPaneArgs: args });
-    console.log("loginPane");
-  };
-*/
   render() {
     if (this.state.page === "Login") {
       return (
@@ -146,6 +141,7 @@ class Root extends Component {
           onAccountMenuCommand={this.onAccountMenuCommand}
           accountData={this.state.AccountData}
           onClose={this.gotoMain}
+          gotoMain={this.gotoMain}
           gotoIam={this.gotoIam}
           narrowPage={this.state.page === "loginPane"}
         />
@@ -157,19 +153,6 @@ class Root extends Component {
             filename={this.state.filename}
             blob={this.state.blob}
           />
-          {/*
-          <LoginPane
-            show={this.state.page === "loginPane"}
-            args={this.state.itemPaneArgs}
-            onClose={(refresh = false) => {
-              this.gotoMain();
-              if (refresh === true) {
-                this.mainPageRef.current.refreshUserData();
-              }
-            }}
-          />
-          */}
-
           <MainPage
             show={this.state.page === "Main"}
             inMemoryView={this.inMemoryView}
