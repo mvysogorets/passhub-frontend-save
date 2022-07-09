@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import axios from "axios";
 import IdleTimer from "react-idle-timer";
+import WsConnection from "../lib/wsConnection";
 import * as passhubCrypto from "../lib/crypto";
 import {
   keepTicketAlive,
   getFolderById,
   getApiUrl,
+  getWsUrl,
   getVerifier,
   setUserData,
 } from "../lib/utils";
@@ -23,8 +25,9 @@ import progress from "../lib/progress";
 
 import { popCopyBuffer } from "../lib/copyBuffer";
 import * as dropAndPaste from "../lib/dropAndPaste";
+import { toBeDisabled } from "@testing-library/jest-dom/dist/matchers";
 
-let webSocket;
+let wsConnector;
 
 function decryptSafeData(safe, aesKey) {
   for (let i = 0; i < safe.items.length; i += 1) {
@@ -219,14 +222,14 @@ class MainPage extends Component {
     }
   };
 
-  refreshUserData = ({ safes = [], newFolderID } = {}) => {
+  refreshUserData = ({ safes = [], newFolderID, broadcast = true } = {}) => {
     console.log(safes);
     console.log(newFolderID);
-    if (safes.length > 0 && webSocket) {
+    if (broadcast && wsConnector) {
       console.log(JSON.stringify(safes));
-      webSocket.send(JSON.stringify(safes));
-      // webSocket.send(JSON.encode(safes));
+      wsConnector.send(JSON.stringify(safes));
     }
+
     let activeFolderID = this.state.activeFolder.id
       ? this.state.activeFolder.id
       : null;
@@ -281,35 +284,16 @@ class MainPage extends Component {
       });
   };
 
-  createWebSocket = () => {
-    let wsURL = new URL(window.location.href);
-    wsURL = "wss://" + wsURL.hostname + "/wsapp/";
-    console.log(wsURL);
-
-    webSocket = new WebSocket(wsURL);
-    console.log(webSocket);
-
-    // Connection opened
-    webSocket.addEventListener("open", function (event) {
-      webSocket.send("Hello Server!");
-    });
-
-    webSocket.addEventListener("close", function (event) {
-      console.log("Bye Server!");
-      console.log(webSocket);
-    });
-
-    // Listen for messages
-    webSocket.addEventListener("message", function (event) {
-      console.log("Message from server ", event.data);
-    });
-    /*
-    setInterval(() => {
-      if (webSocket) {
-        webSocket.send("ping");
+  wsMessageInd = (message) => {
+    try {
+      const pMessage = JSON.parse(message);
+      if (Array.isArray(pMessage)) {
+        console.log("Safes total: " + pMessage.length);
+        this.refreshUserData({ broadcast: false });
       }
-    }, 15000);
-    */
+    } catch (err) {
+      console.log("catch 322" + err);
+    }
   };
 
   getPageData = () => {
@@ -351,7 +335,18 @@ class MainPage extends Component {
                   data.activeFolder = data.safes[0];
                 }
                 setUserData(data);
-                this.createWebSocket();
+                if (data.websocket) {
+                  wsConnector = new WsConnection(getWsUrl(), this.wsMessageInd);
+                  try {
+                    wsConnector.connect();
+                  } catch (err) {
+                    console.log("catch 343");
+                    console.log(err);
+                  }
+                } else {
+                  console.log("websocket disbled");
+                }
+
                 progress.unlock();
                 self.setState(data);
                 if ("goPremium" in data && data.goPremium == true) {
