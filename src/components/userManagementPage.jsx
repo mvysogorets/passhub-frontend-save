@@ -107,16 +107,20 @@ class UserManagementPage extends Component {
       });
   };
 
-  componentDidMount() {
-    // console.log("userManagementPage did mount");
-    if (this.props.show) {
-      this.getPageData();
-    }
-  }
+  isShown = false;
 
   render() {
     if (!this.props.show) {
       return null;
+    }
+
+    if (!this.props.show) {
+      this.isShown = false;
+      return null;
+    }
+    if (!this.isShown) {
+      this.isShown = true;
+      this.getPageData();
     }
 
     return (
