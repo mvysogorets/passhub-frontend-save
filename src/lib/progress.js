@@ -5,7 +5,7 @@ function lock(seconds, message) {
   if(progressTimeout) {
     clearTimeout(progressTimeout);
   }
-  let timeout = 10; // defaults to 10 seconds
+  let timeout = 30; // defaults to 10 seconds
   if (undefined !== seconds) {
     timeout = seconds;
   }
