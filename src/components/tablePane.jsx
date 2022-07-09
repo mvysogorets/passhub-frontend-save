@@ -510,12 +510,7 @@ class TablePane extends Component {
             show={this.state.showModal === "DeleteItemModal"}
             folder={folder}
             args={this.state.itemModalArgs}
-            onClose={(refresh = false) => {
-              this.setState({ showModal: "" });
-              if (refresh === true) {
-                this.props.refreshUserData();
-              }
-            }}
+            onClose={this.onItemModalClose}
           ></DeleteItemModal>
         </div>
       </Col>
@@ -524,3 +519,12 @@ class TablePane extends Component {
 }
 
 export default TablePane;
+
+/*
+onClose={(refresh = false) => {
+  this.setState({ showModal: "" });
+  if (refresh === true) {
+    this.props.refreshUserData();
+  }
+}}
+*/
